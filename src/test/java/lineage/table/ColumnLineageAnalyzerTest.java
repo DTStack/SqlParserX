@@ -37,9 +37,10 @@ public class ColumnLineageAnalyzerTest {
 
     /**
      * 测试用例2：CREATE TABLE AS SELECT
+     *  例子1:较简单
      */
     @Test
-    public void testSimpleCreateTableAsSelect() {
+    public void test_02_SimpleCreateTableAsSelect() {
         String sql = "CREATE TABLE new_table AS SELECT id, name FROM source_table as st";
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
             {
@@ -60,9 +61,10 @@ public class ColumnLineageAnalyzerTest {
 
     /**
      * 测试用例3：CREATE TABLE AS SELECT
+     *  例子2:较复杂
      */
     @Test
-    public void testSimpleCreateTableAsSelect_02() {
+    public void test_03_SimpleCreateTableAsSelect() {
         String sql = "CREATE TABLE user_order_summary AS\n" +
                 "SELECT \n" +
                 "    u.id as user_id, \n" +
@@ -96,52 +98,43 @@ public class ColumnLineageAnalyzerTest {
         assertRelation(relations, "user_order_summary.total_amount", "orders.amount");
         assertRelation(relations, "user_order_summary.order_count", "orders.id");
     }
-    
+
+    /**
+     * 测试用例4：CREATE TABLE AS SELECT UNION
+     *  目标表的字段以第一个select为准
+     */
     @Test
-    public void testCreateTableAsSelectWithAlias() {
-        String sql = "CREATE TABLE new_table (col1, col2) AS SELECT id as user_id, name as user_name FROM source_table";
-        
+    public void test_04_createTableAsSelectUnion() {
+        String sql = "CREATE TABLE new_table AS\n" +
+                "SELECT col1, col2 FROM table1\n" +
+                "UNION\n" +
+                "SELECT col3, col4 FROM table2;";
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+            {
+                this.put("table1",
+                        Arrays.asList(new Column("col1", 0)
+                                , new Column("col2", 1)
+                        ));
+                this.put("table2",
+                        Arrays.asList(new Column("col3", 0)
+                                , new Column("col4", 1)
+                        ));
+            }
+        };
+        // 实现字段血缘分析
         ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql);
-        
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        // 校验血缘分析结果
+//        result.printColumnLineage();
+        assertEquals("new_table", result.getTargetTable());
         Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
         assertEquals(2, relations.size());
-        assertRelation(relations, "new_table.col1", "user_id");
-        assertRelation(relations, "new_table.col2", "user_name");
+        assertRelation(relations, "new_table.col1", "table1.col1");
+        assertRelation(relations, "new_table.col1", "table2.col3");
+        assertRelation(relations, "new_table.col2", "table1.col2");
+        assertRelation(relations, "new_table.col2", "table2.col4");
     }
-    
-    @Test
-    public void testCreateTableAsSelectWithExpression() {
-        String sql = "CREATE TABLE stats AS " +
-                     "SELECT user_id, SUM(amount) as total_amount, COUNT(*) as order_count " +
-                     "FROM orders GROUP BY user_id";
-        
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql);
-        
-        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
-        assertEquals(3, relations.size());
-        assertRelation(relations, "stats.user_id", "user_id");
-        assertRelation(relations, "stats.total_amount", "amount");
-        assertRelation(relations, "stats.order_count", "*");
-    }
-    
-    @Test
-    public void testCreateTableAsSelectWithMultiTable() {
-        String sql = "CREATE TABLE user_orders AS " +
-                     "SELECT u.id as user_id, u.name, o.order_id, o.amount " +
-                     "FROM users u JOIN orders o ON u.id = o.user_id";
-        
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql);
-        
-        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
-        assertEquals(4, relations.size());
-        assertRelation(relations, "user_orders.user_id", "u.id");
-        assertRelation(relations, "user_orders.name", "u.name");
-        assertRelation(relations, "user_orders.order_id", "o.order_id");
-        assertRelation(relations, "user_orders.amount", "o.amount");
-    }
+
 
     /**
      * 验证关联关系

@@ -69,16 +69,19 @@ public class CreateTableLineageTest {
         float aa = 0.016739889f;
         System.out.println(aa);
 
-        float a = Float.MAX_VALUE;
-        BigDecimal bigDecimal = new BigDecimal(a * 2);
-        System.out.println(a * 2); // 输出 Infinity
+        float a = Float.POSITIVE_INFINITY;
+        System.out.println(a);
+        System.out.println(a * 100);// Infinity * 100 不会报错
+        // 报错点
+//        BigDecimal bigDecimal = new BigDecimal(a * 2);
+//        System.out.println(a * 2); // 输出 Infinity
 
-
-        Double capacity = retainDecimal(2, Math.abs(aa * 100.0));
+        Double capacity = retainDecimal(2, Math.abs(a * 100.0));
         System.out.println(capacity);
     }
 
     private static Double retainDecimal(Integer position, Double decimal) {
+        // 报错点
         BigDecimal retain = new BigDecimal(decimal);
         return retain.setScale(position, BigDecimal.ROUND_HALF_UP).doubleValue();
     }

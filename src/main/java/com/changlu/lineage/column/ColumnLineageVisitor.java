@@ -11,6 +11,7 @@ import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlSchemaStatVisitor;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.alibaba.druid.stat.TableStat;
 import com.changlu.lineage.domain.Column;
+import com.changlu.lineage.utils.TableSourceUtil;
 
 import java.util.*;
 
@@ -31,22 +32,10 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
     /**
-     *  处理表数据源
-     * @param tableSource
+     * 获取表名
+     * @param tableSource 表名source
+     * @return 表名
      */
-    private void processTableSource(SQLTableSource tableSource) {
-        if (tableSource instanceof SQLExprTableSource) {
-            SQLExprTableSource exprTableSource = (SQLExprTableSource) tableSource;
-            String alias = exprTableSource.getAlias();
-            String tableName = extractTableName(exprTableSource);
-
-            if (alias != null) {
-                fromTables.put(alias, tableName);
-            }
-            fromTables.put(tableName, tableName);
-        }
-    }
-
     private String extractTableName(SQLTableSource tableSource) {
         if (tableSource instanceof SQLExprTableSource) {
             SQLExpr expr = ((SQLExprTableSource) tableSource).getExpr();
@@ -68,26 +57,77 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
         // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
         SQLSelect select = x.getSelect();
         if (select != null) {
+            SQLSelectQuery selectQuery = select.getQuery();
             // 收集所有的表名映射情况
-            SQLTableSource fromNode = x.getSelect().getQueryBlock().getFrom();
-            fromNode.accept(new SQLASTVisitorAdapter() {
-                @Override
-                public boolean visit(SQLExprTableSource tableSource) {
-                    String alias = tableSource.getAlias();
-                    String tableName = extractTableName(tableSource);
-                    if (alias != null) {
-                        fromTables.put(alias, tableName);
-                    }else {
-                        fromTables.put(tableName, tableName);
-                    }
-                    return true;
-                }
-            });
+            fromTables = TableSourceUtil.getAllTables(selectQuery);
 
-            // 处理select xxx 来源字段
-            processCreateTableAsSelect(x);
+            // 区分不同select 类型场景
+            // 场景1：普通select xxx from、select xxx from xxx left join
+            if (selectQuery instanceof SQLSelectQueryBlock) {
+                // 目标targetColumns（考虑一层即可）
+                SQLSelectQueryBlock selectQueryBlock = (SQLSelectQueryBlock) selectQuery;
+                List<String> targetColumns = getTargetColumns(selectQueryBlock);
+
+                // 处理一组 select xxx 来源字段
+                processQueryBlockLineage(selectQueryBlock, targetColumns);
+            }
+            // 场景2：select xxx from table1 union select xxx from table2
+            else if (selectQuery instanceof SQLUnionQuery){
+                // 获取到union 所有组
+                // select xxx from table1 union 场景
+//                throw new RuntimeException("暂不支持该场景");
+                List<SQLSelectQuery> relations = ((SQLUnionQuery) selectQuery).getRelations();
+                // 获取到union所有组的关系
+                if (relations != null && !relations.isEmpty())  {
+                    // 目标targets字段
+                    SQLSelectQueryBlock selectQueryBlock = findFirstSelectQueryBlock(selectQuery);
+                    List<String> targetColumns = getTargetColumns(selectQueryBlock);
+
+                    for (SQLSelectQuery relationSelectQuery : relations) {
+                        if (relationSelectQuery instanceof SQLSelectQueryBlock) {
+                            SQLSelectQueryBlock relationSelectQueryBlock = (SQLSelectQueryBlock) relationSelectQuery;
+                            // 处理每一组的select血缘关系
+                            processQueryBlockLineage(relationSelectQueryBlock, targetColumns);
+                        }else {
+                            throw new RuntimeException("selectQuery is SQLUnionQuery，match relations error，selectQuery type: " + selectQuery.getClass().getName() + "暂无相应处理");
+                        }
+                    }
+                }
+
+//                for (SQLSelectQuery relation : relations) {
+//                    // 选择第一组 select xxx 来源字段作为目标写入端
+//
+//
+//                    if (relation instanceof SQLSelectQueryBlock) {
+//                        // 处理select xxx 来源字段
+//                        processQueryBlockLineage((SQLSelectQueryBlock) relation, targetColumns);
+//                    }else {
+//                        throw new RuntimeException("暂不支持该场景");
+//                    }
+//                }
+            }else {
+                throw new RuntimeException("暂不支持该场景");
+            }
         }
         return false;
+    }
+
+    /**
+     * 获取到union的第一个select
+     * @param selectQuery
+     * @return
+     */
+    private SQLSelectQueryBlock findFirstSelectQueryBlock(SQLSelectQuery selectQuery) {
+        if (selectQuery instanceof SQLSelectQueryBlock) {
+            return (SQLSelectQueryBlock) selectQuery;
+        } else if (selectQuery instanceof SQLUnionQuery) {
+            SQLUnionQuery unionQuery = (SQLUnionQuery) selectQuery;
+            List<SQLSelectQuery> relations = unionQuery.getRelations();
+            if (!relations.isEmpty()) {
+                return findFirstSelectQueryBlock(relations.get(0));
+            }
+        }
+        throw new RuntimeException("findFirstSelectQueryBlock error，selectQuery type: " + selectQuery.getClass().getName() + "暂无相应处理");
     }
 
     @Override
@@ -96,61 +136,29 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
 
-    private void processCreateTableAsSelect(SQLCreateTableStatement createStmt) {
-        // 获取到目标表的字段名选项
-        List<String> targetColumns = getTargetColumns(createStmt);
-
+    private void processQueryBlockLineage(SQLSelectQueryBlock queryBlock, List<String> targetColumns) {
         // 获取SELECT项列表
-        SQLSelect select = createStmt.getSelect();
-        List<SQLSelectItem> selectItems = select.getQueryBlock().getSelectList();
+        SelectSpecialLineageService selectSpecialLineageService = new SelectSpecialLineageService();
+        List<SelectColumn> selectColumns = selectSpecialLineageService.queryColumnsBySqlSelectQueryBlock(queryBlock);
+        if (selectColumns == null || selectColumns.isEmpty()) return;
 
-        // 遍历SELECT项并处理
-        for (int i = 0; i < selectItems.size(); i++) {
-            SQLSelectItem selectItem = selectItems.get(i);
-            String targetColumn = i < targetColumns.size() ?
-                    targetColumns.get(i) :
-                    "column_" + (i + 1);
-            processSelectItem(selectItem, targetColumn);
-        }
+        // 遍历select 列表项 & targetColumns 来实现血缘关联
+        for (int i = 0; i < selectColumns.size(); i++) {
+            SelectColumn selectColumn = selectColumns.get(i);
+            String sourceTableName = selectColumn.getTableName();
+            String sourceColumnName = selectColumn.getColumnName();
+            String aliasName = selectColumn.getAliasName();
 
-    }
-
-    private void processSelectItem(SQLSelectItem selectItem, String targetColumn) {
-        SQLExpr expr = selectItem.getExpr();
-        if (expr instanceof SQLIdentifierExpr) {
-            // 简单字段引用：从FROM子句查找表名
-            String sourceColumn = ((SQLIdentifierExpr) expr).getName();
-            String sourceTable = findSourceTableForColumn(sourceColumn);
-            addRelation(sourceTable, sourceColumn, targetTable, targetColumn);
-        }else if (expr instanceof SQLPropertyExpr) {
-            // 带表名的字段引用：SELECT t.a AS col1 【注意：t可能是别名场景】
-            SQLPropertyExpr propExpr = (SQLPropertyExpr) expr;
-            String sourceTable = propExpr.getOwnerName();
-            String sourceColumn = propExpr.getName();
-            addRelation(fromTables.get(sourceTable), sourceColumn, targetTable, targetColumn);
-        }
-        // 支持聚合表达式，例如sum、count、avg类型
-        else if (expr instanceof SQLAggregateExpr){
-            SQLAggregateExpr aggregateExpr = (SQLAggregateExpr) expr;
-            List<SQLExpr> arguments = aggregateExpr.getArguments();
-            // 目前需要简单check 一下，后续需要完善
-            for (SQLExpr argument : arguments) {
-                if (argument instanceof SQLPropertyExpr) {
-                    // 带表名的字段引用：SELECT t.a AS col1 【注意：t可能是别名场景】
-                    SQLPropertyExpr propExpr = (SQLPropertyExpr) argument;
-                    String sourceTable = propExpr.getOwnerName();
-                    String sourceColumn = propExpr.getName();
-                    addRelation(fromTables.get(sourceTable), sourceColumn, targetTable, targetColumn);
+            if (aliasName != null) {
+                // 有别名情况 （选择指定sql语句中带有别名的表）
+                if (targetColumns.contains(aliasName)) {
+                    addRelation(fromTables.get(sourceTableName), sourceColumnName, targetTable, aliasName);
                 }
-                else if (argument instanceof SQLIdentifierExpr) {
-                    // 简单字段引用：从FROM子句查找表名
-                    String sourceColumn = ((SQLIdentifierExpr) argument).getName();
-                    String sourceTable = findSourceTableForColumn(sourceColumn);
-                    addRelation(sourceTable, sourceColumn, targetTable, targetColumn);
-                }
+            }else {
+                // 无别名情况（多表连接场景下，则需要去比对真实传入表 & 字段来选择相应的表）
+                addRelation(findSourceTableForColumn(sourceColumnName), sourceColumnName, targetTable, targetColumns.get(i));
             }
         }
-
     }
 
     private String findSourceTableForColumn(String columnName) {
@@ -189,29 +197,6 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
     /**
-     * 处理表达式中的字段引用
-     * @param expr 表达式node
-     * @param targetTable 目标表
-     * @param targetColumn 目标字段
-     */
-//    private void processExpression(SQLBinaryOpExpr expr, String targetTable, String targetColumn) {
-//        // 递归处理表达式中的字段引用
-//        expr.accept(new SQLASTVisitorAdapter() {
-//            @Override
-//            public boolean visit(SQLIdentifierExpr x) {
-//                addRelation(null, x.getName(), targetTable, targetColumn);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean visit(SQLPropertyExpr x) {
-//                addRelation(x.getOwnerName(), x.getName(), targetTable, targetColumn);
-//                return true;
-//            }
-//        });
-//    }
-
-    /**
      * 添加关联关系
      * @param sourceTable 原始表
      * @param sourceColumn 原始字段
@@ -241,18 +226,11 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
      * @param createStmt
      * @return
      */
-    private List<String> getTargetColumns(SQLCreateTableStatement createStmt) {
+    private List<String> getTargetColumns(SQLSelectQueryBlock selectQueryBlock) {
         List<String> columns = new ArrayList<>();
-
-        // 方式1：从表定义中获取列名（自定义指定列名场景）
-//        for (SQLTableElement element : createStmt.getTableElementList()) {
-//            if (element instanceof SQLColumnDefinition) {
-//                columns.add(((SQLColumnDefinition) element).getColumnName());
-//            }
-//        }
         // 方式2：如果没有显式定义列，则使用SELECT项的别名（直接create table as select 这种形式，无列名场景）
-        if (columns.isEmpty() && createStmt.getSelect() != null) {
-            List<SQLSelectItem> selectList = createStmt.getSelect().getQueryBlock().getSelectList();
+        if (selectQueryBlock != null) {
+            List<SQLSelectItem> selectList = selectQueryBlock.getSelectList();
             for (int i = 0; i < selectList.size(); i++) {
                 String columnName = extractRealColumnName(selectList.get(i), i);
                 columns.add(columnName);

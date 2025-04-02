@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ColumnLineageResult {
     private final String targetTable;
+    // 字段血缘关系 key:目标字段 value:目标字段来源字段
     private final Map<String, List<ColumnRelation>> columnRelations;
     
     public ColumnLineageResult(String targetTable, 
