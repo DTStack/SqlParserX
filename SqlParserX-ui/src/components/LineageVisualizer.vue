@@ -76,8 +76,8 @@ export default {
         { value: 4, label: 'SQL Server' },
         { value: 5, label: 'Hive' }
       ],
-      selectedField: '', // 用于存储当前选中的字段
-      highlightedFields: new Set(), // 新增高亮字段集合
+      fieldRelationsMap: {}, // 存储字段间的映射关系
+      highlightedFields: new Set(), // 存储当前高亮的字段集合
     };
   },
   mounted() {
@@ -108,6 +108,7 @@ export default {
         this.myChart.showLoading();
         const { tableData, relationData } = await this.analyzeSQL(sql);
         this.updateTableData(tableData, relationData);
+        this.buildFieldRelationsMap(relationData); // 新增：构建字段映射关系
       } catch (error) {
         console.error('解析失败:', error);
         alert('解析失败: ' + error.message);
@@ -115,6 +116,24 @@ export default {
         this.myChart.hideLoading();
       }
     },
+
+
+    // 新增方法：构建字段关系映射
+    buildFieldRelationsMap(relationData) {
+      const map = {};
+      relationData.forEach(rel => {
+        // 正向关系：来源 -> 目标
+        if (!map[rel.from]) map[rel.from] = new Set();
+        map[rel.from].add(rel.to);
+
+        // 反向关系：目标 -> 来源
+        if (!map[rel.to]) map[rel.to] = new Set();
+        map[rel.to].add(rel.from);
+      });
+      this.fieldRelationsMap = map;
+      console.log('build初始化：', this.fieldRelationsMap);
+    },
+
 
     async loadExampleData() {
       try {
@@ -361,26 +380,30 @@ export default {
         if (this.isFieldLevel) {
           table.fields.forEach((field, index) => {
             const fieldFullName = `${table.tableName}.${field}`;
+            console.log("fieldFullName=>", fieldFullName);
             tableGroup.children.push({
               type: 'rect',
               shape: {width: 140, height: 24},
               style: {
-                fill: this.selectedField === fieldFullName ? '#e6f7ff' : '#fff', // 动态设置背景色
+                fill: this.highlightedFields.has(fieldFullName) ? '#c113e8' : '#fff', // 动态设置背景色
                 stroke: '#ccc'
               },
               position: [0, 30 + index * 24],
               name: fieldFullName,
               z: 10,
+              // 确保 data 是一个对象且包含 isField 属性
               data: {
+                isField: true,  // 明确设置 isField
                 source: this.relationData.find(r => r.to === fieldFullName)?.from,
                 tableName: table.tableName,
-                isField: true,
                 fieldName: field
               },
-              // 添加点击事件
               onclick: (params) => {
-                this.selectedField = fieldFullName;
-                this.renderChart();
+                this.handleChartClick({
+                  componentType: 'graphic',
+                  name: fieldFullName,
+                  data: { isField: true }
+                });
               }
             });
             tableGroup.children.push({
@@ -438,6 +461,7 @@ export default {
         const arrowLine = this.drawArrowLine(x1, y1, x2, y2, this.defaultLineColor, 2);
         arrowLine.forEach(line => {
           line.name = `line_${rel.from}_${rel.to}`;
+          // 确保 data 是一个对象且包含必要的属性
           line.data = {
             from: rel.from,
             to: rel.to,
@@ -479,36 +503,93 @@ export default {
     },
 
     handleChartClick(params) {
+      console.log("handleChartClick=>", params);
       if (params.componentType === 'graphic' && params.name) {
-        const currentRelations = this.isFieldLevel ? this.relationData : this.getTableRelations();
-        const relatedRelations = currentRelations.filter(r => r.to === params.name || r.from === params.name);
-        const newGraphicElements = this.currentGraphicElements.map(item => {
-          if (item.data && item.data.defaultColor) {
-            const isRelated = relatedRelations.some(rel => item.name === `line_${rel.from}_${rel.to}`);
-            const newColor = isRelated ? item.data.activeColor : item.data.defaultColor;
-            if (item.type === 'polyline') {
-              return {
-                ...item,
-                style: {
-                  ...item.style,
-                  fill: newColor,
-                  stroke: newColor
-                }
-              };
-            } else if (item.type === 'line') {
-              return {
-                ...item,
-                style: {
-                  ...item.style,
-                  stroke: newColor
-                }
-              };
-            }
-          }
-          return item;
-        });
-        this.myChart.setOption({graphic: newGraphicElements});
+        // 如果是字段点击
+        if (params.data?.isField) {
+          this.highlightedFields = new Set();
+
+          // 获取所有相关字段
+          console.log(this.fieldRelationsMap)
+          console.log("缓存映射=>", this.fieldRelationsMap, ", filedName:", params.name)
+          const collectRelatedFields = (fieldName) => {
+            console.log("获取相关字段=>", this.highlightedFields)
+            if (this.highlightedFields.has(fieldName)) return;
+            this.highlightedFields.add(fieldName);
+
+            const relatedFields = this.fieldRelationsMap[fieldName] || [];
+            relatedFields.forEach(f => collectRelatedFields(f));
+          };
+
+          collectRelatedFields(params.name);
+        }
+
+        console.log('当前高亮属性：', this.highlightedFields);
+        console.log('当前高亮属性判断：', this.highlightedFields.has("user_order_summary.order_count"));
+        console.log('当前高亮属性判断：', this.highlightedFields.has("orders.id"));
+
+        // 更新图表高亮
+        this.updateChartHighlight();
       }
+    },
+
+    // 新增方法：更新图表高亮状态
+    updateChartHighlight() {
+      const processItem = (item) => {
+        const itemData = item.data || {};
+
+        // 处理group类型，递归处理其children
+        if (item.type === 'group' && item.children) {
+          return {
+            ...item,
+            children: item.children.map(child => processItem(child))
+          };
+        }
+
+        // 处理字段高亮
+        if (itemData.isField) {
+          const isHighlighted = this.highlightedFields.has(item.name);
+          return {
+            ...item,
+            style: {
+              ...item.style,
+              fill: isHighlighted ? '#e6f7ff' : '#fff'
+            }
+          };
+        }
+
+        // 处理连线高亮
+        if (itemData.isLine) {
+          const isRelated = [...this.highlightedFields].some(field =>
+              itemData.from === field || itemData.to === field
+          );
+          const newColor = isRelated ? this.activeLineColor : this.defaultLineColor;
+
+          if (item.type === 'polyline') {
+            return {
+              ...item,
+              style: {
+                ...item.style,
+                fill: newColor,
+                stroke: newColor
+              }
+            };
+          } else if (item.type === 'line') {
+            return {
+              ...item,
+              style: {
+                ...item.style,
+                stroke: newColor
+              }
+            };
+          }
+        }
+
+        return item;
+      };
+
+      const newGraphicElements = this.currentGraphicElements.map(item => processItem(item));
+      this.myChart.setOption({ graphic: newGraphicElements });
     },
 
     handleResize() {
