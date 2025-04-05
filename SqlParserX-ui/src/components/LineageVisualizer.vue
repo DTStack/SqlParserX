@@ -1,4 +1,3 @@
-<!-- src/components/LineageVisualizer.vue -->
 <template>
   <div class="lineage-visualizer">
     <div class="header">
@@ -76,7 +75,9 @@ export default {
         { value: 3, label: 'Oracle' },
         { value: 4, label: 'SQL Server' },
         { value: 5, label: 'Hive' }
-      ]
+      ],
+      selectedField: '', // 用于存储当前选中的字段
+      highlightedFields: new Set(), // 新增高亮字段集合
     };
   },
   mounted() {
@@ -147,13 +148,13 @@ export default {
 
     async getExampleData() {
       const exampleSQL = `CREATE TABLE user_order_summary AS
-        SELECT
-            u.id as user_id,
-            u.name,
-            SUM(o.amount) as total_amount,
-            COUNT(o.id) as order_count
-        FROM users u JOIN orders o ON u.id = o.user_id
-        GROUP BY u.id, u.name`;
+      SELECT
+        u.id as user_id,
+        u.name,
+        SUM(o.amount) as total_amount,
+        COUNT(o.id) as order_count
+      FROM users u JOIN orders o ON u.id = o.user_id
+      GROUP BY u.id, u.name`;
 
       return this.analyzeSQL(exampleSQL);
     },
@@ -339,10 +340,10 @@ export default {
           children: [
             {
               type: 'rect',
-              shape: { width: 140, height: 30 },
-              style: { fill: '#409EFF' },
+              shape: {width: 140, height: 30},
+              style: {fill: '#409EFF'},
               name: table.tableName,
-              data: { isTable: true, tableName: table.tableName }
+              data: {isTable: true, tableName: table.tableName}
             },
             {
               type: 'text',
@@ -362,8 +363,11 @@ export default {
             const fieldFullName = `${table.tableName}.${field}`;
             tableGroup.children.push({
               type: 'rect',
-              shape: { width: 140, height: 24 },
-              style: { fill: '#fff', stroke: '#ccc' },
+              shape: {width: 140, height: 24},
+              style: {
+                fill: this.selectedField === fieldFullName ? '#e6f7ff' : '#fff', // 动态设置背景色
+                stroke: '#ccc'
+              },
               position: [0, 30 + index * 24],
               name: fieldFullName,
               z: 10,
@@ -372,6 +376,11 @@ export default {
                 tableName: table.tableName,
                 isField: true,
                 fieldName: field
+              },
+              // 添加点击事件
+              onclick: (params) => {
+                this.selectedField = fieldFullName;
+                this.renderChart();
               }
             });
             tableGroup.children.push({
@@ -498,7 +507,7 @@ export default {
           }
           return item;
         });
-        this.myChart.setOption({ graphic: newGraphicElements });
+        this.myChart.setOption({graphic: newGraphicElements});
       }
     },
 
