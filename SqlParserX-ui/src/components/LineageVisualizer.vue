@@ -11,7 +11,9 @@
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
             <select id="data-source" v-model="selectedDataSource">
-              <option v-for="source in dataSources" :key="source.value" :value="source.value">
+              <option v-for="source in dataSources"
+                      :key="source.value"
+                      :value="source.value">
                 {{ source.label }}
               </option>
             </select>
@@ -69,20 +71,16 @@ export default {
       activeLineColor: '#66b1ff',
       API_BASE_URL: 'http://127.0.0.1:8090',
       selectedDataSource: 1, // 默认选中MySQL
-      dataSources: [
-        { value: 1, label: 'MySQL' },
-        { value: 2, label: 'PostgreSQL' },
-        { value: 3, label: 'Oracle' },
-        { value: 4, label: 'SQL Server' },
-        { value: 5, label: 'Hive' }
-      ],
+      dataSources: [], // 初始化为空数组
       fieldRelationsMap: {}, // 存储字段间的映射关系
       highlightedFields: new Set(), // 存储当前高亮的字段集合
     };
   },
   mounted() {
+    this.fetchDataSourceTypes(); // 在组件挂载时获取数据源类型
     this.initChart();
     this.loadExampleData();
+    this.parseSQL();
     window.addEventListener('resize', this.handleResize);
   },
   beforeDestroy() {
@@ -131,7 +129,7 @@ export default {
         map[rel.to].add(rel.from);
       });
       this.fieldRelationsMap = map;
-      console.log('build初始化：', this.fieldRelationsMap);
+      // console.log('build初始化：', this.fieldRelationsMap);
     },
 
 
@@ -151,7 +149,7 @@ export default {
       try {
         const encodedSQL = encodeURIComponent(sql);
         const response = await fetch(
-            `${this.API_BASE_URL}/lineage/query?sql=${encodedSQL}&datasourceType=${this.selectedDataSource}`
+            `${this.API_BASE_URL}/api/lineage/query?sql=${encodedSQL}&datasourceType=${this.selectedDataSource}`
         );
 
         if (!response.ok) {
@@ -162,6 +160,26 @@ export default {
       } catch (error) {
         console.error('Error in analyzeSQL:', error);
         throw error;
+      }
+    },
+
+    async fetchDataSourceTypes() {
+      try {
+        const response = await fetch(`${this.API_BASE_URL}/api/datasource/types`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data source types');
+        }
+        this.dataSources = await response.json();
+      } catch (error) {
+        console.error('Error fetching data source types:', error);
+        // 设置默认值作为回退
+        this.dataSources = [
+          { value: 3, label: 'MYSQL' },
+          { value: 1, label: 'ORACLE' },
+          { value: 11, label: 'POSTGRESQL' },
+          { value: 17, label: 'SQLSERVER' },
+          { value: 25, label: 'HIVE' }
+        ];
       }
     },
 
@@ -380,12 +398,12 @@ export default {
         if (this.isFieldLevel) {
           table.fields.forEach((field, index) => {
             const fieldFullName = `${table.tableName}.${field}`;
-            console.log("fieldFullName=>", fieldFullName);
+            // console.log("fieldFullName=>", fieldFullName);
             tableGroup.children.push({
               type: 'rect',
               shape: {width: 140, height: 24},
               style: {
-                fill: this.highlightedFields.has(fieldFullName) ? '#c113e8' : '#fff', // 动态设置背景色
+                fill: this.highlightedFields.has(fieldFullName) ? '#e6f7ff' : '#fff', // 动态设置背景色
                 stroke: '#ccc'
               },
               position: [0, 30 + index * 24],
@@ -503,17 +521,17 @@ export default {
     },
 
     handleChartClick(params) {
-      console.log("handleChartClick=>", params);
+      // console.log("handleChartClick=>", params);
       if (params.componentType === 'graphic' && params.name) {
         // 如果是字段点击
         if (params.data?.isField) {
           this.highlightedFields = new Set();
 
           // 获取所有相关字段
-          console.log(this.fieldRelationsMap)
-          console.log("缓存映射=>", this.fieldRelationsMap, ", filedName:", params.name)
+          // console.log(this.fieldRelationsMap)
+          // console.log("缓存映射=>", this.fieldRelationsMap, ", filedName:", params.name)
           const collectRelatedFields = (fieldName) => {
-            console.log("获取相关字段=>", this.highlightedFields)
+            // console.log("获取相关字段=>", this.highlightedFields)
             if (this.highlightedFields.has(fieldName)) return;
             this.highlightedFields.add(fieldName);
 
@@ -524,9 +542,9 @@ export default {
           collectRelatedFields(params.name);
         }
 
-        console.log('当前高亮属性：', this.highlightedFields);
-        console.log('当前高亮属性判断：', this.highlightedFields.has("user_order_summary.order_count"));
-        console.log('当前高亮属性判断：', this.highlightedFields.has("orders.id"));
+        // console.log('当前高亮属性：', this.highlightedFields);
+        // console.log('当前高亮属性判断：', this.highlightedFields.has("user_order_summary.order_count"));
+        // console.log('当前高亮属性判断：', this.highlightedFields.has("orders.id"));
 
         // 更新图表高亮
         this.updateChartHighlight();

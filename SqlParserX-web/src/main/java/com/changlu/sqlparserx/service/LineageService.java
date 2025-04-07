@@ -13,6 +13,7 @@ public class LineageService {
 
     public Map<String, Object> getLineage(String sql, Integer datasourceType) {
         ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        // 无匹配的数据源则走
         DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
         ColumnLineageResult columnLineageResult = analyzer.analyze(sql, null, dbType);
 

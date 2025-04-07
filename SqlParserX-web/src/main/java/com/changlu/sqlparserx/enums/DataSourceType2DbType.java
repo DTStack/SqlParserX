@@ -1,23 +1,64 @@
 package com.changlu.sqlparserx.enums;
 import com.alibaba.druid.DbType;
 
-public enum DataSourceType2DbType {
-    MYSQL(1, DbType.mysql),
-    POSTGRESQL(2, DbType.postgresql),
-    ORACLE(3, DbType.oracle),
-    SQLSERVER(4, DbType.sqlserver),
-    HIVE(5, DbType.hive);
+import java.util.Arrays;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
 
-    private final int code;
+/**
+ * DatasourceType映射
+ */
+public enum DataSourceType2DbType {
+    ORACLE(DbType.oracle, new HashSet<>(Arrays.asList(DatasourceTypeEnum.ORACLE.getCode()))),
+    OCEANBASE_ORACLE(DbType.oceanbase_oracle, new HashSet<>(Arrays.asList(DatasourceTypeEnum.OCEANBASE_ORACLE.getCode()))),
+    MYSQL(DbType.mysql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.MYSQL.getCode()))),
+    TIDB(DbType.mysql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.TIDB.getCode()))),
+    MARIADB(DbType.mariadb, new HashSet<>(Arrays.asList(DatasourceTypeEnum.MARIADB.getCode()))),
+    GOLDENDB(DbType.mysql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.GOLDENDB.getCode()))),
+    OCEANBASE(DbType.oceanbase, new HashSet<>(Arrays.asList(DatasourceTypeEnum.OCEANBASE.getCode()))),
+    DRDS(DbType.drds, new HashSet<>(Arrays.asList(DatasourceTypeEnum.DRDS.getCode()))),
+    POLARDBX(DbType.polardb, new HashSet<>(Arrays.asList(DatasourceTypeEnum.POLARDBX.getCode()))),
+    ELASTIC_SEARCH(DbType.elastic_search, new HashSet<>(Arrays.asList(DatasourceTypeEnum.ELASTIC_SEARCH.getCode()))),
+    POSTGRESQL(DbType.postgresql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.POSTGRESQL.getCode()))),
+    GREENPLUM(DbType.postgresql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.GREENPLUM.getCode()))),
+    EDB(DbType.edb, new HashSet<>(Arrays.asList(DatasourceTypeEnum.EDB.getCode()))),
+    GAUSSDB(DbType.postgresql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.GAUSSDB.getCode()))),
+    HOLOGRES(DbType.postgresql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.HOLOGRES.getCode()))),
+    REDSHIFT(DbType.postgresql, new HashSet<>(Arrays.asList(DatasourceTypeEnum.REDSHIFT.getCode()))),
+    SQLSERVER(DbType.sqlserver, new HashSet<>(Arrays.asList(DatasourceTypeEnum.SQLSERVER.getCode()))),
+    JTDS(DbType.jtds, new HashSet<>(Arrays.asList(DatasourceTypeEnum.JTDS.getCode()))),
+    H2(DbType.h2, new HashSet<>(Arrays.asList(DatasourceTypeEnum.H2.getCode()))),
+    LEALONE(DbType.lealone, new HashSet<>(Arrays.asList(DatasourceTypeEnum.LEALONE.getCode()))),
+    BLINK(DbType.blink, new HashSet<>(Arrays.asList(DatasourceTypeEnum.BLINK.getCode()))),
+    DB2(DbType.db2, new HashSet<>(Arrays.asList(DatasourceTypeEnum.DB2.getCode()))),
+    ODPS(DbType.odps, new HashSet<>(Arrays.asList(DatasourceTypeEnum.ODPS.getCode()))),
+    PHOENIX(DbType.phoenix, new HashSet<>(Arrays.asList(DatasourceTypeEnum.PHOENIX.getCode()))),
+    HIVE(DbType.hive, new HashSet<>(Arrays.asList(DatasourceTypeEnum.HIVE.getCode()))),
+    PRESTO(DbType.presto, new HashSet<>(Arrays.asList(DatasourceTypeEnum.PRESTO.getCode()))),
+    TRINO(DbType.trino, new HashSet<>(Arrays.asList(DatasourceTypeEnum.TRINO.getCode()))),
+    ATHENA(DbType.athena, new HashSet<>(Arrays.asList(DatasourceTypeEnum.ATHENA.getCode()))),
+    BIGQUERY(DbType.bigquery, new HashSet<>(Arrays.asList(DatasourceTypeEnum.BIGQUERY.getCode()))),
+    SNOWFLAKE(DbType.snowflake, new HashSet<>(Arrays.asList(DatasourceTypeEnum.SNOWFLAKE.getCode()))),
+    SPARK(DbType.spark, new HashSet<>(Arrays.asList(DatasourceTypeEnum.SPARK.getCode()))),
+    CLICKHOUSE(DbType.clickhouse, new HashSet<>(Arrays.asList(DatasourceTypeEnum.CLICKHOUSE.getCode()))),
+    STARROCKS(DbType.starrocks, new HashSet<>(Arrays.asList(DatasourceTypeEnum.STARROCKS.getCode()))),
+    INFORMIX(DbType.informix, new HashSet<>(Arrays.asList(DatasourceTypeEnum.INFORMIX.getCode()))),
+    IMPALA(DbType.impala, new HashSet<>(Arrays.asList(DatasourceTypeEnum.IMPALA.getCode()))),
+    DORIS(DbType.doris, new HashSet<>(Arrays.asList(DatasourceTypeEnum.DORIS.getCode()))),
+    OSCAR(DbType.oscar, new HashSet<>(Arrays.asList(DatasourceTypeEnum.OSCAR.getCode()))),
+    TERADATA(DbType.teradata, new HashSet<>(Arrays.asList(DatasourceTypeEnum.TERADATA.getCode())));
+
+    private final Set<Integer> codes;
     private final DbType dbType;
 
-    DataSourceType2DbType(int code, DbType dbType) {
-        this.code = code;
+    DataSourceType2DbType(DbType dbType, Set<Integer> codes) {
         this.dbType = dbType;
+        this.codes = Collections.unmodifiableSet(new HashSet<>(codes)); // 确保不可变
     }
 
-    public int getCode() {
-        return code;
+    public Set<Integer> getCodes() {
+        return codes;
     }
 
     public DbType getDbType() {
@@ -27,11 +68,11 @@ public enum DataSourceType2DbType {
     /**
      * 根据数据源类型代码获取对应的DbType
      * @param dataSourceType 数据源类型代码
-     * @return 对应的DbType，如果找不到则返回null
+     * @return 对应的DbType，如果找不到则返回mysql
      */
     public static DbType getDbType(int dataSourceType) {
         for (DataSourceType2DbType type : values()) {
-            if (type.getCode() == dataSourceType) {
+            if (type.getCodes().contains(dataSourceType)) {
                 return type.getDbType();
             }
         }
@@ -41,11 +82,11 @@ public enum DataSourceType2DbType {
     /**
      * 根据数据源类型代码获取对应的枚举实例
      * @param dataSourceType 数据源类型代码
-     * @return 对应的枚举实例，如果找不到则返回null
+     * @return 对应的枚举实例，如果找不到则返回MYSQL
      */
     public static DataSourceType2DbType getByCode(int dataSourceType) {
         for (DataSourceType2DbType type : values()) {
-            if (type.getCode() == dataSourceType) {
+            if (type.getCodes().contains(dataSourceType)) {
                 return type;
             }
         }
