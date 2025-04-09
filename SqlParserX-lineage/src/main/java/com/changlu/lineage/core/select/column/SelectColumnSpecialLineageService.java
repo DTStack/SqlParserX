@@ -1,22 +1,27 @@
 package com.changlu.lineage.core.select.column;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
-import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
-import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
+import com.alibaba.druid.sql.ast.expr.*;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.lineage.domain.Pair;
 import com.changlu.lineage.domain.Table;
 import com.changlu.lineage.utils.TableSourceUtil;
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectColumnSpecialLineageService {
 
-    public List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
+    /**
+     * 查询到SQLSelect中所有涉及字段 匹配 真实表所关联的信息
+     * @param sqlSelect SQLSelect
+     * @return List<SelectColumn> 每一个SelectColumn中包含字段来源表名 & 字段名
+     */
+    public static List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
         // 表查询
         SQLSelectQuery sqlSelectQuery = sqlSelect.getQuery();
-        return this.queryColumnsBySqlSelectQuery(sqlSelectQuery);
+        return queryColumnsBySqlSelectQuery(sqlSelectQuery);
     }
 
     /**
@@ -24,7 +29,7 @@ public class SelectColumnSpecialLineageService {
      * @param sqlSelectQuery
      * @return
      */
-    public List<SelectColumn> queryColumnsBySqlSelectQuery(SQLSelectQuery sqlSelectQuery) {
+    public static List<SelectColumn> queryColumnsBySqlSelectQuery(SQLSelectQuery sqlSelectQuery) {
         List<SelectColumn> selectColumns = new ArrayList<>();
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             return queryColumnsBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
@@ -68,7 +73,7 @@ public class SelectColumnSpecialLineageService {
      * @param curSelectColumns
      * @return
      */
-    public List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
+    public static List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
         int size = preSelectColumnList.size();
         List<SelectColumn> unionSelectColumns = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -76,6 +81,8 @@ public class SelectColumnSpecialLineageService {
             String columnName = preSelectColumnList.get(i).getColumnName() + "," + curSelectColumns.get(i).getColumnName();
             String aliasName = preSelectColumnList.get(i).getAliasName();
             SelectColumn selectColumn = new SelectColumn(tableName, columnName, aliasName);
+            // 过滤处理，针对别名相同情况，真实表名 & 真实字段名 相同情况只保留一个
+            selectColumn = SelectColumn.filterDuplicateRealColumns(selectColumn);
             unionSelectColumns.add(selectColumn);
         }
         return unionSelectColumns;
@@ -87,7 +94,7 @@ public class SelectColumnSpecialLineageService {
      * @param selectQueryBlock select语句
      * @return 关联到的所有字段(只关注获取到字段来源表名 & 字段名)
      */
-    public List<SelectColumn> queryColumnsBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
+    public static List<SelectColumn> queryColumnsBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
         if (selectQueryBlock == null) return null;
         // 遍历SELECT项并处理
         List<SelectColumn> selectColumns = buildSelectColumnsBySelectItems(selectQueryBlock.getSelectList());
@@ -106,7 +113,7 @@ public class SelectColumnSpecialLineageService {
      * @param selectColumns select字段集合封装
      * @return select字段集合转换封装结果
      */
-    public List<SelectColumn> queryFromTableByColumns(SQLTableSource fromTable, List<SelectColumn> selectColumns) {
+    public static List<SelectColumn> queryFromTableByColumns(SQLTableSource fromTable, List<SelectColumn> selectColumns) {
         // 不同场景
         // 场景1：from 普通表场景（SQLExprTableSource） 如：from table1  或者 from table1 as t1
         if (fromTable instanceof SQLExprTableSource) {
@@ -166,7 +173,7 @@ public class SelectColumnSpecialLineageService {
             SQLSubqueryTableSource sqlSubqueryTableSource = (SQLSubqueryTableSource) fromTable;
             SQLSelect select = sqlSubqueryTableSource.getSelect();
             // 查询到子查询中的字段集合
-            List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelect(select);
+            List<SelectColumn> subquerySelectColumns = queryColumnsBySqlSelect(select);
 
             // selectColumns & subquerySelectColumns 进行match匹配操作
             selectColumns = matchSubQuerySelectColumns(selectColumns, subquerySelectColumns);
@@ -190,7 +197,7 @@ public class SelectColumnSpecialLineageService {
      * @param subquerySelectColumns 子查询select集合
      * @return
      */
-    private List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
+    private static List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
         if (subquerySelectColumns == null || subquerySelectColumns.isEmpty()) return selectColumns;
 
         List<SelectColumn> res = new ArrayList<>();
@@ -232,48 +239,96 @@ public class SelectColumnSpecialLineageService {
         return res;
     }
 
-    public static List<SelectColumn> buildSelectColumnsBySelectItems(List<SQLSelectItem> selectList) {
+    /**
+     * insert into values(xxx, xxx)，其中(xxx, xxx)场景就是一组selectExprList
+     * @param sqlExprs sqlExprs
+     * @return 查询到一组column字段信息集合，包含真实所属表信息字段
+     */
+    public static List<SelectColumn> buildSelectColumnsBySQLExprs(List<SQLExpr> sqlExprs) {
         List<SelectColumn> selectColumns = new ArrayList<>();
-        for (SQLSelectItem sqlSelectItem : selectList) {
-            SelectColumn selectColumn = buildSelectColumnBySelectItem(sqlSelectItem);
-            if (selectColumn == null) continue;
-            selectColumns.add(selectColumn);
+        for (SQLExpr sqlExpr : sqlExprs) {
+            SelectColumn selectColumn = buildSelectColumnBySelectExpr(sqlExpr);
+            if (selectColumn != null) selectColumns.add(selectColumn);
         }
         return selectColumns;
     }
 
-    // #feat1：筛选select字段场景
+    /**
+     * select xxx, xxx, xxx 场景，xxx, xxx, xxx作为一组 List<SQLSelectItem>
+     * @param selectList selectList
+     * @return  List<SelectColumn>（完整带别名情况）
+     */
+    public static List<SelectColumn> buildSelectColumnsBySelectItems(List<SQLSelectItem> selectList) {
+        List<SelectColumn> selectColumns = new ArrayList<>();
+        for (SQLSelectItem sqlSelectItem : selectList) {
+            SelectColumn selectColumn = buildSelectColumnBySelectItem(sqlSelectItem);
+            if (selectColumn != null) selectColumns.add(selectColumn);
+        }
+        return selectColumns;
+    }
+
+    // #feat1：筛选select字段场景（带别名情况）
     private static SelectColumn buildSelectColumnBySelectItem(SQLSelectItem selectItem) {
-        // 初始化封装表字段
-        SelectColumn selectColumn = new SelectColumn();
-        String columnName = "";
-        String aliasName = "";
-        String tableName = "";
-
         SQLExpr expr = selectItem.getExpr();
-        // 特定封装处理字段细节函数，包含
-        SelectColumnItem selectColumnItem = buildSelectColumnItem(expr);
-        if (selectColumnItem == null) return null;
-        columnName = selectColumnItem.getColumnName();
-        tableName = selectColumnItem.getTableInfo();
+        // 将expr表达式 => SelectColumn（无别名）
+        SelectColumn selectColumn = buildSelectColumnBySelectExpr(expr);
+        if (selectColumn == null) return null;
 
-        // 别名设置
-        if (selectItem.getAlias() != null) {
-            aliasName = selectItem.getAlias();
-        }else {
-            aliasName = columnName;
+        String aliasColumnName = selectItem.getAlias();
+        String tableInfo = selectColumn.getTableInfo();
+        String columnName = selectColumn.getColumnName();
+
+        // 别名为空情况设置
+        if (aliasColumnName == null) {
+            aliasColumnName = columnName;
         }
 
         selectColumn.setColumnName(columnName);
-        selectColumn.setAliasName(aliasName);
-        selectColumn.setTableInfo(tableName);
+        selectColumn.setTableInfo(tableInfo);
+        selectColumn.setAliasName(aliasColumnName);
         return selectColumn;
     }
 
-    // 单独去获取到select中的一个字段选项
+    /**
+     * SQLExpr => SelectColumn (提取字段信息，无别名)
+     * @param sqlExpr sqlExpr
+     * @return SelectColumn无中无别名
+     */
+    private static SelectColumn buildSelectColumnBySelectExpr(SQLExpr sqlExpr) {
+        // 初始化封装表字段
+        SelectColumn selectColumn = new SelectColumn();
+        String columnName = "";
+        String tableInfo = "";
+
+        // 特定封装处理字段细节函数，包含
+        SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
+        if (selectColumnItem == null) return null;
+        columnName = selectColumnItem.getColumnName();
+        tableInfo = selectColumnItem.getTableInfo();
+
+        // 初始化字段信息、表信息
+        selectColumn.setColumnName(columnName);
+        selectColumn.setTableInfo(tableInfo);
+        return selectColumn;
+    }
+
+    /**
+     * 单独去获取到select中的一个字段选项 可以是如下场景
+     * select
+     *   sum(o.id) as sum,
+     *   CONCAT(n.tt1, n2.tt2) as tmp => 函数场景 SQLAggregateExpr、SQLMethodInvokeExpr
+     *   t5.level + 1  => SQLBinaryOpExpr
+     *
+     *   真实字段    别名字段    真实表名
+     *    id         sum         o
+     *  tt1,tt2     tmp        n,n2
+     *   level     level        t5
+     * @param expr
+     * @return
+     */
     private static SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
         String columnName = "";
-        String tableName = "";
+        String tableInfo = "";
         if (expr instanceof SQLIdentifierExpr) {
             // 如：select id 中的id
             columnName = ((SQLIdentifierExpr) expr).getName();
@@ -282,30 +337,63 @@ public class SelectColumnSpecialLineageService {
             columnName = ((SQLPropertyExpr) expr).getName();
             // 如：select catalog.db.table.id 中的catalog.db.table
             SQLExpr owner = ((SQLPropertyExpr) expr).getOwner();
-            tableName = Table.TableTransfer.transfer(TableSourceUtil.extractTable(owner));
+            tableInfo = Table.TableTransfer.transfer(TableSourceUtil.extractTable(owner));
         }else if (expr instanceof SQLAggregateExpr || expr instanceof SQLMethodInvokeExpr) {
             // SQLAggregateExpr 聚合表达式场景：如sum、count、avg、concat场景。
             // SQLMethodInvokeExpr：如concat函数可能带有多个字段场景 如concat(o.id, '_', t.id)
             SQLMethodInvokeExpr aggregateExpr = (SQLMethodInvokeExpr) expr;
             List<SQLExpr> arguments = aggregateExpr.getArguments();
-            List<String> columnNameItems = new ArrayList<>();
-            List<String> tableNameItems = new ArrayList<>();
-            for (SQLExpr argumentExpr : arguments) {
-                // 递归逻辑获取
-                SelectColumnItem selectColumnItem = buildSelectColumnItem(argumentExpr);
-                if (selectColumnItem == null) continue;
-                columnNameItems.add(selectColumnItem.getColumnName());
-                tableNameItems.add(selectColumnItem.getTableInfo());
-            }
-            columnName = String.join(",", columnNameItems);
-            tableName = String.join(",", tableNameItems);
-        }else {
+            // 原始写法
+//            List<String> columnNameItems = new ArrayList<>();
+//            List<String> tableNameItems = new ArrayList<>();
+//            for (SQLExpr argumentExpr : arguments) {
+//                // 递归逻辑获取
+//                SelectColumnItem selectColumnItem = buildSelectColumnItem(argumentExpr);
+//                if (selectColumnItem == null) continue;
+//                columnNameItems.add(selectColumnItem.getColumnName());
+//                tableNameItems.add(selectColumnItem.getTableInfo());
+//            }
+            // 复用写法
+            Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(arguments);
+            columnName = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getFirst();
+        }else if (expr instanceof SQLBinaryOpExpr) {
+            // SELECT t5.level + 1 二元表达式场景
+            SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr)expr;
+            // 左右两边表达式情况
+            List<SQLExpr> sqlBinaryOpExprList = Arrays.asList(
+                    sqlBinaryOpExpr.getLeft(),
+                    sqlBinaryOpExpr.getRight()
+            );
+            Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(sqlBinaryOpExprList);
+            columnName = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getSecond();
+        } else {
             // 其他场景暂无匹配逻辑
             // 目前如字符串类型expr忽略，如 select 'test' 中的'test'，得到的expr类型为：SQLCharExpr
             return null;
         }
-        return new SelectColumnItem(tableName, columnName);
+        return new SelectColumnItem(tableInfo, columnName);
     }
+
+    // 优化多个SQLExpr场景需要递归处理场景
+    private static Pair<String, String> getColumnAndTablePairBySQLExpr(List<SQLExpr> sqlExprs) {
+        List<String> columnNameItems = new ArrayList<>();
+        List<String> tableNameItems = new ArrayList<>();
+        String columnName = "";
+        String tableInfo = "";
+        for (SQLExpr sqlExpr : sqlExprs) {
+            // 递归逻辑获取
+            SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
+            if (selectColumnItem == null) continue;
+            columnNameItems.add(selectColumnItem.getColumnName());
+            tableNameItems.add(selectColumnItem.getTableInfo());
+        }
+        columnName = String.join(",", columnNameItems);
+        tableInfo = String.join(",", tableNameItems);
+        return Pair.of(columnName, tableInfo);  // 返回不可变的 Pair
+    }
+
 
 }
 
