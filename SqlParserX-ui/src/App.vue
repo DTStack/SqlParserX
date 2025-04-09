@@ -1,18 +1,12 @@
-<!-- src/App.vue -->
 <template>
   <div id="app">
-    <LineageVisualizer />
+    <router-view/>
   </div>
 </template>
 
 <script>
-import LineageVisualizer from './components/LineageVisualizer.vue';
-
 export default {
-  name: 'App',
-  components: {
-    LineageVisualizer
-  }
+  name: 'App'
 }
 </script>
 
@@ -22,8 +16,8 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  height: 100vh;
-  width: 100vw;
+  min-height: 100vh;
+  background-color: #f5f7fa;
   margin: 0;
   padding: 0;
 }

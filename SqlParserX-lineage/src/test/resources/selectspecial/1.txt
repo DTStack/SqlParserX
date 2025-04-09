@@ -1,0 +1,7 @@
+SELECT
+    u.id as user_id,
+    u.name,
+    concat(o.amount, '', o.ttt) as total_amount,
+    COUNT(o.id) as order_count
+FROM users u JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name

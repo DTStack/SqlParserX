@@ -29,23 +29,6 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
         this.tableColumnsMap = tableColumnsMap;
     }
 
-    /**
-     * 获取表名
-     * @param tableSource 表名source
-     * @return 表名
-     */
-    private String extractTableName(SQLTableSource tableSource) {
-        if (tableSource instanceof SQLExprTableSource) {
-            SQLExpr expr = ((SQLExprTableSource) tableSource).getExpr();
-            if (expr instanceof SQLIdentifierExpr) {
-                return ((SQLIdentifierExpr) expr).getName();
-            } else if (expr instanceof SQLPropertyExpr) {
-                return ((SQLPropertyExpr) expr).getName();
-            }
-        }
-        return tableSource.toString();
-    }
-
     @Override
     public boolean visit(SQLInsertStatement x) {
         List<SQLExpr> columns = x.getColumns();
@@ -56,7 +39,7 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     public boolean visit(SQLCreateTableStatement x) {
         // 获取到创建的目标表名
         String targetTableName = x.getName().getSimpleName();
-        // 留口子 可以指定catalog、db情况
+        // 留口子 可以根据实际业务方法调用传入指定catalog、db情况完成赋值
         targetTable = new Table(null, null, targetTableName, null);
         contextStack.push(x);
 
@@ -81,7 +64,7 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
 
             // 3、完成CREATE TABLE AS SELECT的血缘分析
             if (targetColumns.size() > selectColumns.size()) {
-                throw new RuntimeException("血缘解析异常");
+                throw new RuntimeException("血缘解析异常，sql写法问题");
             }
             for (int i = 0; i < targetColumns.size(); i++) {
                 // #feat5：字段血缘核心匹配逻辑
