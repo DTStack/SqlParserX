@@ -5,9 +5,14 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.SQLCreateTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
+import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
+import com.alibaba.druid.sql.ast.statement.SQLWithSubqueryClause;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
+import com.changlu.lineage.core.table.TableService;
+import com.changlu.lineage.domain.Table;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TableLineageVisitor extends SQLASTVisitorAdapter {
@@ -24,35 +29,51 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
     @Override
     public boolean visit(SQLCreateTableStatement x) {
         targetTable = x.getName().getSimpleName();
-        // 处理create table as select
-        if (x.getSelect() != null) {
-            // visitor模式放下该select 所有的tables
-            x.getSelect().accept(new SQLASTVisitorAdapter() {
-                @Override
-                public boolean visit(SQLExprTableSource tableSource) {
-                    sourceTables.add(extractTableName(tableSource));
-                    return true;
-                }
-            });
+        SQLExprTableSource mainTableSource = x.getTableSource();
+        // 主表
+        Table mainTable = TableService.parseTable(mainTableSource);
+        this.targetTable = mainTable.getName();
+        // 匹配到所有的表
+        List<Table> tables = TableService.parseTables(x);
+        tables.remove(mainTable);
+        for (Table table : tables) {
+            sourceTables.add(table.getName());
         }
         return true;
     }
 
-    // 提取表名（处理带schema和别名的情况）
-    private String extractTableName(SQLExprTableSource tableSource) {
-        // 针对有别名场景，返回当前的表名
-//        if (tableSource.getAlias() != null) {
-//            return tableSource.getTableName();
-//        }
-        // 下面就是重写tableSource.getTableName()的逻辑实现
-        SQLExpr expr = tableSource.getExpr();
-        if (expr instanceof SQLIdentifierExpr) { // 单独一个字面量情况 select * from table，其中table就是SQLIdentifierExpr
-            return ((SQLIdentifierExpr) expr).getName();
-        } else if (expr instanceof SQLPropertyExpr) { // 属性情况 select * from table.column，其中table.column就是SQLPropertyExpr， owner就是table，name为column
-            SQLPropertyExpr propExpr = (SQLPropertyExpr) expr;
-            return propExpr.getOwner() + "." + propExpr.getName();
+    /**
+     * 处理create 类型sql
+     * @param x druid node sql
+     * @return
+     */
+    @Override
+    public boolean visit(SQLInsertStatement x) {
+        SQLExprTableSource mainTableSource = x.getTableSource();
+        // 主表
+        Table mainTable = TableService.parseTable(mainTableSource);
+        this.targetTable = mainTable.getName();
+
+        // check是否是with as结构
+        if (x.getWith() != null) {
+            SQLWithSubqueryClause with = x.getWith();
+            List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
+            if (!entries.isEmpty()) {
+                // 遍历每一组with as结构
+                for (SQLWithSubqueryClause.Entry entry : entries) {
+                    // as 的别名
+                    String aliasTableName = entry.getAlias();
+                }
+            }
         }
-        return tableSource.toString();
+
+        // 匹配到所有的表
+        List<Table> tables = TableService.parseTables(x);
+        tables.remove(mainTable);
+        for (Table table : tables) {
+            sourceTables.add(table.getName());
+        }
+        return true;
     }
 
     /**

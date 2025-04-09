@@ -1,4 +1,4 @@
-package com.changlu.lineage.core.select;
+package com.changlu.lineage.core.select.column;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
@@ -6,12 +6,12 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.lineage.domain.Table;
 import com.changlu.lineage.utils.TableSourceUtil;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SelectSpecialLineageService {
+public class SelectColumnSpecialLineageService {
 
     public List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
         // 表查询
@@ -72,7 +72,7 @@ public class SelectSpecialLineageService {
         int size = preSelectColumnList.size();
         List<SelectColumn> unionSelectColumns = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            String tableName = preSelectColumnList.get(i).getTableName() + "," + curSelectColumns.get(i).getTableName();
+            String tableName = preSelectColumnList.get(i).getTableInfo() + "," + curSelectColumns.get(i).getTableInfo();
             String columnName = preSelectColumnList.get(i).getColumnName() + "," + curSelectColumns.get(i).getColumnName();
             String aliasName = preSelectColumnList.get(i).getAliasName();
             SelectColumn selectColumn = new SelectColumn(tableName, columnName, aliasName);
@@ -124,22 +124,22 @@ public class SelectSpecialLineageService {
                 // 场景2:             tt1,tt2       tmp       n,n2
                 // 场景3（无表名情况）:  tt2,tt3      tmp2      无表名
                 // select item中的真实表名
-                String tableName = selectColumn.getTableName();
+                String tableInfo = selectColumn.getTableInfo();
                 // 1、字段中真实表名存在情况
-                if (!"".equals(tableName)) {
+                if (!"".equals(tableInfo)) {
                     // 兼容真实表名是否有多个,场景
-                    if (tableName.contains(",")) {
-                        String[] tableNameArr = tableName.split(",");
+                    if (tableInfo.contains(",")) {
+                        String[] tableNameArr = tableInfo.split(",");
                         for (int i = 0; i < tableNameArr.length; i++) {
                             if (tableNameArr[i].equals(aliasSourceTableName)) {
                                 tableNameArr[i] = sourceTableName;
                             }
                         }
-                        selectColumn.setTableName(String.join(",", tableNameArr));
+                        selectColumn.setTableInfo(String.join(",", tableNameArr));
                     }else {
                         // 单独tableName
-                        if (tableName.equals(aliasSourceTableName)) {
-                            selectColumn.setTableName(sourceTableName);
+                        if (tableInfo.equals(aliasSourceTableName)) {
+                            selectColumn.setTableInfo(sourceTableName);
                         }
                     }
 
@@ -158,7 +158,7 @@ public class SelectSpecialLineageService {
                     // 2、若字段中真实表名不存在情况
                     //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
                     // 这里直接默认from的表名
-                    selectColumn.setTableName(sourceTableName);
+                    selectColumn.setTableInfo(sourceTableName);
                 }
             }
         }// 场景2：子查询表（SQLSubqueryTableSource） 如：from (select xxx, xxx from table 1)
@@ -220,7 +220,7 @@ public class SelectSpecialLineageService {
                 SelectColumn subQuerySelectColumn = subQuerySelectMap.get(columnName);
                 // 保留原始的真实字段、真实表名
                 curSelectColumn.setColumnName(subQuerySelectColumn.getColumnName());
-                curSelectColumn.setTableName(subQuerySelectColumn.getTableName());
+                curSelectColumn.setTableInfo(subQuerySelectColumn.getTableInfo());
                 // 设置当前select字段中的别名替换替换
                 curSelectColumn.setAliasName(aliasName);
             }else {
@@ -255,7 +255,7 @@ public class SelectSpecialLineageService {
         SelectColumnItem selectColumnItem = buildSelectColumnItem(expr);
         if (selectColumnItem == null) return null;
         columnName = selectColumnItem.getColumnName();
-        tableName = selectColumnItem.getTableName();
+        tableName = selectColumnItem.getTableInfo();
 
         // 别名设置
         if (selectItem.getAlias() != null) {
@@ -266,7 +266,7 @@ public class SelectSpecialLineageService {
 
         selectColumn.setColumnName(columnName);
         selectColumn.setAliasName(aliasName);
-        selectColumn.setTableName(tableName);
+        selectColumn.setTableInfo(tableName);
         return selectColumn;
     }
 
@@ -278,9 +278,11 @@ public class SelectSpecialLineageService {
             // 如：select id 中的id
             columnName = ((SQLIdentifierExpr) expr).getName();
         } else if (expr instanceof SQLPropertyExpr) {
-            // 如：select o.id 中的o.id
+            // 如：select catalog.db.table.id 中的id
             columnName = ((SQLPropertyExpr) expr).getName();
-            tableName = ((SQLPropertyExpr) expr).getOwnerName();
+            // 如：select catalog.db.table.id 中的catalog.db.table
+            SQLExpr owner = ((SQLPropertyExpr) expr).getOwner();
+            tableName = Table.TableTransfer.transfer(TableSourceUtil.extractTable(owner));
         }else if (expr instanceof SQLAggregateExpr || expr instanceof SQLMethodInvokeExpr) {
             // SQLAggregateExpr 聚合表达式场景：如sum、count、avg、concat场景。
             // SQLMethodInvokeExpr：如concat函数可能带有多个字段场景 如concat(o.id, '_', t.id)
@@ -293,7 +295,7 @@ public class SelectSpecialLineageService {
                 SelectColumnItem selectColumnItem = buildSelectColumnItem(argumentExpr);
                 if (selectColumnItem == null) continue;
                 columnNameItems.add(selectColumnItem.getColumnName());
-                tableNameItems.add(selectColumnItem.getTableName());
+                tableNameItems.add(selectColumnItem.getTableInfo());
             }
             columnName = String.join(",", columnNameItems);
             tableName = String.join(",", tableNameItems);

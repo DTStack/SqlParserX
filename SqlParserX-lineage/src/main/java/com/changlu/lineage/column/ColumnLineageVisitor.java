@@ -6,15 +6,16 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
-import com.changlu.lineage.core.select.SelectColumn;
-import com.changlu.lineage.core.select.SelectSpecialLineageService;
-import com.changlu.lineage.domain.Column;
+import com.changlu.lineage.core.select.column.SelectColumn;
+import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
+import com.changlu.lineage.domain.Table;
 
 import java.util.*;
 
 public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
 
-    private String targetTable;
+    // 目标表：主体表
+    private Table targetTable;
     // key：写入目标table.column  value：一组来源column
     private final Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = new LinkedHashMap<>();
     // 跟踪当前解析上下文的关键数据结构，用于记录遍历过程中当前语法上下文的栈
@@ -46,9 +47,17 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
     @Override
+    public boolean visit(SQLInsertStatement x) {
+        List<SQLExpr> columns = x.getColumns();
+        return super.visit(x);
+    }
+
+    @Override
     public boolean visit(SQLCreateTableStatement x) {
         // 获取到创建的目标表名
-        targetTable = x.getName().getSimpleName();
+        String targetTableName = x.getName().getSimpleName();
+        // 留口子 可以指定catalog、db情况
+        targetTable = new Table(null, null, targetTableName, null);
         contextStack.push(x);
 
         // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
@@ -60,15 +69,15 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
             List<SelectColumn> targetColumns = matchFirstSelectColumns(selectQuery);
             // 初始化目标表
             for (SelectColumn targetColumn : targetColumns) {
-                targetColumn.setTableName(targetTable);
+                targetColumn.setTableInfo(Table.TableTransfer.transfer(targetTable));
             }
 
             // 提前剪枝
             if (targetColumns == null || targetColumns.isEmpty()) return false;
 
             // 2、收集以当前select主体结构所追溯汇总得到的一组来源字段
-            SelectSpecialLineageService selectSpecialLineageService = new SelectSpecialLineageService();
-            List<SelectColumn> selectColumns = selectSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
+            SelectColumnSpecialLineageService selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
+            List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
 
             // 3、完成CREATE TABLE AS SELECT的血缘分析
             if (targetColumns.size() > selectColumns.size()) {
@@ -80,13 +89,13 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
                 SelectColumn selectColumn = selectColumns.get(i);
                 // 确认select的字段是否为聚合字段、union字段场景，会出现血缘匹配多条情况
                 String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
-                String[] selectTableNameArr = selectColumn.getTableName().split(",");
+                String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
                 int lineageRelationsCount = selectColumnNameArr.length;
                 for (int j = 0; j < lineageRelationsCount; j++) {
                     // 添加血缘关系
                     // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
                     // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
-                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableName(), targetColumn.getAliasName());
+                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getAliasName());
                 }
             }
 
@@ -185,7 +194,7 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             SQLSelectQueryBlock sqlSelectQueryBlock = (SQLSelectQueryBlock) sqlSelectQuery;
             List<SQLSelectItem> selectList = sqlSelectQueryBlock.getSelectList();
-            selectColumns = SelectSpecialLineageService.buildSelectColumnsBySelectItems(selectList);
+            selectColumns = SelectColumnSpecialLineageService.buildSelectColumnsBySelectItems(selectList);
         }else if (sqlSelectQuery instanceof SQLUnionQuery) {
             SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
             // 优先匹配到左侧的
@@ -234,6 +243,6 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
     public ColumnLineageResult getResult() {
-        return new ColumnLineageResult(targetTable, columnRelations);
+        return new ColumnLineageResult(Table.TableTransfer.transfer(targetTable), columnRelations);
     }
 }

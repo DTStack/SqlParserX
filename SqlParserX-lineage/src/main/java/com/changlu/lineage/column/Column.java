@@ -1,4 +1,4 @@
-package com.changlu.lineage.domain;
+package com.changlu.lineage.column;
 
 public class Column {
 

@@ -1,13 +1,14 @@
 package com.changlu.lineage.table;
 
+import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 
 public class TableLineageAnalyzer {
-    private final String dbType;
+    private final DbType dbType;
     
-    public TableLineageAnalyzer(String dbType) {
+    public TableLineageAnalyzer(DbType dbType) {
         this.dbType = dbType;
     }
     
@@ -19,4 +20,5 @@ public class TableLineageAnalyzer {
         stmt.accept(visitor);
         return visitor.getResult();
     }
+
 }
