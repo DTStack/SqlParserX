@@ -356,7 +356,7 @@ public class SelectColumnSpecialLineageService {
             // 复用写法
             Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(arguments);
             columnName = columnNameAndTableInfo.getFirst();
-            tableInfo = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getSecond();
         }else if (expr instanceof SQLBinaryOpExpr) {
             // SELECT t5.level + 1 二元表达式场景
             SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr)expr;

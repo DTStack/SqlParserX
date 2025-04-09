@@ -9,6 +9,7 @@ import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.core.select.column.SelectColumn;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.domain.Table;
+import com.changlu.lineage.utils.TableSourceUtil;
 
 import java.util.*;
 
@@ -31,16 +32,154 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
 
     @Override
     public boolean visit(SQLInsertStatement x) {
-        List<SQLExpr> columns = x.getColumns();
-        return super.visit(x);
+        targetTable = TableSourceUtil.extractTable(x.getTableSource());
+
+        // 1、获取到目标表的columns信息
+        List<SQLExpr> insertTableColumns = x.getColumns();
+        List<SelectColumn> targetColumns = new ArrayList<>();
+        if (insertTableColumns == null) {
+            // 写法1：无插入指定列场景 INSERT INTO target_table SELECT column1, column2, column3
+            SQLSelect select = x.getQuery();
+            if (select != null) {
+                SQLSelectQuery selectQuery = select.getQuery();
+                // 获取到目标字段集合
+                targetColumns = matchFirstSelectColumns(selectQuery);
+            }
+        }else {
+            // 写法2：插入指定列场景 insert into table values(xxx, xxx) select xxx, xxx
+            targetColumns = SelectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns);
+        }
+        // 初始化目标字段的表信息
+        for (SelectColumn targetColumn : targetColumns) {
+            targetColumn.setTableInfo(Table.TableTransfer.transfer(targetTable));
+        }
+
+        // 2、获取到主体查询的一组columns
+        SQLSelect query = x.getQuery();
+        List<SelectColumn> selectColumns = SelectColumnSpecialLineageService.queryColumnsBySqlSelect(query);
+
+        // 3、with as场景处理
+        // check是否是with as结构
+        Map<String, List<SelectColumn>> columnInfoByTableMap = new HashMap<>();
+        if (x.getWith() != null) {
+            SQLWithSubqueryClause with = x.getWith();
+            List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
+            if (!entries.isEmpty()) {
+                // 遍历每一组with as结构
+                for (SQLWithSubqueryClause.Entry entry : entries) {
+                    // as 的别名
+                    String aliasTableName = entry.getAlias();
+                    // select 主体过滤得到的字段记录含追溯真实表记录
+                    List<SelectColumn> withAsTableSelectColumns = SelectColumnSpecialLineageService.queryColumnsBySqlSelect(entry.getSubQuery());
+                    List<SelectColumn> filterSelectColumns = new ArrayList<>();
+                    // with as 递归CTE场景 去除tableInfo中相对应匹配别名table相对应的字段记录信息
+                    for (SelectColumn selectColumn : withAsTableSelectColumns) {
+                        List<String> selectColumnNames = new ArrayList<>();
+                        List<String> seletTableNames = new ArrayList<>();
+                        String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
+                        String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
+                        for (int i = 0; i < selectColumnNameArr.length; i++) {
+                            // 核心过滤掉递归CTE场景的字段依赖别名情况
+                            if (aliasTableName.equals(selectTableNameArr[i])) continue;
+                            selectColumnNames.add(selectColumnNameArr[i]);
+                            seletTableNames.add(selectTableNameArr[i]);
+                        }
+                        // 若是去除引入别名字段依赖情况后，数组数量为空情况，则跳过（一般不会出现该问题）
+                        if (selectColumnNames.isEmpty()) continue;
+                        selectColumn.setColumnName(String.join(",", selectColumnNames));
+                        selectColumn.setTableInfo(String.join(",", seletTableNames));
+                        filterSelectColumns.add(selectColumn);
+                    }
+
+                    columnInfoByTableMap.put(aliasTableName, filterSelectColumns);
+                }
+            }
+
+            // 处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
+            selectColumns = matchWithAsAndSelectColumns(selectColumns, columnInfoByTableMap);
+        }
+        System.out.println(columnInfoByTableMap);
+
+        if (targetColumns.size() > selectColumns.size()) {
+            throw new RuntimeException("血缘解析异常，sql写法问题");
+        }
+
+        // 4、构建字段血缘信息
+        addColumnRelations(selectColumns, targetColumns);
+        return false;
+    }
+
+    /**
+     * 处理with as场景 & 主体selct字段情况  消除掉主体select引用with as别名问题
+     * @param selectColumns 主体select字段
+     * @param columnInfoByTableMap with as map场景
+     * @return 消除掉主体select引用with as别名后得到的一组selectColumns
+     */
+    private List<SelectColumn> matchWithAsAndSelectColumns(List<SelectColumn> selectColumns, Map<String, List<SelectColumn>> columnInfoByTableMap) {
+        List<SelectColumn> result = new ArrayList<>();
+
+        // 遍历每个SELECT列
+        for (SelectColumn selectColumn : selectColumns) {
+            // 拆分表信息和列名(可能包含多个以逗号分隔的值)
+            String[] tableInfos = selectColumn.getTableInfo().split(",");
+            String[] columnNames = selectColumn.getColumnName().split(",");
+            String aliasName = selectColumn.getAliasName();
+
+            // 验证表信息和列名数量是否匹配
+            if (tableInfos.length != columnNames.length) {
+                throw new IllegalArgumentException("SELECT列中的表信息和列名数量不匹配");
+            }
+
+            List<String> newTableInfos = new ArrayList<>();
+            List<String> newColumnNames = new ArrayList<>();
+
+            // 处理每个表/列对
+            for (int i = 0; i < tableInfos.length; i++) {
+                String tableInfo = tableInfos[i];
+                String columnName = columnNames[i];
+
+                // 检查别名是否是WITH AS表(存在于map中)
+                if (columnInfoByTableMap.containsKey(tableInfo)) {
+                    boolean found = false;
+                    // 在WITH AS表的列中搜索匹配项
+                    for (SelectColumn withColumn : columnInfoByTableMap.get(tableInfo)) {
+                        // 匹配列名与WITH AS表中的别名
+                        if (columnName.equals(withColumn.getAliasName())) {
+                            newTableInfos.add(withColumn.getTableInfo());
+                            newColumnNames.add(withColumn.getColumnName());
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        // 未在WITH AS表中找到匹配项，保留原始值
+                        newTableInfos.add(tableInfo);
+                        newColumnNames.add(columnName);
+                    }
+                }else {
+                    // 无匹配到，表示该表名非with as中，保留原始值
+                    newTableInfos.add(tableInfo);
+                    newColumnNames.add(columnName);
+                }
+            }
+
+            // 创建新的SelectColumn对象(使用解析后的引用)
+            SelectColumn newColumn = new SelectColumn(
+                    String.join(",", newTableInfos),
+                    String.join(",", newColumnNames),
+                    aliasName
+            );
+            result.add(newColumn);
+        }
+
+        return result;
     }
 
     @Override
     public boolean visit(SQLCreateTableStatement x) {
-        // 获取到创建的目标表名
-        String targetTableName = x.getName().getSimpleName();
+        // 获取到目标表
         // 留口子 可以根据实际业务方法调用传入指定catalog、db情况完成赋值
-        targetTable = new Table(null, null, targetTableName, null);
+        targetTable = TableSourceUtil.extractTable(x.getTableSource());
         contextStack.push(x);
 
         // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
@@ -56,34 +195,41 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
             }
 
             // 提前剪枝
-            if (targetColumns == null || targetColumns.isEmpty()) return false;
+            if (targetColumns.isEmpty()) return false;
 
             // 2、收集以当前select主体结构所追溯汇总得到的一组来源字段
-            SelectColumnSpecialLineageService selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
-            List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
+            List<SelectColumn> selectColumns = SelectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
 
             // 3、完成CREATE TABLE AS SELECT的血缘分析
             if (targetColumns.size() > selectColumns.size()) {
                 throw new RuntimeException("血缘解析异常，sql写法问题");
             }
-            for (int i = 0; i < targetColumns.size(); i++) {
-                // #feat5：字段血缘核心匹配逻辑
-                SelectColumn targetColumn = targetColumns.get(i);
-                SelectColumn selectColumn = selectColumns.get(i);
-                // 确认select的字段是否为聚合字段、union字段场景，会出现血缘匹配多条情况
-                String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
-                String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
-                int lineageRelationsCount = selectColumnNameArr.length;
-                for (int j = 0; j < lineageRelationsCount; j++) {
-                    // 添加血缘关系
-                    // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
-                    // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
-                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getAliasName());
-                }
-            }
-
+            addColumnRelations(selectColumns, targetColumns);
         }
         return false;
+    }
+
+    /**
+     * 针对来源columns & 目标columns 来构件字段级血缘
+     * @param selectColumns 主体select压缩合并的字段集合
+     * @param targetColumns 目标表字段集合
+     */
+    private void addColumnRelations(List<SelectColumn> selectColumns, List<SelectColumn> targetColumns) {
+        for (int i = 0; i < targetColumns.size(); i++) {
+            // #feat5：字段血缘核心匹配逻辑
+            SelectColumn targetColumn = targetColumns.get(i);
+            SelectColumn selectColumn = selectColumns.get(i);
+            // 确认select的字段是否为聚合字段、union字段场景，会出现血缘匹配多条情况
+            String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
+            String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
+            int lineageRelationsCount = selectColumnNameArr.length;
+            for (int j = 0; j < lineageRelationsCount; j++) {
+                // 添加血缘关系
+                // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
+                // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
+                addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getAliasName());
+            }
+        }
     }
 
     /**
