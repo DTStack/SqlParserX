@@ -159,12 +159,12 @@ public class SelectColumnSpecialLineageService {
                     }
                     String[] tableNameArr = new String[num];
                     for (int i = 0; i < num; i++) {
+                        // 2、若字段中真实表名不存在情况
+                        //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
+                        // 这里直接默认from的表名
                         tableNameArr[i] = sourceTableName;
                     }
                     sourceTableName = String.join(",", tableNameArr);
-                    // 2、若字段中真实表名不存在情况
-                    //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
-                    // 这里直接默认from的表名
                     selectColumn.setTableInfo(sourceTableName);
                 }
             }
