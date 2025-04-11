@@ -70,6 +70,10 @@
             id="container"
             ref="chartContainer"
             @wheel.prevent="handleWheel"
+            @mousedown="startDrag"
+            @mousemove="handleDrag"
+            @mouseup="endDrag"
+            @mouseleave="endDrag"
         ></div>
       </div>
     </div>
@@ -108,9 +112,16 @@ export default {
       // 原有数据保持不变
       zoomLevel: 1, // 新增缩放级别
       isFullscreen: false, // 是否全屏状态
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      translateX: 0,
+      translateY: 0,
     };
   },
   mounted() {
+    // 初始化时设置光标样式
+    this.$refs.chartContainer.style.cursor = 'grab';
     this.fetchDataSourceTypes(); // 在组件挂载时获取数据源类型
     this.initChart();
     this.loadExampleData();
@@ -124,6 +135,39 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    // 新增：开始拖拽
+    startDrag(event) {
+      this.isDragging = true;
+      this.dragStartX = event.clientX - this.translateX;
+      this.dragStartY = event.clientY - this.translateY;
+      this.$refs.chartContainer.style.cursor = 'grabbing';
+    },
+
+    // 新增：处理拖拽移动
+    handleDrag(event) {
+      if (!this.isDragging) return;
+
+      this.translateX = event.clientX - this.dragStartX;
+      this.translateY = event.clientY - this.dragStartY;
+
+      this.applyTransform();
+    },
+
+    // 新增：结束拖拽
+    endDrag() {
+      this.isDragging = false;
+      this.$refs.chartContainer.style.cursor = 'grab';
+    },
+
+    // 修改：应用变换（合并缩放和位移）
+    applyTransform() {
+      const container = this.$refs.chartContainer;
+      container.style.transform = `
+        scale(${this.zoomLevel})
+        translate(${this.translateX}px, ${this.translateY}px)
+      `;
+    },
+
     // 滚轮缩放处理
     handleWheel(event) {
       // 阻止默认滚动行为
@@ -147,25 +191,25 @@ export default {
       this.applyZoom();
     },
 
-    // 新增方法：重置缩放
+
+    // 修改：重置时也重置位置
     resetZoom() {
       this.zoomLevel = 1;
-      this.applyZoom();
+      this.translateX = 0;
+      this.translateY = 0;
+      this.applyTransform();
+      this.$nextTick(() => {
+        this.myChart.resize();
+        this.renderChart();
+      });
     },
 
-    // 新增方法：应用缩放
+    // 修改：缩放时保持当前位置
     applyZoom() {
-      if (this.myChart) {
-        // 只修改图表容器的transform，不改变外部尺寸
-        const container = this.$refs.chartContainer;
-        container.style.transform = `scale(${this.zoomLevel})`;
-        container.style.transformOrigin = '0 0';
-
-        // 需要重新渲染图表
-        this.$nextTick(() => {
-          this.myChart.resize();
-        });
-      }
+      this.applyTransform();
+      this.$nextTick(() => {
+        this.myChart.resize();
+      });
     },
 
     // 新增方法：切换全屏
@@ -844,9 +888,15 @@ export default {
   width: 100%;
   height: 100%;
   min-height: 600px;
-  overflow: hidden; /* 隐藏超出部分 */
+  overflow: hidden;
   transform-origin: 0 0;
-  transition: transform 0.2s ease-out;
+  transition: transform 0.15s ease-out; /* 更快的过渡动画更适合拖拽 */
+  user-select: none; /* 防止拖动时选中文本 */
+}
+
+/* 拖拽时的临时样式（通过JS动态添加） */
+.grabbing {
+  cursor: grabbing !important;
 }
 
 .sql-input-container {
