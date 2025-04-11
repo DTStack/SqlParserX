@@ -12,7 +12,7 @@ import java.util.Map;
 public class ColumnLineageAnalyzer {
 
     public ColumnLineageResult analyze(String sql) {
-        return analyze(sql, new HashMap<>());
+        return analyze(sql, null);
     }
     
     public ColumnLineageResult analyze(String sql, Map<String, List<Column>> tableColumnsMap) {
@@ -22,8 +22,8 @@ public class ColumnLineageAnalyzer {
     public ColumnLineageResult analyze(String sql, Map<String, List<Column>> tableColumnsMap, DbType dbType) {
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
         SQLStatement stmt = parser.parseStatement();
-
         ColumnLineageVisitor visitor = new ColumnLineageVisitor(tableColumnsMap);
+
         stmt.accept(visitor);
 
         return visitor.getResult();

@@ -8,11 +8,9 @@ import java.util.Map;
 // 通用select 转换的字段追溯信息
 public class SelectColumn{
 
-    /**
-     * 真实表信息
-     */
+    // 真实表信息
     private String tableInfo;
-    // 真实字段名
+    // 真实字段名 （可能为多个，例如select concat(t.id, '_', t.name) as name => id,name，同时tableInfo也是一一对应 table1,table2）
     private String columnName;
     // 字段别名
     private String aliasName;
@@ -97,6 +95,14 @@ public class SelectColumn{
         filtered.setAliasName(aliasName);
 
         return filtered;
+    }
+
+    /**
+     * 克隆一份自己全新的对象
+     * @return SelectColumn
+     */
+    public SelectColumn cloneOwn() {
+        return new SelectColumn(tableInfo, columnName, aliasName);
     }
 
     @Override

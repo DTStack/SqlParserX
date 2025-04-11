@@ -1,5 +1,6 @@
 package com.changlu.lineage.core.select.column;
 
+import com.changlu.enums.ColumnTypeEnum;
 import com.changlu.lineage.domain.Table;
 
 import java.util.Objects;
@@ -9,13 +10,23 @@ public class SelectColumnItem {
     private String tableInfo;
     // 真实字段名
     private String columnName;
+    // Column字段类型
+    private String columnType;
 
     public SelectColumnItem() {
+        this.columnType = ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName();
     }
 
     public SelectColumnItem(String tableInfo, String columnName) {
         this.tableInfo = tableInfo;
         this.columnName = columnName;
+        this.columnType = ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName();
+    }
+
+    public SelectColumnItem(String tableInfo, String columnName, ColumnTypeEnum columnType) {
+        this.tableInfo = tableInfo;
+        this.columnName = columnName;
+        this.columnType = columnType.getFieldName();
     }
 
     public String getColumnName() {
@@ -32,6 +43,14 @@ public class SelectColumnItem {
 
     public void setTableInfo(String tableInfo) {
         this.tableInfo = tableInfo;
+    }
+
+    public String getColumnType() {
+        return columnType;
+    }
+
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
     }
 
     @Override
@@ -52,6 +71,7 @@ public class SelectColumnItem {
         return "SelectColumnItem{" +
                 "tableInfo='" + tableInfo + '\'' +
                 ", columnName='" + columnName + '\'' +
+                ", columnType='" + columnType + '\'' +
                 '}';
     }
 }

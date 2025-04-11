@@ -3,22 +3,39 @@ package com.changlu.lineage.core.select.column;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.*;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.enums.ColumnTypeEnum;
+import com.changlu.enums.TableNameMatchStrategy;
+import com.changlu.lineage.column.Column;
+import com.changlu.lineage.config.Constant;
 import com.changlu.lineage.domain.Pair;
 import com.changlu.lineage.domain.Table;
 import com.changlu.lineage.utils.TableSourceUtil;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectColumnSpecialLineageService {
 
+    // 真实表&字段关联关系（用于外部查询元数据）
+    private final Map<String, List<Column>> tableColumnsMap;
+    // 策略选择控制
+    private TableNameMatchStrategy tableNameStrategy = TableNameMatchStrategy.CHECK_COLUMN_EXISTS;
+
+    public SelectColumnSpecialLineageService() {
+        this.tableColumnsMap = new HashMap<>();
+        this.tableNameStrategy = TableNameMatchStrategy.DEFAULT_FROM_TABLE;
+    }
+
+    public SelectColumnSpecialLineageService(Map<String, List<Column>> tableColumnsMap) {
+        this.tableColumnsMap = tableColumnsMap;
+    }
+
     /**
      * 查询到SQLSelect中所有涉及字段 匹配 真实表所关联的信息
      * @param sqlSelect SQLSelect
      * @return List<SelectColumn> 每一个SelectColumn中包含字段来源表名 & 字段名
      */
-    public static List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
+    public List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
         // 表查询
         SQLSelectQuery sqlSelectQuery = sqlSelect.getQuery();
         return queryColumnsBySqlSelectQuery(sqlSelectQuery);
@@ -29,7 +46,7 @@ public class SelectColumnSpecialLineageService {
      * @param sqlSelectQuery
      * @return
      */
-    public static List<SelectColumn> queryColumnsBySqlSelectQuery(SQLSelectQuery sqlSelectQuery) {
+    public List<SelectColumn> queryColumnsBySqlSelectQuery(SQLSelectQuery sqlSelectQuery) {
         List<SelectColumn> selectColumns = new ArrayList<>();
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             return queryColumnsBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
@@ -73,7 +90,7 @@ public class SelectColumnSpecialLineageService {
      * @param curSelectColumns
      * @return
      */
-    public static List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
+    public List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
         int size = preSelectColumnList.size();
         List<SelectColumn> unionSelectColumns = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -94,7 +111,7 @@ public class SelectColumnSpecialLineageService {
      * @param selectQueryBlock select语句
      * @return 关联到的所有字段(只关注获取到字段来源表名 & 字段名)
      */
-    public static List<SelectColumn> queryColumnsBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
+    public List<SelectColumn> queryColumnsBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
         if (selectQueryBlock == null) return null;
         // 遍历SELECT项并处理
         List<SelectColumn> selectColumns = buildSelectColumnsBySelectItems(selectQueryBlock.getSelectList());
@@ -113,7 +130,7 @@ public class SelectColumnSpecialLineageService {
      * @param selectColumns select字段集合封装
      * @return select字段集合转换封装结果
      */
-    public static List<SelectColumn> queryFromTableByColumns(SQLTableSource fromTable, List<SelectColumn> selectColumns) {
+    public List<SelectColumn> queryFromTableByColumns(SQLTableSource fromTable, List<SelectColumn> selectColumns) {
         // 不同场景
         // 场景1：from 普通表场景（SQLExprTableSource） 如：from table1  或者 from table1 as t1
         if (fromTable instanceof SQLExprTableSource) {
@@ -126,14 +143,41 @@ public class SelectColumnSpecialLineageService {
             for (SelectColumn selectColumn : selectColumns) {
                 // #feat3：基于#feat2的特殊情况（单列多字段场景）
                 // 跟随真实字段数量匹配多个tableName场景走
-                //                  真实字段       别名字段    真实表名
-                // 场景1：              id          sum        o
-                // 场景2:             tt1,tt2       tmp       n,n2
-                // 场景3（无表名情况）:  tt2,tt3      tmp2      无表名
-                // select item中的真实表名
+                //                      真实字段       别名字段    真实表名
+                // 场景1：                 id          sum        o
+                // 场景2:                tt1,tt2       tmp       n,n2
+                // 场景3（无表名情况）:     tt2,tt3      tmp2
                 String tableInfo = selectColumn.getTableInfo();
-                // 1、字段中真实表名存在情况
-                if (!"".equals(tableInfo)) {
+                String columnName = selectColumn.getColumnName();
+                // 1、字段中真实表名为空情况
+                if (tableInfo == null || tableInfo.isEmpty()) {
+                    // 真实表为空情况 需要去匹配根据当前表去匹配
+                    String[] columnNameArr = columnName.split(",");
+                    // 兼容真实表名是否有多个,场景
+                    // 真实字段带有,场景，根据，分隔数量来构造表名的数量
+                    List<String> tableNameList = new ArrayList<>();
+                    for (int i = 0; i < columnNameArr.length; i++) {
+                        // 2、若字段中真实表名不存在情况
+                        //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
+                        // 这里直接默认from的表名
+                        // 根据当前选择策略
+                        if (tableNameStrategy == TableNameMatchStrategy.DEFAULT_FROM_TABLE) {
+                            // 策略1：默认就是from对应的表名
+                            tableNameList.add(sourceTableName);
+                        }else {
+                            // 策略2：根据外界（表元数据）传入的表字段来进行判断是否有来匹配
+                            if (Constant.ALL.equals(columnNameArr[i]) || checkColumnRealExists(columnNameArr[i], sourceTableName)) {
+                                tableNameList.add(sourceTableName);
+                            }else {
+                                // 无来源表情况
+                                tableNameList.add(Constant.NO_RELATION_TABLE);
+                            }
+                        }
+                    }
+                    sourceTableName = String.join(",", tableNameList);
+                    selectColumn.setTableInfo(sourceTableName);
+                }else {
+                    // 2、真实表不为空情况
                     // 兼容真实表名是否有多个,场景
                     if (tableInfo.contains(",")) {
                         String[] tableNameArr = tableInfo.split(",");
@@ -149,31 +193,88 @@ public class SelectColumnSpecialLineageService {
                             selectColumn.setTableInfo(sourceTableName);
                         }
                     }
-
-                }else {
-                    // 兼容真实表名是否有多个,场景
-                    // 真实字段带有,场景，根据，分隔数量来构造表名的数量
-                    int num = 1;
-                    if (selectColumn.getColumnName().contains(",")) {
-                        num = selectColumn.getColumnName().split(",").length;
-                    }
-                    String[] tableNameArr = new String[num];
-                    for (int i = 0; i < num; i++) {
-                        // 2、若字段中真实表名不存在情况
-                        //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
-                        // 这里直接默认from的表名
-                        tableNameArr[i] = sourceTableName;
-                    }
-                    sourceTableName = String.join(",", tableNameArr);
-                    selectColumn.setTableInfo(sourceTableName);
                 }
             }
+
+            // 针对擦参数中 * 场景替换处理
+            if (tableNameStrategy == TableNameMatchStrategy.CHECK_COLUMN_EXISTS) {
+
+                // 提前check是否有需要替换操作
+                boolean isMatchHasAllColumns = false;
+                for (SelectColumn selectColumn : selectColumns) {
+                    if (selectColumn.getColumnName().contains(Constant.ALL)) {
+                        isMatchHasAllColumns = true;
+                        break;
+                    }
+                }
+
+                // 是否有匹配到元数据表填充字段
+                List<Column> metaTableColumns = this.tableColumnsMap.get(sourceTableName);
+                if (isMatchHasAllColumns && metaTableColumns != null && !metaTableColumns.isEmpty()) {
+                    List<SelectColumn> newBuildSelectColumns = new ArrayList<>();
+                    // 真实表替换后 => 针对字段 * 构建逻辑
+                    //                      真实字段       别名字段    真实表名
+                    // 场景4（*情况）：           *           *       table1       =>  *场景，需要补充多个selectColumn，真实字段与别名字段一致，真实表名复制一份
+                    // 场景5（字段中带有*情况）  *,id          tmp      table1, o   =>  一个字段中带有*，在同一个selectColumn扩展字段
+                    // 普通from 查询中的带有*字段处理
+                    //   举例：select * from (select * from new_table) as t; 内层的*
+                    for (SelectColumn selectColumn : selectColumns) {
+                        String tableInfo = selectColumn.getTableInfo();
+                        String columnName = selectColumn.getColumnName();
+                        // 场景4情况
+                        if (Constant.ALL.equals(columnName)) {
+                            if (sourceTableName.equals(tableInfo)) {
+                                // 场景4 *，扩建多个selectColumn
+                                // *           *       table1
+                                // 转为
+                                // name       name     table1
+                                // age        age      table1
+                                for (Column metaTableColumn : metaTableColumns) {
+                                    String metaTableColumnColumnName = metaTableColumn.getColumnName();
+                                    newBuildSelectColumns.add(new SelectColumn(sourceTableName, metaTableColumnColumnName, metaTableColumnColumnName));
+                                }
+                            }else {
+                                newBuildSelectColumns.add(selectColumn);
+                            }
+                        }else {
+                            String[] columnNameArr = columnName.split(",");
+                            String[] tableNameArr = tableInfo.split(",");
+                            List<String> columnNameList = new ArrayList<>();
+                            List<String> tableNameList = new ArrayList<>();
+                            for (int i = 0; i < columnNameArr.length; i++) {
+                                if (Constant.ALL.equals(columnNameArr[i]) && sourceTableName.equals(tableNameArr[i])) {
+                                    // 在一个selectColumn中扩展多个情况
+                                    // *,id          tmp      table1, o   =>  一个字段中带有*，在同一个selectColumn扩展字段
+                                    // 填充
+                                    // name,age,id   tmp      table1,table1,o
+                                    for (Column metaTableColumn : metaTableColumns) {
+                                        columnNameList.add(metaTableColumn.getColumnName());
+                                        tableNameList.add(sourceTableName);
+                                    }
+                                }else{
+                                    columnNameList.add(columnNameArr[i]);
+                                    tableNameList.add(tableNameArr[i]);
+                                }
+                            }
+                            selectColumn.setColumnName(String.join(",", columnNameList));
+                            selectColumn.setTableInfo(String.join(",", tableNameList));
+                            newBuildSelectColumns.add(selectColumn);
+                        }
+                    }
+                    selectColumns = newBuildSelectColumns;
+                }
+            }
+
         }// 场景2：子查询表（SQLSubqueryTableSource） 如：from (select xxx, xxx from table 1)
         else if (fromTable instanceof SQLSubqueryTableSource) {
             SQLSubqueryTableSource sqlSubqueryTableSource = (SQLSubqueryTableSource) fromTable;
             SQLSelect select = sqlSubqueryTableSource.getSelect();
             // 查询到子查询中的字段集合
             List<SelectColumn> subquerySelectColumns = queryColumnsBySqlSelect(select);
+
+            // subquerySelectColumns中 外层属性* 切带有子查询情况
+            //   举例：select * from (select * from new_table) as t; 外层的* 字段取决于子查询中的所有字段
+            selectColumns = dealSubQuerySelectColumnsByAllColumns(selectColumns, subquerySelectColumns);
 
             // selectColumns & subquerySelectColumns 进行match匹配操作
             selectColumns = matchSubQuerySelectColumns(selectColumns, subquerySelectColumns);
@@ -192,12 +293,63 @@ public class SelectColumnSpecialLineageService {
     }
 
     /**
+     *  场景 select * from (select * from new_table) as t; 外层的* 字段取决于子查询中的所有字段
+     *  selectColumns如下：
+     *  字段名      别名     真实表名
+     *  *           *
+     *
+     *  subquerySelectColumns如下： 这里必然会拿到*匹配的所有情况，因为在内部select * from xxx 中已经做过一次匹配了，无需再考虑会有*情况（除非是没有提供元数据相应表字段属性）
+     *  字段名           别名         真实表名
+     *   gh             gh      dwd_jszt_jyjs0504
+     *   xm             xm      dwd_jszt_jyjs0504
+     *   dqszdwmc   dqszdwmc    dwd_jszt_jyjs0504
+     *   zdxsjsjlmc zdxsjsjlmc  dwd_jszt_jyjs0504
+     *
+     *  效果： * => 构建多个selectColumns，拷贝subquerySelectColumns
+     *
+     * @param selectColumns 当前select xxx 中的xxx作为一组selectColumns
+     * @param subquerySelectColumns from (select xxx from table1) 中的子查询查询字段列表集合
+     * @return selectColumns
+     */
+    private List<SelectColumn> dealSubQuerySelectColumnsByAllColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
+        List<SelectColumn> buildNewSelectColumns = new ArrayList<>();
+        for (SelectColumn selectColumn : selectColumns) {
+            if (Constant.ALL.equals(selectColumn.getColumnName())) {
+                for (SelectColumn subquerySelectColumn : subquerySelectColumns) {
+                    buildNewSelectColumns.add(subquerySelectColumn.cloneOwn());
+                }
+            }else {
+                buildNewSelectColumns.add(selectColumn);
+            }
+        }
+        return buildNewSelectColumns;
+    }
+
+    /**
+     * select id from table1 场景，判断id是否真实存在table1中
+     * @param columnName sql中的字段
+     * @param sourceTableName 测试验证的表名
+     * @return true：存在，false：不存在
+     */
+    private boolean checkColumnRealExists(String columnName, String sourceTableName) {
+        if (this.tableColumnsMap.containsKey(sourceTableName)) {
+            List<Column> columns = this.tableColumnsMap.get(sourceTableName);
+            for (Column column : columns) {
+                if (column.getColumnName().equals(columnName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * 场景2：from查询表（SQLSubqueryTableSource）核心匹配逻辑
      * @param selectColumns select字段集合
      * @param subquerySelectColumns 子查询select集合
      * @return
      */
-    private static List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
+    private List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
         if (subquerySelectColumns == null || subquerySelectColumns.isEmpty()) return selectColumns;
 
         List<SelectColumn> res = new ArrayList<>();
@@ -242,12 +394,17 @@ public class SelectColumnSpecialLineageService {
     /**
      * insert into values(xxx, xxx)，其中(xxx, xxx)场景就是一组selectExprList
      * @param sqlExprs sqlExprs
-     * @return 查询到一组column字段信息集合，包含真实所属表信息字段
+     * @return 查询到一组column字段信息集合，包含真实所属表信息字段 别名借助
      */
-    public static List<SelectColumn> buildSelectColumnsBySQLExprs(List<SQLExpr> sqlExprs) {
+    public List<SelectColumn> buildSelectColumnsBySQLExprs(List<SQLExpr> sqlExprs) {
         List<SelectColumn> selectColumns = new ArrayList<>();
         for (SQLExpr sqlExpr : sqlExprs) {
-            SelectColumn selectColumn = buildSelectColumnBySelectExpr(sqlExpr);
+            SelectColumn selectColumn = new SelectColumn();
+            SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
+
+            selectColumn.setTableInfo(selectColumnItem.getTableInfo());
+            selectColumn.setColumnName(selectColumnItem.getColumnName());
+            selectColumn.setAliasName(selectColumnItem.getColumnName());
             if (selectColumn != null) selectColumns.add(selectColumn);
         }
         return selectColumns;
@@ -258,7 +415,7 @@ public class SelectColumnSpecialLineageService {
      * @param selectList selectList
      * @return  List<SelectColumn>（完整带别名情况）
      */
-    public static List<SelectColumn> buildSelectColumnsBySelectItems(List<SQLSelectItem> selectList) {
+    public List<SelectColumn> buildSelectColumnsBySelectItems(List<SQLSelectItem> selectList) {
         List<SelectColumn> selectColumns = new ArrayList<>();
         for (SQLSelectItem sqlSelectItem : selectList) {
             SelectColumn selectColumn = buildSelectColumnBySelectItem(sqlSelectItem);
@@ -268,19 +425,23 @@ public class SelectColumnSpecialLineageService {
     }
 
     // #feat1：筛选select字段场景（带别名情况）
-    private static SelectColumn buildSelectColumnBySelectItem(SQLSelectItem selectItem) {
+    private SelectColumn buildSelectColumnBySelectItem(SQLSelectItem selectItem) {
         SQLExpr expr = selectItem.getExpr();
+        SelectColumn selectColumn = new SelectColumn();
         // 将expr表达式 => SelectColumn（无别名）
-        SelectColumn selectColumn = buildSelectColumnBySelectExpr(expr);
+        SelectColumnItem selectColumnItem = buildSelectColumnItem(expr);
         if (selectColumn == null) return null;
 
         String aliasColumnName = selectItem.getAlias();
-        String tableInfo = selectColumn.getTableInfo();
-        String columnName = selectColumn.getColumnName();
+        String tableInfo = selectColumnItem.getTableInfo();
+        String columnName = selectColumnItem.getColumnName();
 
         // 别名为空情况设置
         if (aliasColumnName == null) {
+            // 别名为空情况无法直接设置columnName，保证aliasColumnName在SelectColumn中只有一个
             aliasColumnName = columnName;
+            // 举例：select concat(t.id, '_', t.name), t.num + 1 from table，这种情况别名只能够是当前selectItem的字符串情况
+//            aliasColumnName = selectItem.toString();
         }
 
         selectColumn.setColumnName(columnName);
@@ -289,28 +450,28 @@ public class SelectColumnSpecialLineageService {
         return selectColumn;
     }
 
-    /**
-     * SQLExpr => SelectColumn (提取字段信息，无别名)
-     * @param sqlExpr sqlExpr
-     * @return SelectColumn无中无别名
-     */
-    private static SelectColumn buildSelectColumnBySelectExpr(SQLExpr sqlExpr) {
-        // 初始化封装表字段
-        SelectColumn selectColumn = new SelectColumn();
-        String columnName = "";
-        String tableInfo = "";
-
-        // 特定封装处理字段细节函数，包含
-        SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
-        if (selectColumnItem == null) return null;
-        columnName = selectColumnItem.getColumnName();
-        tableInfo = selectColumnItem.getTableInfo();
-
-        // 初始化字段信息、表信息
-        selectColumn.setColumnName(columnName);
-        selectColumn.setTableInfo(tableInfo);
-        return selectColumn;
-    }
+//    /**
+//     * SQLExpr => SelectColumn (提取字段信息，无别名)
+//     * @param sqlExpr sqlExpr
+//     * @return SelectColumn无中无别名
+//     */
+//    private SQLSelectItem buildSelectColumnBySelectExpr(SQLExpr sqlExpr) {
+//        // 初始化封装表字段
+//        SQLSelectItem selectColumn = new SQLSelectItem();
+//        String columnName = "";
+//        String tableInfo = "";
+//
+//        // 特定封装处理字段细节函数，包含
+//        SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
+//        if (selectColumnItem == null) return null;
+//        columnName = selectColumnItem.getColumnName();
+//        tableInfo = selectColumnItem.getTableInfo();
+//
+//        // 初始化字段信息、表信息
+//        selectColumn.setColumnName(columnName);
+//        selectColumn.setTableInfo(tableInfo);
+//        return selectColumn;
+//    }
 
     /**
      * 单独去获取到select中的一个字段选项 可以是如下场景
@@ -326,7 +487,7 @@ public class SelectColumnSpecialLineageService {
      * @param expr
      * @return
      */
-    private static SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
+    private SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
         String columnName = "";
         String tableInfo = "";
         if (expr instanceof SQLIdentifierExpr) {
@@ -368,16 +529,34 @@ public class SelectColumnSpecialLineageService {
             Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(sqlBinaryOpExprList);
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
+        }else if (expr instanceof SQLAllColumnExpr) {
+            // select db.t1.* from xxx，其中db.t1.*就是一个SQLAllColumnExpr
+            SQLAllColumnExpr sqlAllColumnExpr = (SQLAllColumnExpr) expr;
+            columnName = Constant.ALL;
+            tableInfo = Table.TableTransfer.transfer(TableSourceUtil.extractTable(sqlAllColumnExpr.getOwner()));
+        } else if (expr instanceof SQLQueryExpr) {
+            SQLQueryExpr sqlQueryExpr = (SQLQueryExpr) expr;
+            // select (SELECT COUNT(*) FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count
+            SQLSelect sqlSelect = sqlQueryExpr.getSubQuery();
+            List<SelectColumn> selectColumns = this.queryColumnsBySqlSelect(sqlSelect);
+            if (!selectColumns.isEmpty()) {
+                SelectColumn selectColumn = selectColumns.get(0);
+                columnName = selectColumn.getColumnName();
+                tableInfo = selectColumn.getTableInfo();
+            }
         } else {
             // 其他场景暂无匹配逻辑
             // 目前如字符串类型expr忽略，如 select 'test' 中的'test'，得到的expr类型为：SQLCharExpr
-            return null;
+//            return null;
+            // 引入字段匹配table机制之后，可以返回相应的字面量值
+            columnName = expr.toString();
+            return new SelectColumnItem(tableInfo, columnName, ColumnTypeEnum.LITERAL_VALUE);
         }
         return new SelectColumnItem(tableInfo, columnName);
     }
 
-    // 优化多个SQLExpr场景需要递归处理场景
-    private static Pair<String, String> getColumnAndTablePairBySQLExpr(List<SQLExpr> sqlExprs) {
+    // 优化多个SQLExpr场景需要递归处理场景（通常是聚合函数、表达式情况）
+    private Pair<String, String> getColumnAndTablePairBySQLExpr(List<SQLExpr> sqlExprs) {
         List<String> columnNameItems = new ArrayList<>();
         List<String> tableNameItems = new ArrayList<>();
         String columnName = "";
@@ -385,7 +564,9 @@ public class SelectColumnSpecialLineageService {
         for (SQLExpr sqlExpr : sqlExprs) {
             // 递归逻辑获取
             SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
-            if (selectColumnItem == null) continue;
+            // 若是在当前聚合函数、表达式情况，过滤掉其中的字面量值
+            if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem.getColumnType()))
+                continue;
             columnNameItems.add(selectColumnItem.getColumnName());
             tableNameItems.add(selectColumnItem.getTableInfo());
         }
@@ -394,7 +575,17 @@ public class SelectColumnSpecialLineageService {
         return Pair.of(columnName, tableInfo);  // 返回不可变的 Pair
     }
 
+    public Map<String, List<Column>> getTableColumnsMap() {
+        return tableColumnsMap;
+    }
 
+    public TableNameMatchStrategy getTableNameStrategy() {
+        return tableNameStrategy;
+    }
+
+    public void setTableNameStrategy(TableNameMatchStrategy tableNameStrategy) {
+        this.tableNameStrategy = tableNameStrategy;
+    }
 }
 
 
