@@ -40,7 +40,37 @@
           </label>
           <span>表级别血缘关系</span>
         </div>
-        <div id="container" ref="chartContainer"></div>
+
+        <!-- 图表控制按钮（使用Element UI图标） -->
+        <div class="chart-controls">
+          <el-tooltip content="放大" placement="bottom">
+            <el-button circle @click="zoomIn" size="small">
+              <i class="el-icon-zoom-in"></i>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="缩小" placement="bottom">
+            <el-button circle @click="zoomOut" size="small">
+              <i class="el-icon-zoom-out"></i>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="重置" placement="bottom">
+            <el-button circle @click="resetZoom" size="small">
+              <i class="el-icon-refresh-left"></i>
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="全屏" placement="bottom">
+            <el-button circle @click="toggleFullscreen" size="small">
+              <i class="el-icon-full-screen"></i>
+            </el-button>
+          </el-tooltip>
+        </div>
+
+        <!-- 添加滚轮事件监听 -->
+        <div
+            id="container"
+            ref="chartContainer"
+            @wheel.prevent="handleWheel"
+        ></div>
       </div>
     </div>
   </div>
@@ -48,6 +78,7 @@
 
 <script>
 import * as echarts from 'echarts';
+import { fullscreen, exitFullscreen } from '@/utils/fullscreen'; // 假设有这个工具函数
 
 export default {
   name: 'LineageVisualizer',
@@ -74,6 +105,9 @@ export default {
       dataSources: [], // 初始化为空数组
       fieldRelationsMap: {}, // 存储字段间的映射关系
       highlightedFields: new Set(), // 存储当前高亮的字段集合
+      // 原有数据保持不变
+      zoomLevel: 1, // 新增缩放级别
+      isFullscreen: false, // 是否全屏状态
     };
   },
   mounted() {
@@ -90,6 +124,78 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    // 滚轮缩放处理
+    handleWheel(event) {
+      // 阻止默认滚动行为
+      event.preventDefault();
+
+      // 计算缩放方向（deltaY > 0 向下滚=缩小，< 0 向上滚=放大）
+      const delta = event.deltaY > 0 ? -0.1 : 0.1;
+      this.zoomLevel = Math.min(Math.max(this.zoomLevel + delta, 0.5), 3); // 限制0.5-3倍
+
+      this.applyZoom();
+    },
+    // 新增方法：放大图表
+    zoomIn() {
+      this.zoomLevel = Math.min(this.zoomLevel + 0.1, 2); // 限制最大放大2倍
+      this.applyZoom();
+    },
+
+    // 新增方法：缩小图表
+    zoomOut() {
+      this.zoomLevel = Math.max(this.zoomLevel - 0.1, 0.5); // 限制最小缩小0.5倍
+      this.applyZoom();
+    },
+
+    // 新增方法：重置缩放
+    resetZoom() {
+      this.zoomLevel = 1;
+      this.applyZoom();
+    },
+
+    // 新增方法：应用缩放
+    applyZoom() {
+      if (this.myChart) {
+        // 只修改图表容器的transform，不改变外部尺寸
+        const container = this.$refs.chartContainer;
+        container.style.transform = `scale(${this.zoomLevel})`;
+        container.style.transformOrigin = '0 0';
+
+        // 需要重新渲染图表
+        this.$nextTick(() => {
+          this.myChart.resize();
+        });
+      }
+    },
+
+    // 新增方法：切换全屏
+    async toggleFullscreen() {
+      const container = this.$refs.chartContainer.parentElement;
+
+      if (this.isFullscreen) {
+        await exitFullscreen();
+        this.isFullscreen = false;
+      } else {
+        await fullscreen(container);
+        this.isFullscreen = true;
+      }
+
+      // 全屏状态变化后需要重新调整图表大小
+      this.$nextTick(() => {
+        this.myChart.resize();
+      });
+    },
+
+    // 修改原有的handleResize方法
+    handleResize() {
+      if (this.myChart) {
+        this.myChart.resize();
+        // 只有在非全屏状态下才重新渲染图表
+        if (!this.isFullscreen) {
+          this.renderChart();
+        }
+      }
+    },
     initChart() {
       this.myChart = echarts.init(this.$refs.chartContainer);
       this.myChart.on('click', this.handleChartClick);
@@ -646,13 +752,6 @@ export default {
 
       const newGraphicElements = this.currentGraphicElements.map(item => processItem(item));
       this.myChart.setOption({ graphic: newGraphicElements });
-    },
-
-    handleResize() {
-      if (this.myChart) {
-        this.myChart.resize();
-        this.renderChart();
-      }
     }
   },
   watch: {
@@ -740,10 +839,14 @@ export default {
   position: relative;
 }
 
+/* 图表容器样式 */
 #container {
   width: 100%;
   height: 100%;
   min-height: 600px;
+  overflow: hidden; /* 隐藏超出部分 */
+  transform-origin: 0 0;
+  transition: transform 0.2s ease-out;
 }
 
 .sql-input-container {
@@ -873,8 +976,47 @@ input:checked + .slider:before {
     flex: 0 0 auto;
   }
 }
-.scrollable {
-  overflow-y: auto; /* 当内容超出容器高度时显示垂直滚动条 */
-  max-height: 100vh; /* 设置最大高度为视口高度 */
+/* 图表控制按钮样式 */
+.chart-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+.chart-controls button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.chart-controls button:hover {
+  background: #409EFF;
+  color: white;
+}
+
+/* 按钮图标样式 */
+.chart-controls i {
+  font-size: 16px;
+  color: #606266;
+}
+
+.chart-controls .el-button:hover i {
+  color: #409EFF;
+}
+
+
 </style>
