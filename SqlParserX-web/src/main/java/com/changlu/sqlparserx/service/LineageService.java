@@ -25,9 +25,11 @@ public class LineageService {
         Set<String> targetFields = new HashSet<>();
 
         columnLineageResult.getColumnRelations().forEach((targetColumn, relations) -> {
-            String[] targetParts = targetColumn.split("\\.");
-            if (targetParts.length == 2) {
-                targetFields.add(targetParts[1]);
+            // Split on last dot only to handle cases like "digua_ceshi.result_table.id"
+            int lastDotIndex = targetColumn.lastIndexOf('.');
+            if (lastDotIndex > 0) {
+                String columnName = targetColumn.substring(lastDotIndex + 1);
+                targetFields.add(columnName);
             }
 
             if (relations != null) {
@@ -41,13 +43,17 @@ public class LineageService {
                     relationMap.put("to", target);
                     relationData.add(relationMap);
 
-                    String[] sourceParts = source.split("\\.");
-                    if (sourceParts.length == 2) {
-                        allTables.add(sourceParts[0]);
-                        if (!tableFields.containsKey(sourceParts[0])) {
-                            tableFields.put(sourceParts[0], new HashSet<>());
+                    // Handle source with same logic (split on last dot)
+                    int sourceLastDotIndex = source.lastIndexOf('.');
+                    if (sourceLastDotIndex > 0) {
+                        String tableName = source.substring(0, sourceLastDotIndex);
+                        String sourceColumnName = source.substring(sourceLastDotIndex + 1);
+
+                        allTables.add(tableName);
+                        if (!tableFields.containsKey(tableName)) {
+                            tableFields.put(tableName, new HashSet<>());
                         }
-                        tableFields.get(sourceParts[0]).add(sourceParts[1]);
+                        tableFields.get(tableName).add(sourceColumnName);
                     }
                 }
             }

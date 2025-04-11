@@ -196,7 +196,7 @@ public class SelectColumnSpecialLineageService {
                 }
             }
 
-            // 针对擦参数中 * 场景替换处理
+            // 针对参数中 * 场景替换处理
             if (tableNameStrategy == TableNameMatchStrategy.CHECK_COLUMN_EXISTS) {
 
                 // 提前check是否有需要替换操作
@@ -394,20 +394,15 @@ public class SelectColumnSpecialLineageService {
     /**
      * insert into values(xxx, xxx)，其中(xxx, xxx)场景就是一组selectExprList
      * @param sqlExprs sqlExprs
-     * @return 查询到一组column字段信息集合，包含真实所属表信息字段 别名借助
+     * @return 查询到一组column字段信息集合
      */
-    public List<SelectColumn> buildSelectColumnsBySQLExprs(List<SQLExpr> sqlExprs) {
-        List<SelectColumn> selectColumns = new ArrayList<>();
+    public List<SelectColumnItem> buildSelectColumnsBySQLExprs(List<SQLExpr> sqlExprs) {
+        List<SelectColumnItem> selectColumnItems = new ArrayList<>();
         for (SQLExpr sqlExpr : sqlExprs) {
-            SelectColumn selectColumn = new SelectColumn();
             SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
-
-            selectColumn.setTableInfo(selectColumnItem.getTableInfo());
-            selectColumn.setColumnName(selectColumnItem.getColumnName());
-            selectColumn.setAliasName(selectColumnItem.getColumnName());
-            if (selectColumn != null) selectColumns.add(selectColumn);
+            selectColumnItems.add(selectColumnItem);
         }
-        return selectColumns;
+        return selectColumnItems;
     }
 
     /**
@@ -540,9 +535,12 @@ public class SelectColumnSpecialLineageService {
             SQLSelect sqlSelect = sqlQueryExpr.getSubQuery();
             List<SelectColumn> selectColumns = this.queryColumnsBySqlSelect(sqlSelect);
             if (!selectColumns.isEmpty()) {
-                SelectColumn selectColumn = selectColumns.get(0);
-                columnName = selectColumn.getColumnName();
-                tableInfo = selectColumn.getTableInfo();
+                // 若是匹配到多个字段，则取第一个
+//                SelectColumn selectColumn = selectColumns.get(0);
+                // 若是匹配到多个字段，则完成合并
+                Pair<String, String> columnAndTablePairBySelectColumns = getColumnAndTablePairBySelectColumns(selectColumns);
+                columnName = columnAndTablePairBySelectColumns.getFirst();
+                tableInfo = columnAndTablePairBySelectColumns.getSecond();
             }
         } else {
             // 其他场景暂无匹配逻辑
@@ -569,6 +567,33 @@ public class SelectColumnSpecialLineageService {
                 continue;
             columnNameItems.add(selectColumnItem.getColumnName());
             tableNameItems.add(selectColumnItem.getTableInfo());
+        }
+        columnName = String.join(",", columnNameItems);
+        tableInfo = String.join(",", tableNameItems);
+        return Pair.of(columnName, tableInfo);  // 返回不可变的 Pair
+    }
+
+    /**
+     * 多个SelectColumn时，来进行合并为一个SelectColumn的columnName & tableInfo （无需关心别名）
+     * 该种场景为：
+     *      select (SELECT COUNT(*) FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count
+     *      select (SELECT concat(id,name) FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count
+     *     不可能出现 select (SELECT id, name FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count，若是出现这种sql后续走db也会失败
+     * 举例如下：
+     *  真实字段   真实表    别名
+     *  id        table    id
+     *  name      table    name
+     * @param selectColumns
+     * @return
+     */
+    private Pair<String, String> getColumnAndTablePairBySelectColumns(List<SelectColumn> selectColumns) {
+        List<String> columnNameItems = new ArrayList<>();
+        List<String> tableNameItems = new ArrayList<>();
+        String columnName = "";
+        String tableInfo = "";
+        for (SelectColumn selectColumn : selectColumns) {
+            columnNameItems.add(selectColumn.getColumnName());
+            tableNameItems.add(selectColumn.getTableInfo());
         }
         columnName = String.join(",", columnNameItems);
         tableInfo = String.join(",", tableNameItems);

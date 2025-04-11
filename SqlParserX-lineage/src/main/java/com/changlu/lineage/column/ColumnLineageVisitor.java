@@ -8,6 +8,7 @@ import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.config.Constant;
 import com.changlu.lineage.core.select.column.SelectColumn;
+import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.domain.Pair;
 import com.changlu.lineage.domain.Table;
@@ -49,23 +50,21 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
 
         // 1、获取到目标表的columns信息
         List<SQLExpr> insertTableColumns = x.getColumns();
-        List<SelectColumn> targetColumns = new ArrayList<>();
-        if (insertTableColumns == null || insertTableColumns.isEmpty()) {
-            // 写法1：无插入指定列场景 INSERT INTO target_table SELECT column1, column2, column3
-            SQLSelect select = x.getQuery();
-            if (select != null) {
-                SQLSelectQuery selectQuery = select.getQuery();
-                // 获取到目标字段集合
-                targetColumns = matchFirstSelectColumns(selectQuery);
-            }
-        }else {
+        List<SelectColumnItem> targetColumns = new ArrayList<>();
+//        if (insertTableColumns == null || insertTableColumns.isEmpty()) {
+//            // 写法1：无插入指定列场景 INSERT INTO target_table SELECT column1, column2, column3
+//            SQLSelect select = x.getQuery();
+//            if (select != null) {
+//                SQLSelectQuery selectQuery = select.getQuery();
+//                // 获取到目标字段集合
+//                targetColumns = matchFirstSelectColumns(selectQuery);
+//            }
+//        }else
+        // 若是insert sql指定字段写入
+        if (insertTableColumns != null && insertTableColumns.isEmpty()){
             // 写法2：插入指定列场景 insert into table values(xxx, xxx) select xxx, xxx
             targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns);
         }
-        // 初始化目标字段的表信息
-//        for (SelectColumn targetColumn : targetColumns) {
-//            targetColumn.setTableInfo(Table.TableTransfer.transfer(targetTable));
-//        }
 
         // 2、获取到主体查询的一组columns
         SQLSelect query = x.getQuery();
@@ -111,15 +110,32 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
             // 处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
             selectColumns = matchWithAsAndSelectColumns(selectColumns, columnInfoByTableMap);
         }
-//        System.out.println(columnInfoByTableMap);
+
+        // 4、若是没有指定insert的字段，那么此时targetColumns为空，此时需要从主体select中获取字段信息
+        if (insertTableColumns.isEmpty() && targetColumns.isEmpty()) {
+            targetColumns = queryTargetTableColumns(selectColumns, targetTable);
+        }
 
         if (targetColumns.size() > selectColumns.size()) {
             throw new RuntimeException("血缘解析异常，sql写法问题");
         }
 
         // 4、构建字段血缘信息
-        addColumnRelations(selectColumns, targetColumns, targetTable);
+        addColumnRelations(selectColumns, targetColumns);
         return false;
+    }
+
+    /**
+     * 查询获取insert目标字段集合 从主体selectColumns中获取目标字段集合
+     * @param selectColumns 主体select字段
+     * @return List<SelectColumnItem>
+     */
+    private List<SelectColumnItem> queryTargetTableColumns(List<SelectColumn> selectColumns, Table targetTable) {
+        List<SelectColumnItem> insertTableColumns = new ArrayList<>();
+        for (SelectColumn selectColumn : selectColumns) {
+            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), selectColumn.getAliasName()));
+        }
+        return insertTableColumns;
     }
 
     /**
@@ -215,23 +231,25 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
             SQLSelectQuery selectQuery = select.getQuery();
 
             // 1、获取到目标字段集合
-            List<SelectColumn> targetColumns = matchFirstSelectColumns(selectQuery);
+//            List<SelectColumn> targetColumns = matchFirstSelectColumns(selectQuery);
             // 初始化目标表
 //            for (SelectColumn targetColumn : targetColumns) {
 //                targetColumn.setTableInfo(Table.TableTransfer.transfer(targetTable));
 //            }
 
             // 提前剪枝
-            if (targetColumns.isEmpty()) return false;
+//            if (targetColumns.isEmpty()) return false;
 
             // 2、收集以当前select主体结构所追溯汇总得到的一组来源字段
             List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
+
+            List<SelectColumnItem> targetColumns = this.queryTargetTableColumns(selectColumns, targetTable);
 
             // 3、完成CREATE TABLE AS SELECT的血缘分析
             if (targetColumns.size() > selectColumns.size()) {
                 throw new RuntimeException("血缘解析异常，sql写法问题");
             }
-            addColumnRelations(selectColumns, targetColumns, targetTable);
+            addColumnRelations(selectColumns, targetColumns);
         }
         return false;
     }
@@ -241,10 +259,10 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
      * @param selectColumns 主体select压缩合并的字段集合
      * @param targetColumns 目标表字段集合
      */
-    private void addColumnRelations(List<SelectColumn> selectColumns, List<SelectColumn> targetColumns, Table targetTable) {
+    private void addColumnRelations(List<SelectColumn> selectColumns, List<SelectColumnItem> targetColumns) {
         for (int i = 0; i < targetColumns.size(); i++) {
             // #feat5：字段血缘核心匹配逻辑
-            SelectColumn targetColumn = targetColumns.get(i);
+            SelectColumnItem targetColumn = targetColumns.get(i);
             SelectColumn selectColumn = selectColumns.get(i);
             // 确认select的字段是否为聚合字段、union字段场景，会出现血缘匹配多条情况
             String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
@@ -258,7 +276,7 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
                 // 添加血缘关系
                 // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
                 // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
-                addRelation(selectTableNameArr[j], selectColumnNameArr[j], Table.TableTransfer.transfer(targetTable), targetColumn.getAliasName());
+                addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getColumnName());
             }
         }
     }

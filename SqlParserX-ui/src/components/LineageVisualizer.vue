@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="visualization-panel">
+      <div class="visualization-panel" scrollable>
         <div class="panel-title">血缘关系图</div>
         <!-- 开关按钮及文字说明 -->
         <div class="switch-container">
@@ -231,15 +231,19 @@ export default {
         } else if (!isSource && isTarget) {
           targetTables.push(table);
         } else {
+          // 如果既是源表又是目标表，根据实际情况决定放入哪个数组
+          // 这里简单地放入目标表数组
           targetTables.push(table);
         }
       });
 
+      // 计算源表总高度
       const totalSourceHeight = sourceTables.reduce((sum, table) => sum + tableHeights[table.tableName], 0) +
           (sourceTables.length - 1) * verticalSpacing;
       let startY = (containerHeight - totalSourceHeight) / 2;
       let currentY = startY;
 
+      // 计算源表位置
       sourceTables.forEach(table => {
         positions[table.tableName] = {
           x: containerWidth * 0.2,
@@ -248,11 +252,13 @@ export default {
         currentY += tableHeights[table.tableName] + verticalSpacing;
       });
 
+      // 计算目标表总高度
       const totalTargetHeight = targetTables.reduce((sum, table) => sum + tableHeights[table.tableName], 0) +
           (targetTables.length - 1) * verticalSpacing;
       startY = (containerHeight - totalTargetHeight) / 2;
       currentY = startY;
 
+      // 计算目标表位置
       targetTables.forEach(table => {
         positions[table.tableName] = {
           x: containerWidth * 0.7,
@@ -265,9 +271,9 @@ export default {
         this.adjustOverlaps(positions, tableHeights, verticalSpacing);
       }
 
+      // console.log('Calculated positions:', positions); // 打印计算出的位置，方便调试
       return positions;
     },
-
     adjustOverlaps(positions, tableHeights, minSpacing) {
       const tableNames = Object.keys(positions);
 
@@ -418,20 +424,18 @@ export default {
         if (this.isFieldLevel) {
           table.fields.forEach((field, index) => {
             const fieldFullName = `${table.tableName}.${field}`;
-            // console.log("fieldFullName=>", fieldFullName);
             tableGroup.children.push({
               type: 'rect',
               shape: {width: 140, height: 24},
               style: {
-                fill: this.highlightedFields.has(fieldFullName) ? '#e6f7ff' : '#fff', // 动态设置背景色
+                fill: this.highlightedFields.has(fieldFullName) ? '#e6f7ff' : '#fff',
                 stroke: '#ccc'
               },
               position: [0, 30 + index * 24],
               name: fieldFullName,
               z: 10,
-              // 确保 data 是一个对象且包含 isField 属性
               data: {
-                isField: true,  // 明确设置 isField
+                isField: true,
                 source: this.relationData.find(r => r.to === fieldFullName)?.from,
                 tableName: table.tableName,
                 fieldName: field
@@ -462,18 +466,13 @@ export default {
 
       const currentRelationData = this.isFieldLevel ? this.relationData : this.getTableRelations();
 
-      console.log("currentRelationData=>", currentRelationData)
       currentRelationData.forEach(rel => {
-        console.log("rel => ", rel)
         try {
           const { tableName: fromTable, fieldName: fromField } = this.getTableAndField(rel.from);
           const { tableName: toTable, fieldName: toField } = this.getTableAndField(rel.to);
 
           const fromPos = positions[fromTable];
           const toPos = positions[toTable];
-          console.log("positions => ", positions)
-          console.log("fromPos => ", fromPos, "fromTable=>", fromTable)
-          console.log("toPos => ", toPos, "toTable=>", toTable)
           if (!fromPos || !toPos) return;
 
           let x1, y1, x2, y2;
@@ -486,25 +485,34 @@ export default {
             x2 = toPos.x + 140;
           }
 
-          console.log(111)
           if (this.isFieldLevel) {
             const fromTableData = this.tableData.find(t => t.tableName === fromTable);
             const toTableData = this.tableData.find(t => t.tableName === toTable);
-            const fromField = rel.from.split('.')[1];
-            const toField = rel.to.split('.')[1];
+
+            if (!fromTableData || !toTableData) {
+              console.error(`Table data not found: fromTable=${fromTable}, toTable=${toTable}`);
+              return;
+            }
 
             const fromFieldIndex = fromTableData.fields.indexOf(fromField);
             const toFieldIndex = toTableData.fields.indexOf(toField);
 
+            if (fromFieldIndex === -1 || toFieldIndex === -1) {
+              console.error(`Field not found: fromField=${fromField}, toField=${toField}`);
+              return;
+            }
+
             y1 = fromPos.y + 30 + fromFieldIndex * 24 + 12;
             y2 = toPos.y + 30 + toFieldIndex * 24 + 12;
+
+            // console.log(`Field positions: fromField=${fromField}, fromFieldIndex=${fromFieldIndex}, y1=${y1}, toField=${toField}, toFieldIndex=${toFieldIndex}, y2=${y2}`);
           } else {
             y1 = fromPos.y + 15;
             y2 = toPos.y + 15;
           }
 
           const arrowLine = this.drawArrowLine(x1, y1, x2, y2, this.defaultLineColor, 2);
-          console.log(`Drawing line from (${x1},${y1}) to (${x2},${y2})`)
+          // console.log(`Drawing line from (${x1},${y1}) to (${x2},${y2})`);
           arrowLine.forEach(line => {
             line.name = `line_${rel.from}_${rel.to}`;
             line.data = {
@@ -514,7 +522,7 @@ export default {
               defaultColor: this.defaultLineColor,
               activeColor: this.activeLineColor
             };
-            line.z = 20; // 确保连线在较高层级
+            line.z = 20;
             this.currentLines.push(line);
             this.currentGraphicElements.push(line);
           });
@@ -550,7 +558,6 @@ export default {
 
       this.myChart.setOption(option);
     },
-
     handleChartClick(params) {
       // console.log("handleChartClick=>", params);
       if (params.componentType === 'graphic' && params.name) {
@@ -865,5 +872,9 @@ input:checked + .slider:before {
   .sql-panel {
     flex: 0 0 auto;
   }
+}
+.scrollable {
+  overflow-y: auto; /* 当内容超出容器高度时显示垂直滚动条 */
+  max-height: 100vh; /* 设置最大高度为视口高度 */
 }
 </style>
