@@ -357,6 +357,26 @@ export default {
       ];
     },
 
+    // 新增方法：正确拆分带schema的表名和字段名
+    getTableAndField(fullName) {
+      // 处理特殊字段名（如t1.0）
+      if (/\.\d+$/.test(fullName)) {
+        const lastDotIndex = fullName.lastIndexOf('.');
+        return {
+          tableName: fullName.slice(0, lastDotIndex),
+          fieldName: fullName.slice(lastDotIndex + 1)
+        };
+      }
+
+      // 处理普通情况（如digua_ceshi.demo_table_digua.id）
+      const parts = fullName.split('.');
+      if (parts.length < 2) return { tableName: fullName, fieldName: '' };
+
+      const fieldName = parts.pop();
+      const tableName = parts.join('.');
+      return { tableName, fieldName };
+    },
+
     renderChart() {
       if (!this.myChart) return;
 
@@ -442,54 +462,65 @@ export default {
 
       const currentRelationData = this.isFieldLevel ? this.relationData : this.getTableRelations();
 
+      console.log("currentRelationData=>", currentRelationData)
       currentRelationData.forEach(rel => {
-        const fromTable = this.isFieldLevel ? rel.from.split('.')[0] : rel.from;
-        const toTable = this.isFieldLevel ? rel.to.split('.')[0] : rel.to;
+        console.log("rel => ", rel)
+        try {
+          const { tableName: fromTable, fieldName: fromField } = this.getTableAndField(rel.from);
+          const { tableName: toTable, fieldName: toField } = this.getTableAndField(rel.to);
 
-        const fromPos = positions[fromTable];
-        const toPos = positions[toTable];
-        if (!fromPos || !toPos) return;
+          const fromPos = positions[fromTable];
+          const toPos = positions[toTable];
+          console.log("positions => ", positions)
+          console.log("fromPos => ", fromPos, "fromTable=>", fromTable)
+          console.log("toPos => ", toPos, "toTable=>", toTable)
+          if (!fromPos || !toPos) return;
 
-        let x1, y1, x2, y2;
+          let x1, y1, x2, y2;
 
-        if (fromPos.x < toPos.x) {
-          x1 = fromPos.x + 140;
-          x2 = toPos.x;
-        } else {
-          x1 = fromPos.x;
-          x2 = toPos.x + 140;
+          if (fromPos.x < toPos.x) {
+            x1 = fromPos.x + 140;
+            x2 = toPos.x;
+          } else {
+            x1 = fromPos.x;
+            x2 = toPos.x + 140;
+          }
+
+          console.log(111)
+          if (this.isFieldLevel) {
+            const fromTableData = this.tableData.find(t => t.tableName === fromTable);
+            const toTableData = this.tableData.find(t => t.tableName === toTable);
+            const fromField = rel.from.split('.')[1];
+            const toField = rel.to.split('.')[1];
+
+            const fromFieldIndex = fromTableData.fields.indexOf(fromField);
+            const toFieldIndex = toTableData.fields.indexOf(toField);
+
+            y1 = fromPos.y + 30 + fromFieldIndex * 24 + 12;
+            y2 = toPos.y + 30 + toFieldIndex * 24 + 12;
+          } else {
+            y1 = fromPos.y + 15;
+            y2 = toPos.y + 15;
+          }
+
+          const arrowLine = this.drawArrowLine(x1, y1, x2, y2, this.defaultLineColor, 2);
+          console.log(`Drawing line from (${x1},${y1}) to (${x2},${y2})`)
+          arrowLine.forEach(line => {
+            line.name = `line_${rel.from}_${rel.to}`;
+            line.data = {
+              from: rel.from,
+              to: rel.to,
+              isLine: true,
+              defaultColor: this.defaultLineColor,
+              activeColor: this.activeLineColor
+            };
+            line.z = 20; // 确保连线在较高层级
+            this.currentLines.push(line);
+            this.currentGraphicElements.push(line);
+          });
+        } catch (error) {
+          console.error(`Error processing relation ${JSON.stringify(rel)}:`, error);
         }
-
-        if (this.isFieldLevel) {
-          const fromTableData = this.tableData.find(t => t.tableName === fromTable);
-          const toTableData = this.tableData.find(t => t.tableName === toTable);
-          const fromField = rel.from.split('.')[1];
-          const toField = rel.to.split('.')[1];
-
-          const fromFieldIndex = fromTableData.fields.indexOf(fromField);
-          const toFieldIndex = toTableData.fields.indexOf(toField);
-
-          y1 = fromPos.y + 30 + fromFieldIndex * 24 + 12;
-          y2 = toPos.y + 30 + toFieldIndex * 24 + 12;
-        } else {
-          y1 = fromPos.y + 15;
-          y2 = toPos.y + 15;
-        }
-
-        const arrowLine = this.drawArrowLine(x1, y1, x2, y2, this.defaultLineColor, 2);
-        arrowLine.forEach(line => {
-          line.name = `line_${rel.from}_${rel.to}`;
-          // 确保 data 是一个对象且包含必要的属性
-          line.data = {
-            from: rel.from,
-            to: rel.to,
-            isLine: true,
-            defaultColor: this.defaultLineColor,
-            activeColor: this.activeLineColor
-          };
-          this.currentLines.push(line);
-          this.currentGraphicElements.push(line);
-        });
       });
 
       const option = {
