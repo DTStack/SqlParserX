@@ -109,6 +109,8 @@ export default {
       dataSources: [], // 初始化为空数组
       fieldRelationsMap: {}, // 存储字段间的映射关系
       highlightedFields: new Set(), // 存储当前高亮的字段集合
+      // 绘制矩形宽度
+      tableWidth: 160,
       // 原有数据保持不变
       zoomLevel: 1, // 新增缩放级别
       isFullscreen: false, // 是否全屏状态
@@ -354,14 +356,13 @@ export default {
 
     calculatePositions(tables) {
       const positions = {};
-      const padding = 50;
-      const tableWidth = 140;
       const tableHeightBase = 30;
       const fieldHeight = 24;
       const containerHeight = this.$refs.chartContainer.clientHeight;
       const containerWidth = this.$refs.chartContainer.clientWidth;
 
-      const verticalSpacing = this.isFieldLevel ? 100 : 50;
+      // 表格之间间隔
+      const verticalSpacing = this.isFieldLevel ? 60 : 30;
 
       const tableHeights = {};
       tables.forEach(table => {
@@ -411,7 +412,7 @@ export default {
       // 计算目标表位置
       targetTables.forEach(table => {
         positions[table.tableName] = {
-          x: containerWidth * 0.7,
+          x: containerWidth * 0.5,
           y: currentY
         };
         currentY += tableHeights[table.tableName] + verticalSpacing;
@@ -542,6 +543,7 @@ export default {
 
       const positions = this.calculatePositions(this.tableData);
 
+      let tableWidth = this.tableWidth
       this.tableData.forEach(table => {
         const pos = positions[table.tableName];
         if (!pos) return;
@@ -553,7 +555,8 @@ export default {
           children: [
             {
               type: 'rect',
-              shape: {width: 140, height: 30},
+              // 指定矩形的长宽
+              shape: {width: tableWidth, height: 30},
               style: {fill: '#409EFF'},
               name: table.tableName,
               data: {isTable: true, tableName: table.tableName}
@@ -576,7 +579,7 @@ export default {
             const fieldFullName = `${table.tableName}.${field}`;
             tableGroup.children.push({
               type: 'rect',
-              shape: {width: 140, height: 24},
+              shape: {width: tableWidth, height: 24},
               style: {
                 fill: this.highlightedFields.has(fieldFullName) ? '#e6f7ff' : '#fff',
                 stroke: '#ccc'
@@ -628,11 +631,11 @@ export default {
           let x1, y1, x2, y2;
 
           if (fromPos.x < toPos.x) {
-            x1 = fromPos.x + 140;
+            x1 = fromPos.x + tableWidth;
             x2 = toPos.x;
           } else {
             x1 = fromPos.x;
-            x2 = toPos.x + 140;
+            x2 = toPos.x + tableWidth;
           }
 
           if (this.isFieldLevel) {
