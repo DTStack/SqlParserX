@@ -26,6 +26,12 @@ public class TableSourceUtilTest extends AbstractSqlParserTest {
     }
 
     @Test
+    public void test_02_parseTables() {
+        String sql = readSqlByIndex(sqlTxtName, 2);
+        System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));
+    }
+
+//    @Test
     public void test_temp_parseTables_01() {
         String sql = readSqlByIndex("TableSourceUtilTestTemp.txt", 1);
         System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));

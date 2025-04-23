@@ -11,15 +11,19 @@ import java.util.stream.Collectors;
 
 public class TableLineageVisitor extends SQLASTVisitorAdapter {
 
-    // 目标表：主体表
+    // 目标表 即 主体表
     private Table targetTable;
+    // 来源表
     private Set<String> sourceTables = new HashSet<>();
     private Set<TableRelation> relations = new HashSet<>();
-    private SelectTableSpecialLineageService selectTableSpecialLineageService;
+    private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
 
-    public TableLineageVisitor() {
-        this.selectTableSpecialLineageService = new SelectTableSpecialLineageService();
+    private void backInit() {
+        this.targetTable = null;
+        this.sourceTables = new HashSet<>();
+        this.relations = new HashSet<>();
     }
+
     /**
      * 处理create 类型sql
      * @param x druid node sql
@@ -27,6 +31,8 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLCreateTableStatement x) {
+        this.backInit();
+
         targetTable = TableSourceUtil.extractTable(x.getTableSource());
         // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
         SQLSelect select = x.getSelect();
@@ -47,28 +53,19 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLInsertStatement x) {
+        this.backInit();
+
         // 1、目标表
         targetTable = TableSourceUtil.extractTable(x.getTableSource());
         // 2、获取到主体查询的一组tables
         SQLSelect sqlSelect = x.getQuery();
         List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(sqlSelect);
         // 3、with as场景处理
-        Map<String, List<SelectTable>> tableInfoByTableMap = new HashMap<>();
         if (x.getWith() != null) {
-            SQLWithSubqueryClause with = x.getWith();
-            List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
-            if (!entries.isEmpty()) {
-                // 遍历每一组with as结构
-                for (SQLWithSubqueryClause.Entry entry : entries) {
-                    // as 的别名
-                    String aliasTableName = entry.getAlias();
-                    SQLSelect withSubquerySQLSelect = entry.getSubQuery();
-                    List<SelectTable> withSubqueryTables = selectTableSpecialLineageService.queryTablesBySqlSelect(withSubquerySQLSelect);
-                    tableInfoByTableMap.put(aliasTableName, withSubqueryTables);
-                }
-            }
+            // 3.1、构建with map
+            Map<String, List<SelectTable>> tableInfoByTableMap = selectTableSpecialLineageService.buildTableInfoByTableMap(x.getWith());
 
-            // 处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名表字段情况
+            // 3.2、处理with as场景 & 主体select字段情况 过滤掉主体中引用with as 别名表字段情况
             selectTables = matchWithAsAndSelectTables(selectTables, tableInfoByTableMap);
         }
 
@@ -76,6 +73,7 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
         addSourceTable(selectTables);
         return false;
     }
+
 
     /**
      * 添加到原始来源表
@@ -109,7 +107,7 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
                                 .collect(Collectors.joining(",")) // 将剩余的 tableName 拼接为字符串
                 ));
 
-        // 重新构建匹配select主体得到的表
+        // 重新构建匹配替换select主体引用的别名表
         List<SelectTable> newSelectTables = new ArrayList<>();
         for (SelectTable selectTable : selectTables) {
             List<String> tableGroup = new ArrayList<>();

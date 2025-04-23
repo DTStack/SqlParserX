@@ -6,7 +6,9 @@ import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.utils.TableSourceUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SelectTableSpecialLineageService {
 
@@ -110,6 +112,30 @@ public class SelectTableSpecialLineageService {
             tables.addAll(queryFromTable(right));
         }
         return tables;
+    }
+
+    /**
+     * 构建with map
+     *    key：with as别名   value：List<SelectTable>
+     * @param with SQLWithSubqueryClause
+     * @return Map<String,List<SelectTable>>
+     */
+    public Map<String, List<SelectTable>> buildTableInfoByTableMap(SQLWithSubqueryClause with) {
+        Map<String, List<SelectTable>> tableInfoByTableMap = new HashMap<>();
+        if (with != null) {
+            List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
+            if (!entries.isEmpty()) {
+                // 遍历每一组with as结构
+                for (SQLWithSubqueryClause.Entry entry : entries) {
+                    // as 的别名
+                    String aliasTableName = entry.getAlias();
+                    SQLSelect withSubquerySQLSelect = entry.getSubQuery();
+                    List<SelectTable> withSubqueryTables = this.queryTablesBySqlSelect(withSubquerySQLSelect);
+                    tableInfoByTableMap.put(aliasTableName, withSubqueryTables);
+                }
+            }
+        }
+        return tableInfoByTableMap;
     }
 
 }

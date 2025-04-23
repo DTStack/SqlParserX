@@ -21,3 +21,7 @@ select
 from table7
 union
 select * from t8
+--------------------2--------------------
+with t1 as (select * from table1), t2 as (select * from table2)
+insert into new_table
+select * from t1
