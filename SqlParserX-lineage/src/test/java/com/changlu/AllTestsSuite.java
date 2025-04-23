@@ -2,7 +2,7 @@ package com.changlu;
 
 import com.changlu.lineage.ColumnLineageAnalyzerTest.ColumnLineageTestSuite;
 import com.changlu.lineage.TableLineageAnalyzerTest.TableLineageTestSuite;
-import com.changlu.parts.TableSourceUtilTest;
+import com.changlu.parts.TableSourceUtilTest.ParseTablesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        TableSourceUtilTest.class,          // 数据源工具类单测
+        ParseTablesTest.class,          // 数据源工具类单测
         TableLineageTestSuite.class,        // 表级血缘分析测试套件
         ColumnLineageTestSuite.class       // 字段级血缘分析测试套件
 })
