@@ -1,4 +1,4 @@
-package com.changlu.lineage.utils;
+package com.changlu.utils;
 
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLExpr;
@@ -6,14 +6,13 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.sql.parser.SQLParserUtils;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.domain.Table;
+import com.changlu.lineage.table.TableLineageAnalyzer;
+import com.changlu.lineage.table.TableLineageResult;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 收集table表名 key
@@ -21,26 +20,13 @@ import java.util.Map;
 public class TableSourceUtil implements SQLASTVisitor {
 
     /**
-     * 获取到对应sqlStatement 所有的tables记录
-     * @param selectQuery selectQuery
-     * @return tables  key：alias,value：tableName
+     * 解析真实表
      */
-    public static Map<String, String> getAllTables(SQLSelectQuery selectQuery) {
-        Map<String, String> tables = new HashMap<>();
-        selectQuery.accept(new SQLASTVisitorAdapter() {
-            @Override
-            public boolean visit(SQLExprTableSource tableSource) {
-                String alias = tableSource.getAlias();
-                String tableName = extractTableName(tableSource);
-                if (alias != null) {
-                    tables.put(alias, tableName);
-                }else {
-                    tables.put(tableName, tableName);
-                }
-                return true;
-            }
-        });
-        return tables;
+    public static List<String> parseTables(String sql, DbType dbType) {
+//        TableLineageAnalyzer tableLineageAnalyzer = new TableLineageAnalyzer(dbType);
+//        TableLineageResult analyze = tableLineageAnalyzer.analyze(sql);
+//        return new ArrayList<>(tables);
+        return new ArrayList<>();
     }
 
     /**
@@ -109,19 +95,5 @@ public class TableSourceUtil implements SQLASTVisitor {
         }
         return new Table(catalog, db, tableName, null);
     }
-
-
-    public static void main(String[] args) {
-        String sql = "select * from table as tmp";
-        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.hive);
-        SQLStatement stmt = parser.parseStatement();
-        SQLSelectStatement selectStatement = (SQLSelectStatement) stmt;
-        SQLSelect select = selectStatement.getSelect();
-        SQLSelectQueryBlock queryBlock = select.getQueryBlock();
-        SQLTableSource from = queryBlock.getFrom();
-        Table table = extractTable((SQLExprTableSource) from);
-        System.out.println(table);
-    }
-
 
 }

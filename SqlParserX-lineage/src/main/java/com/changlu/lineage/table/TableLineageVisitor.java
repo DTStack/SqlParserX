@@ -1,22 +1,25 @@
 package com.changlu.lineage.table;
-import com.alibaba.druid.sql.ast.statement.SQLCreateTableStatement;
-import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
-import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
-import com.alibaba.druid.sql.ast.statement.SQLWithSubqueryClause;
+import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
-import com.changlu.lineage.core.table.TableService;
+import com.changlu.lineage.core.select.table.SelectTable;
+import com.changlu.lineage.core.select.table.SelectTableSpecialLineageService;
 import com.changlu.lineage.domain.Table;
+import com.changlu.utils.TableSourceUtil;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TableLineageVisitor extends SQLASTVisitorAdapter {
 
-    private String targetTable;
+    // 目标表：主体表
+    private Table targetTable;
     private Set<String> sourceTables = new HashSet<>();
     private Set<TableRelation> relations = new HashSet<>();
+    private SelectTableSpecialLineageService selectTableSpecialLineageService;
 
+    public TableLineageVisitor() {
+        this.selectTableSpecialLineageService = new SelectTableSpecialLineageService();
+    }
     /**
      * 处理create 类型sql
      * @param x druid node sql
@@ -24,18 +27,17 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLCreateTableStatement x) {
-        targetTable = x.getName().getSimpleName();
-        SQLExprTableSource mainTableSource = x.getTableSource();
-        // 主表
-        Table mainTable = TableService.parseTable(mainTableSource);
-        this.targetTable = mainTable.getName();
-        // 匹配到所有的表
-        List<Table> tables = TableService.parseTables(x);
-        tables.remove(mainTable);
-        for (Table table : tables) {
-            sourceTables.add(table.getName());
+        targetTable = TableSourceUtil.extractTable(x.getTableSource());
+        // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
+        SQLSelect select = x.getSelect();
+        if (select != null) {
+            SQLSelectQuery selectQuery = select.getQuery();
+            // select结构中的来源表
+            List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelectQuery(selectQuery);
+            // 添加到原始表中
+            addSourceTable(selectTables);
         }
-        return true;
+        return false;
     }
 
     /**
@@ -45,12 +47,13 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLInsertStatement x) {
-        SQLExprTableSource mainTableSource = x.getTableSource();
-        // 主表
-        Table mainTable = TableService.parseTable(mainTableSource);
-        this.targetTable = mainTable.getName();
-
-        // check是否是with as结构
+        // 1、目标表
+        targetTable = TableSourceUtil.extractTable(x.getTableSource());
+        // 2、获取到主体查询的一组tables
+        SQLSelect sqlSelect = x.getQuery();
+        List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(sqlSelect);
+        // 3、with as场景处理
+        Map<String, List<SelectTable>> tableInfoByTableMap = new HashMap<>();
         if (x.getWith() != null) {
             SQLWithSubqueryClause with = x.getWith();
             List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
@@ -59,17 +62,64 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
                 for (SQLWithSubqueryClause.Entry entry : entries) {
                     // as 的别名
                     String aliasTableName = entry.getAlias();
+                    SQLSelect withSubquerySQLSelect = entry.getSubQuery();
+                    List<SelectTable> withSubqueryTables = selectTableSpecialLineageService.queryTablesBySqlSelect(withSubquerySQLSelect);
+                    tableInfoByTableMap.put(aliasTableName, withSubqueryTables);
                 }
             }
+
+            // 处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名表字段情况
+            selectTables = matchWithAsAndSelectTables(selectTables, tableInfoByTableMap);
         }
 
-        // 匹配到所有的表
-        List<Table> tables = TableService.parseTables(x);
-        tables.remove(mainTable);
-        for (Table table : tables) {
-            sourceTables.add(table.getName());
+        // 添加到原始表中
+        addSourceTable(selectTables);
+        return false;
+    }
+
+    /**
+     * 添加到原始来源表
+     */
+    public void addSourceTable(List<SelectTable> selectTables) {
+        for (SelectTable selectTable : selectTables) {
+            String[] sourceTableArr = selectTable.getTableInfo().split(",");
+            Collections.addAll(this.sourceTables, sourceTableArr);
         }
-        return true;
+    }
+
+    /**
+     * with as 场景处理：当前只考虑完成selectTables中具有的别名替换
+     *  注意：这块逻辑表血缘 与 表解析有一些小区别（表解析应当将with as中的所有表字段全部解析拿到的）
+     */
+    private List<SelectTable> matchWithAsAndSelectTables(List<SelectTable> selectTables, Map<String, List<SelectTable>> tableInfoByTableMap) {
+        /**
+         * filter逻辑：针对with as递归cte场景单独处理
+         * t5 -> [{tableInfo:"t5, table1"}, {tableInfo:"table2"}]
+         *      => 只过滤得到最终为
+         *      t5->table1,table2
+         */
+        Map<String, String> aliasNameBySourceTables = tableInfoByTableMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(SelectTable::getTableInfo) // 获取每个 TableInfo
+                                .flatMap(tableInfo -> Arrays.stream(tableInfo.split(","))) // 将每个 TableInfo 按逗号分割为多个 tableName
+                                .map(String::trim) // 去除多余的空格
+                                .filter(tableName -> !tableName.equals(entry.getKey())) // 过滤掉与 entryKey 相同的 tableName
+                                .collect(Collectors.joining(",")) // 将剩余的 tableName 拼接为字符串
+                ));
+
+        // 重新构建匹配select主体得到的表
+        List<SelectTable> newSelectTables = new ArrayList<>();
+        for (SelectTable selectTable : selectTables) {
+            List<String> tableGroup = new ArrayList<>();
+            String[] selectTableArr = selectTable.getTableInfo().split(",");
+            for (String tableName : selectTableArr) {
+                tableGroup.add(aliasNameBySourceTables.getOrDefault(tableName, tableName));
+            }
+            newSelectTables.add(new SelectTable(String.join(",", tableGroup), selectTable.getAliasName()));
+        }
+        return newSelectTables;
     }
 
     /**
@@ -80,10 +130,10 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
         // 初始化血缘解析结果
         if (!sourceTables.isEmpty()) {
             for (String sourceTable : sourceTables) {
-                relations.add(new TableRelation(sourceTable, targetTable));
+                relations.add(new TableRelation(sourceTable, Table.TableTransfer.transfer(targetTable)));
             }
         }
-        return new TableLineageResult(targetTable, sourceTables, relations);
+        return new TableLineageResult(Table.TableTransfer.transfer(targetTable), sourceTables, relations);
     }
 
 }
