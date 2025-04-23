@@ -5,7 +5,6 @@ import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
-import com.changlu.lineage.core.table.TableService;
 import com.changlu.lineage.domain.Table;
 import org.junit.Test;
 
@@ -52,23 +51,11 @@ public class TmpDruidTest {
 
 
     @Test
-    public void tempTest_02() {
-        String sql = "WITH t1 AS (\n" +
-                "SELECT id, name, age\n" +
-                "FROM digua_ceshi.demo_table_digua\n" +
-                "), \n" +
-                "t2 AS (\n" +
-                "SELECT tt1.id, tt2.name\n" +
-                "FROM t1 tt1\n" +
-                "JOIN digua_ceshi.demo_table_digua tt2 ON tt1.id = tt2.id\n" +
-                ")\n" +
-                "SELECT *\n" +
-                "FROM t1 tt1\n" +
-                "JOIN t2 tt2 ON tt1.id = tt2.id";;
-        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.oracle);
-        SQLSelectStatement stmt = (SQLSelectStatement) parser.parseStatement();
-        List<Table> tables = TableService.parseTables(stmt);
-        System.out.println(stmt);
+    public void tempTest_02_starrocks() {
+        String sql = "insert into ods.t_dtinsight_test values(6, '1' ,1,1.1,'2022-02-02 00:00:00');\n";
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.starrocks);
+        SQLStatement sqlStatement = parser.parseStatement();
+        System.out.println(sqlStatement);
     }
 
     @Test

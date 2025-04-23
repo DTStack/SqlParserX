@@ -6,13 +6,12 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
-import com.changlu.lineage.config.Constant;
+import com.changlu.config.Constant;
 import com.changlu.lineage.core.select.column.SelectColumn;
 import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
-import com.changlu.lineage.domain.Pair;
 import com.changlu.lineage.domain.Table;
-import com.changlu.lineage.utils.TableSourceUtil;
+import com.changlu.utils.TableSourceUtil;
 
 import java.util.*;
 
@@ -112,7 +111,7 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
         }
 
         // 4、若是没有指定insert的字段，那么此时targetColumns为空，此时需要从主体select中获取字段信息
-        if (insertTableColumns.isEmpty() && targetColumns.isEmpty()) {
+        if (insertTableColumns.isEmpty() || targetColumns.isEmpty()) {
             targetColumns = queryTargetTableColumns(selectColumns, targetTable);
         }
 

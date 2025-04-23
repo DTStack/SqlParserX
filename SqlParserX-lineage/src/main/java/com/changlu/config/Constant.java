@@ -1,4 +1,4 @@
-package com.changlu.lineage.config;
+package com.changlu.config;
 
 public class Constant {
 

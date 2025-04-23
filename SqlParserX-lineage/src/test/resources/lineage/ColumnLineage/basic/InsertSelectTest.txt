@@ -1,0 +1,31 @@
+--------------------1--------------------
+insert
+  OVERWRITE table dws_jyjs0504
+select
+  b.gh as gh,
+  b.xm as xm,
+  b.dqszdwmc as dqszdwmc,
+  b.zdxsjsjlmc as zdxsjsjlmc
+FROM
+  (
+    SELECT
+      *
+    FROM
+      dwd_jszt_jyjs0504
+    where
+      dt = '${bdp.system.bizdate}'
+  ) as b
+--------------------2--------------------
+insert
+  OVERWRITE table dws_jyjs0504
+select
+  *
+FROM
+  (
+    SELECT
+      gh,xm,dqszdwmc,zdxsjsjlmc
+    FROM
+      dwd_jszt_jyjs0504
+    where
+      dt = '${bdp.system.bizdate}'
+  ) as b

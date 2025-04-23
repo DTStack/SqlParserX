@@ -1,0 +1,609 @@
+--------------------1--------------------
+INSERT INTO
+  metadata_poc.RM_CUST_REASON_INFO partition (stat_dt)
+SELECT
+  T1.prdt_name,
+  T1.applyid,
+  to_char(T1.apply_dt, 'yyyy-mm-dd') as apply_dt,
+  T1.service_type,
+  T1.result,
+  T2.rulesetname AS rulesetname,
+  T1.rulecode,
+  T1.ruledesc,
+  T1.reasoncode,
+  T1.level1desc,
+  T1.level2desc,
+  T1.prdt_no,
+  replace(t1.spreader_type, 'NA', ''),
+  replace(t1.channel_cd, 'NA', ''),
+  '${v_acct_date}' AS stat_dt
+from
+  (
+    SELECT
+      t.id,
+      t.idno,
+      b1.level1Desc,
+      b2.level2desc,
+      b3.reasoncode,
+      b4.rulecode,
+      b5.ruleDesc,
+      t.service_type,
+      t.result,
+      t.orgreqno as applyid,
+      t.szrreceivetime as apply_dt,
+      t.procode as prdt_no,
+      t.proname as prdt_name,
+      t.spreader_type,
+      t.channel_cd
+    FROM
+      (
+        select
+          *
+        from
+          (
+            select
+              id,
+              REPLACE(
+                get_json_object(
+                  outputjson,
+                  '$.body.decisionResult.ruleDecisions.level1Desc'
+                ),
+                '\",\"',
+                ','
+              ) as reason,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.decisionResult.ruleDecisions.level1Desc'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as level1Desc,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.decisionResult.ruleDecisions.level2Desc'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as level2desc,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.decisionResult.ruleDecisions.reasonCode'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as reasoncode,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.decisionResult.ruleDecisions.ruleCode'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as rulecode,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.decisionResult.ruleDecisions.ruleDesc'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as ruleDesc,
+              idno,
+              orgreqno,
+              szrreceivetime,
+              procode,
+              service_type,
+              result,
+              proname,
+              REPLACE(
+                xpath_string(
+                  get_json_object(outputjson, '$.blazeOutputXml'),
+                  '//T01_Cust_Info/@spreader_type'
+                ),
+                'NA',
+                ''
+              ) as SPREADER_TYPE,
+              REPLACE(
+                xpath_string(
+                  get_json_object(outputjson, '$.blazeOutputXml'),
+                  '//T01_Cust_Info/@channel_cd'
+                ),
+                'NA',
+                ''
+              ) as CHANNEL_CD
+            from
+              (
+                select
+                  t.id,
+                  t.outputjson,
+                  t.idno,
+                  t.orgreqno,
+                  szrreceivetime,
+                  procode,
+                  service_type,
+                  result,
+                  proname,
+                  begndt,
+                  row_number() OVER(
+                    PARTITION BY orgreqno
+                    ORDER BY
+                      id DESC
+                  ) as RN
+                from
+                  omi1.rc_transinfo_hs T
+                where
+                  trunc(SZRRECEIVETIME) = date('${v_acct_date}', 'yyyy-mm-dd')
+                  AND begndt <= '${v_acct_date}'
+                  AND overdt > '${v_acct_date}'
+                  AND substr(procode, 1, 2) = 'LN'
+              ) t1
+            where
+              RN = 1
+          )
+        where
+          reason is not null
+        union all
+        select
+          *
+        from
+          (
+            select
+              id,
+              REPLACE(
+                get_json_object(
+                  outputjson,
+                  '$.body.decisionResult.ruleDecisions.level1Desc'
+                ),
+                '\",\"',
+                ','
+              ) as reason,
+              '' as level1Desc,
+              '' as level2desc,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.blazeDecisionResult.RuleDecision.RuleCode'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as reasoncode,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.blazeDecisionResult.RuleDecision.RuleReasonCode'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as rulecode,
+              REPLACE(
+                REPLACE(
+                  REPLACE(
+                    get_json_object(
+                      outputjson,
+                      '$.body.blazeDecisionResult.RuleDecision.RuleName'
+                    ),
+                    '\",\"',
+                    ','
+                  ),
+                  '[\"',
+                  ''
+                ),
+                '\"]',
+                ''
+              ) as ruleDesc,
+              idno,
+              orgreqno,
+              szrreceivetime,
+              procode,
+              service_type,
+              result,
+              proname,
+              REPLACE(
+                xpath_string(
+                  get_json_object(outputjson, '$.blazeOutputXml'),
+                  '//T01_Cust_Info/@spreader_type'
+                ),
+                'NA',
+                ''
+              ) as SPREADER_TYPE,
+              REPLACE(
+                xpath_string(
+                  get_json_object(outputjson, '$.blazeOutputXml'),
+                  '//T01_Cust_Info/@channel_cd'
+                ),
+                'NA',
+                ''
+              ) as CHANNEL_CD
+            from
+              (
+                select
+                  t.id,
+                  t.outputjson,
+                  t.idno,
+                  t.orgreqno,
+                  szrreceivetime,
+                  procode,
+                  service_type,
+                  result,
+                  proname,
+                  begndt,
+                  overdt,
+                  row_number() OVER(
+                    PARTITION BY orgreqno
+                    ORDER BY
+                      id DESC
+                  ) as RN
+                from
+                  omi1.rc_transinfo_hs T
+                where
+                  trunc(SZRRECEIVETIME) = date('${v_acct_date}', 'yyyy-mm-dd')
+                  AND begndt <= '${v_acct_date}'
+                  AND overdt > '${v_acct_date}'
+                  AND substr(procode, 1, 2) = 'LN'
+              ) t1
+            where
+              RN = 1
+          )
+        where
+          reason is null
+      ) t LATERAL VIEW posexplode(split(level1Desc, ',')) b1 AS a,
+      level1Desc LATERAL VIEW posexplode(split(level2desc, ',')) b2 AS b,
+      level2desc LATERAL VIEW posexplode(split(reasoncode, ',')) b3 AS c,
+      reasoncode LATERAL VIEW posexplode(split(rulecode, ',')) b4 AS d,
+      rulecode LATERAL VIEW posexplode(split(ruleDesc, ',')) b5 AS e,
+      ruleDesc
+    WHERE
+      a = b
+      AND b = c
+      and c = d
+      and d = e
+  ) T1
+  LEFT JOIN (
+    SELECT
+      DISTINCT RULECODE,
+      RULESETNAME
+    FROM
+      omi1.rc_ruledecision_hs
+    WHERE
+      begndt <= '${v_acct_date}'
+      AND overdt > '${v_acct_date}'
+  ) T2 ON T1.reasoncode = T2.RULECODE
+  LEFT JOIN (
+    SELECT
+      outter_applyid
+    FROM
+      omi1.rc_ruledecision_hs
+    WHERE
+      begndt <= '${v_acct_date}'
+      AND overdt > '${v_acct_date}'
+      and substr(id, 7, 8) = '${v_acct_date}'
+  ) T3 ON T1.applyid = T3.outter_applyid
+WHERE
+  T3.outter_applyid IS NULL
+union all
+select
+  prdt_name,
+  applyid,
+  date(apply_dt, 'yyyy-mm-dd') as apply_dt,
+  service_type,
+  result,
+  t2.rulesetname as rulesetname,
+  t1.rulecode,
+  t1.ruledesc as ruledesc,
+  t.reasoncode,
+  '' as level1desc,
+  t1.level2desc as level2desc,
+  prdt_no,
+  REPLACE(
+    xpath_string(
+      get_json_object(t3.outputjson, '$.blazeOutputXml'),
+      '//T01_Cust_Info/@spreader_type'
+    ),
+    'NA',
+    ''
+  ) as SPREADER_TYPE,
+  REPLACE(
+    xpath_string(
+      get_json_object(t3.outputjson, '$.blazeOutputXml'),
+      '//T01_Cust_Info/@channel_cd'
+    ),
+    'NA',
+    ''
+  ) as CHANNEL_CD,
+  '${v_acct_date}'
+from
+  (
+    select
+      prdt_no,
+      prdt_name,
+      applyid,
+      apply_dt,
+      result,
+      reasoncode,
+      service_type
+    from
+      (
+        select
+          r.product_id as prdt_no,case
+            when p.productname is null then l.prdt_name
+            else p.productname
+          end as prdt_name,
+          outter_applyid as applyid,
+          replace(output_rulecode, '||', ',') as output_rulecode,
+          substr(id, 7, 8) as apply_dt,
+          out_decision_result as result,
+          r.service_type,
+          rank() over (
+            partition by r.outter_applyid
+            order by
+              r.id desc
+          ) rnum
+        from
+          (
+            select
+              product_id,
+              id,
+              output_rulecode,
+              out_decision_result,
+              service_type,
+              outter_applyid
+            from
+              omi1.rc_rds_blz_oup_usrdef091_hs
+            where
+              begndt <= '${v_acct_date}'
+              and overdt > '${v_acct_date}'
+              and substr(id, 7, 8) = '${v_acct_date}'
+          ) r
+          left join (
+            select
+              productname,case
+                when productid = 'PRD101001' then 'ILN001'
+                else productid
+              end as productid
+            from
+              omi1.nc_product_library_hs
+            where
+              overdt = '2099-12-31'
+          ) p on r.product_id = p.productid
+          left join (
+            select
+              prdt_name,
+              prdt_no
+            from
+              omi1.ib_prdt_base_info_hs
+            where
+              begndt <= '${v_acct_date}'
+              and overdt > '${v_acct_date}'
+          ) l on r.product_id = l.prdt_no
+        where
+          r.OUT_DECISION_RESULT = '1'
+          and substr(r.id, 7, 8) <= '${v_acct_date}'
+      ) LATERAL VIEW explode(split(output_rulecode, ',')) b1 AS reasoncode
+    where
+      rnum = 1
+  ) t
+  left join (
+    select
+      reasoncode,
+      rulecode,
+      ruledesc,
+      level2desc
+    from
+      metadata_poc.cq_rpt_reason_rulecode
+  ) t1 on t.reasoncode = t1.reasoncode
+  LEFT JOIN (
+    SELECT
+      DISTINCT RULECODE,
+      RULESETNAME
+    FROM
+      omi1.rc_ruledecision_hs
+    WHERE
+      begndt <= '${v_acct_date}'
+      AND overdt > '${v_acct_date}'
+  ) T2 ON T1.reasoncode = T2.RULECODE
+  left join (
+    select
+      t.outputjson,
+      t.orgreqno,
+      row_number() OVER(
+        PARTITION BY orgreqno
+        ORDER BY
+          id DESC
+      ) as RN
+    from
+      omi1.rc_transinfo_hs T
+    where
+      trunc(SZRRECEIVETIME) = date('${v_acct_date}', 'yyyy-mm-dd')
+      AND begndt <= '${v_acct_date}'
+      AND overdt > '${v_acct_date}'
+  ) t3 on t.applyid = t3.orgreqno
+  and t3.RN = 1
+union all
+select
+  prdt_name,
+  applyid,
+  date(apply_dt, 'yyyy-mm-dd') as apply_dt,
+  service_type,
+  result,
+  t.rulesetname,
+  t.rulecode,
+  t1.ruledesc as ruledesc,
+  t.reasoncode,
+  '' as level1desc,
+  t1.level2desc as level2desc,
+  prdt_no,
+  REPLACE(
+    xpath_string(
+      get_json_object(t2.outputjson, '$.blazeOutputXml'),
+      '//T01_Cust_Info/@spreader_type'
+    ),
+    'NA',
+    ''
+  ) as SPREADER_TYPE,
+  REPLACE(
+    xpath_string(
+      get_json_object(t2.outputjson, '$.blazeOutputXml'),
+      '//T01_Cust_Info/@channel_cd'
+    ),
+    'NA',
+    ''
+  ) as CHANNEL_CD,
+  '${v_acct_date}'
+from
+  (
+    select
+      prdt_no,
+      prdt_name,
+      applyid,
+      apply_dt,
+      result,
+      rulecode,
+      reasoncode,
+      service_type,
+      rulesetname
+    from
+      (
+        select
+          r.product_id as prdt_no,case
+            when p.productname is null then l.prdt_name
+            else p.productname
+          end as prdt_name,
+          outter_applyid as applyid,
+          rulecode as reasoncode,
+          rulereasoncode as rulecode,
+          substr(id, 7, 8) as apply_dt,
+          ruledecisionresult as result,
+          r.service_type,
+          rulesetname
+        from
+          (
+            select
+              id,
+              product_id,case
+                when product_id = 'ILN062'
+                and split(outter_applyid, '_') [0] = 'CH062'
+                and split(outter_applyid, '_') [2] <> 'C2' then split(outter_applyid, '_') [1]
+                else outter_applyid
+              end as outter_applyid,
+              rulecode,
+              rulereasoncode,
+              ruledecisionresult,
+              service_type,
+              rulesetname
+            from
+              omi1.rc_ruledecision_hs
+            where
+              begndt <= '${v_acct_date}'
+              and overdt > '${v_acct_date}'
+              and substr(id, 7, 8) = '${v_acct_date}'
+          ) r
+          left join (
+            select
+              productname,case
+                when productid = 'PRD101001' then 'ILN001'
+                else productid
+              end as productid
+            from
+              omi1.nc_product_library_hs
+            where
+              overdt = '2099-12-31'
+          ) p on r.product_id = p.productid
+          left join (
+            select
+              prdt_name,
+              prdt_no
+            from
+              omi1.ib_prdt_base_info_hs
+            where
+              begndt <= '${v_acct_date}'
+              and overdt > '${v_acct_date}'
+          ) l on r.product_id = l.prdt_no
+        where
+          substr(r.id, 7, 8) <= '${v_acct_date}'
+      )
+  ) t
+  left join (
+    select
+      reasoncode,
+      rulecode,
+      ruledesc,
+      level2desc
+    from
+      metadata_poc.cq_rpt_reason_rulecode
+  ) t1 on t.reasoncode = t1.reasoncode
+  left join (
+    select
+      t.outputjson,
+      t.orgreqno,
+      row_number() OVER(
+        PARTITION BY orgreqno
+        ORDER BY
+          id DESC
+      ) as RN
+    from
+      omi1.rc_transinfo_hs T
+    where
+      trunc(SZRRECEIVETIME) = date('${v_acct_date}', 'yyyy-mm-dd')
+      AND begndt <= '${v_acct_date}'
+      AND overdt > '${v_acct_date}'
+  ) t2 on t.applyid = t2.orgreqno
+  and t2.RN = 1

@@ -1,4 +1,4 @@
-package com.changlu.lineage.utils;
+package com.changlu.utils;
 
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;

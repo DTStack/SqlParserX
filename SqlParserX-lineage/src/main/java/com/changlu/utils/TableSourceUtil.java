@@ -6,11 +6,14 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.domain.Table;
 import com.changlu.lineage.table.TableLineageAnalyzer;
 import com.changlu.lineage.table.TableLineageResult;
+import com.changlu.visitor.ParseTableVisitor;
 
 import java.util.*;
 
@@ -23,10 +26,11 @@ public class TableSourceUtil implements SQLASTVisitor {
      * 解析真实表
      */
     public static List<String> parseTables(String sql, DbType dbType) {
-//        TableLineageAnalyzer tableLineageAnalyzer = new TableLineageAnalyzer(dbType);
-//        TableLineageResult analyze = tableLineageAnalyzer.analyze(sql);
-//        return new ArrayList<>(tables);
-        return new ArrayList<>();
+        ParseTableVisitor parseTableVisitor = new ParseTableVisitor(dbType);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
+        SQLStatement stmt = parser.parseStatement();
+        stmt.accept(parseTableVisitor);
+        return new ArrayList<>(parseTableVisitor.getSourceTables());
     }
 
     /**

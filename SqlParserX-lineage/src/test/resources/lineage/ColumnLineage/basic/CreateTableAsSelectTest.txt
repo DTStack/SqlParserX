@@ -1,0 +1,26 @@
+--------------------1--------------------
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    age INT,
+    gender ENUM('Male', 'Female')
+);
+--------------------2--------------------
+CREATE TABLE new_table AS select default_catalog.changluya_db.orders2.order_id2 from default_catalog.changluya_db.orders
+--------------------3--------------------
+CREATE TABLE new_table AS SELECT id, name FROM source_table as st
+--------------------4--------------------
+CREATE TABLE user_order_summary AS
+SELECT
+    u.id as user_id,
+    u.name,
+    SUM(o.amount) as total_amount,
+    COUNT(o.id) as order_count
+FROM users u JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name
+--------------------5--------------------
+CREATE TABLE new_table AS
+-- 理解为 table2.col1、table2.col2
+select col3, col4 from (
+    select col1 as col3, col2 as col4, col5 from table2
+)as table3

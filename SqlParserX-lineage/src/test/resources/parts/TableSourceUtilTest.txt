@@ -1,0 +1,23 @@
+--------------------1--------------------
+with t8 as (
+    select * from table8
+)
+insert into new_table
+select * from table1 as t1
+  left join (
+    select * from table3 as tt3 left join table4 as tt4 on tt3.id = tt4.id
+    union
+    select * from table2
+  ) as t34 on t1.id = t34.id
+union
+select * from table1
+union
+select * from table4 as t4
+union
+select
+  id,
+  (SELECT MAX(col1) FROM table5 as t5) AS col2,
+  (SELECT COUNT(*) FROM table6 as t6 WHERE t6.age > 10) AS col3
+from table7
+union
+select * from t8

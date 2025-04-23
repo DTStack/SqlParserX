@@ -1,0 +1,217 @@
+--------------------1--------------------
+with t8 as (
+    select * from table8
+)
+insert into new_table
+select * from table1 as t1
+  left join (
+    select * from table3 as tt3 left join table4 as tt4 on tt3.id = tt4.id
+    union
+    select * from table2
+  ) as t34 on t1.id = t34.id
+union
+select * from table1
+union
+select * from table4 as t4
+union
+select
+  id,
+  (SELECT MAX(col1) FROM table5 as t5) AS col2,
+  (SELECT COUNT(*) FROM table6 as t6 WHERE t6.age > 10) AS col3
+from table7
+union
+select * from t8
+--------------------2--------------------
+-- 完整查询（包含WITH AS、JOIN、子查询、UNION等）
+WITH
+-- 第一个AS：简单SELECT
+t1 AS (
+    SELECT id, name, age
+    FROM digua_ceshi.demo_table_digua
+),
+
+-- 第二个AS：SELECT FROM (SELECT) 嵌套形式
+t2 AS (
+    SELECT sub.id, sub.name
+    FROM (
+        SELECT id, name
+        FROM digua_ceshi.demo_table_digua
+        WHERE id IS NOT NULL
+    ) AS sub
+),
+
+-- 第三个AS：UNION查询（使用新的表）
+t3 AS (
+    SELECT id, name, age
+    FROM digua_ceshi.new_table
+    WHERE age > 18
+    UNION
+    SELECT id, name, age
+    FROM digua_ceshi.new_table
+    WHERE age IS NULL
+    UNION
+    SELECT id, name, age
+    FROM digua_ceshi.new_table2
+    WHERE age IS NULL
+),
+
+-- 第四个AS：LEFT JOIN查询（使用新的表）
+t4 AS (
+    SELECT t.id, t.name, nt.age AS new_table_age
+    FROM digua_ceshi.demo_table_digua t
+    LEFT JOIN digua_ceshi.new_table nt ON t.id = nt.id
+),
+
+-- 第五个AS：递归CTE（使用新的表）
+t5 AS (
+    -- 递归CTE的初始查询
+    SELECT id, name, manager_id, level
+    FROM digua_ceshi.hierarchy_table
+    WHERE manager_id IS NULL  -- 假设顶级节点的manager_id为NULL
+
+    UNION ALL
+
+    -- 递归部分
+    SELECT h.id, h.name, h.manager_id, t5.level + 1
+    FROM digua_ceshi.hierarchy_table h
+    INNER JOIN t5 ON h.manager_id = t5.id
+)
+
+-- 最终主查询（包含所有JOIN、子查询、UNION操作）
+INSERT INTO digua_ceshi.result_table
+SELECT
+    t1.*,
+    t2.name AS t2_name,
+    t3.name AS t3_name,
+    t4.new_table_age AS t4_age,
+    t5.level AS t5_level, -- 添加递归CTE中的层级字段
+    -- 添加与真实表的JOIN
+    dt.department,
+    -- 添加子查询示例
+    (SELECT COUNT(*) FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count
+FROM t1
+JOIN t2 ON t1.id = t2.id
+LEFT JOIN t3 ON t1.id = t3.id
+LEFT JOIN t4 ON t1.id = t4.id
+LEFT JOIN t5 ON t1.id = t5.id
+-- 添加与真实表的JOIN
+JOIN digua_ceshi.departments dt ON t1.id = dt.employee_id
+-- 添加UNION示例
+WHERE t1.age > 20
+
+UNION ALL
+
+SELECT
+    t1.*,
+    t2.name AS t2_name,
+    t3.name AS t3_name,
+    t4.new_table_age AS t4_age,
+    t5.level AS t5_level, -- 添加递归CTE中的层级字段
+    dt.department,
+    0 AS older_count  -- 默认值
+FROM t1
+JOIN t2 ON t1.id = t2.id
+LEFT JOIN t3 ON t1.id = t3.id
+LEFT JOIN t4 ON t1.id = t4.id
+LEFT JOIN t5 ON t1.id = t5.id
+JOIN digua_ceshi.departments dt ON t1.id = dt.employee_id
+WHERE t1.age <= 20;
+--------------------3--------------------
+-- 完整查询（包含WITH AS、JOIN、子查询、UNION等）
+WITH
+-- 第一个AS：简单SELECT
+t1 AS (
+    SELECT id, name, age
+    FROM digua_ceshi.demo_table_digua
+),
+
+-- 第二个AS：SELECT FROM (SELECT) 嵌套形式
+t2 AS (
+    SELECT sub.id, sub.name
+    FROM (
+        SELECT id, name
+        FROM digua_ceshi.demo_table_digua
+        WHERE id IS NOT NULL
+    ) AS sub
+),
+
+-- 第三个AS：UNION查询（使用新的表）
+t3 AS (
+    SELECT id, name, age
+    FROM digua_ceshi.new_table
+    WHERE age > 18
+    UNION
+    SELECT id, name, age
+    FROM digua_ceshi.new_table
+    WHERE age IS NULL
+    UNION
+    SELECT id, name, age
+    FROM digua_ceshi.new_table2
+    WHERE age IS NULL
+),
+
+-- 第四个AS：LEFT JOIN查询（使用新的表）
+t4 AS (
+    SELECT t.id, t.name, nt.age AS new_table_age
+    FROM digua_ceshi.demo_table_digua t
+    LEFT JOIN digua_ceshi.new_table nt ON t.id = nt.id
+),
+
+-- 第五个AS：递归CTE（使用新的表）
+t5 AS (
+    -- 递归CTE的初始查询
+    SELECT id, name, manager_id, level
+    FROM digua_ceshi.hierarchy_table
+    WHERE manager_id IS NULL  -- 假设顶级节点的manager_id为NULL
+
+    UNION ALL
+
+    -- 递归部分
+    SELECT h.id, h.name, h.manager_id, t5.level + 1
+    FROM digua_ceshi.hierarchy_table h
+    INNER JOIN t5 ON h.manager_id = t5.id
+)
+
+-- 最终主查询（包含所有JOIN、子查询、UNION操作）
+INSERT INTO digua_ceshi.result_table (
+    t1_col1, t1_col2, t1_col3,
+    t2_name, t3_name, t4_age,
+    t5_level, department, older_count
+)
+SELECT
+    t1.*,
+    t2.name AS t2_name,
+    t3.name AS t3_name,
+    t4.new_table_age AS t4_age,
+    t5.level AS t5_level, -- 添加递归CTE中的层级字段
+    -- 添加与真实表的JOIN
+    dt.department,
+    -- 添加子查询示例
+    (SELECT COUNT(*) FROM digua_ceshi.demo_table_digua WHERE age > t1.age) AS older_count
+FROM t1
+JOIN t2 ON t1.id = t2.id
+LEFT JOIN t3 ON t1.id = t3.id
+LEFT JOIN t4 ON t1.id = t4.id
+LEFT JOIN t5 ON t1.id = t5.id
+-- 添加与真实表的JOIN
+JOIN digua_ceshi.departments dt ON t1.id = dt.employee_id
+-- 添加UNION示例
+WHERE t1.age > 20
+
+UNION ALL
+
+SELECT
+    t1.*,
+    t2.name AS t2_name,
+    t3.name AS t3_name,
+    t4.new_table_age AS t4_age,
+    t5.level AS t5_level, -- 添加递归CTE中的层级字段
+    dt.department,
+    0 AS older_count  -- 默认值
+FROM t1
+JOIN t2 ON t1.id = t2.id
+LEFT JOIN t3 ON t1.id = t3.id
+LEFT JOIN t4 ON t1.id = t4.id
+LEFT JOIN t5 ON t1.id = t5.id
+JOIN digua_ceshi.departments dt ON t1.id = dt.employee_id
+WHERE t1.age <= 20;
