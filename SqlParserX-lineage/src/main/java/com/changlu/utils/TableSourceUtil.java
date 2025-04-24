@@ -9,7 +9,7 @@ import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
-import com.changlu.lineage.domain.Table;
+import com.changlu.lineage.table.Table;
 import com.changlu.visitor.ParseTableVisitor;
 
 import java.util.*;

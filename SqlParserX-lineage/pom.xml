@@ -34,4 +34,63 @@
         </dependency>
     </dependencies>
 
+    <!--   自动格式化代码强制工具  -->
+    <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>2.22.8</version>
+        <configuration>
+            <java>
+                <!-- 配置格式化规则
+                    不建议GOOGLE：默认缩进两格，AOSP是四格
+                 -->
+                <googleJavaFormat>
+                    <version>1.7</version>
+                    <style>AOSP</style>
+                </googleJavaFormat>
+                <!-- license顶部声明 -->
+                <!--                        <licenseHeader>-->
+                <!--                            <content>/* (C)$YEAR */</content>-->
+                <!--                        </licenseHeader>-->
+                <!--  移除未使用的引用import  -->
+                <removeUnusedImports />
+                <!--  import 导入的顺序 空白（,,）：表示多加一个空行。
+                      默认是都带上一个空行的，这里是为了区分自己模块代码和其他引用模块代码
+                  -->
+                <importOrder>
+                    <order>com.changlu,,javax,java,scala,\#</order>
+                </importOrder>
+            </java>
+            <!--   单独针对pom.xml来进行格式化，指定缩进的空格数，这里是 4。这意味着 POM 文件中的每个缩进级别将使用 4 个空格。  -->
+            <pom>
+                <includes>
+                    <include>pom.xml</include>
+                </includes>
+                <sortPom>
+                    <nrOfIndentSpace>4</nrOfIndentSpace>
+                </sortPom>
+            </pom>
+        </configuration>
+        <!--   定义插件的执行配置
+            <executions> ：配置插件的执行方式和时机
+            定义了插件在 Maven 生命周期的哪个阶段（phase）执行哪些目标（goals）
+         -->
+        <executions>
+            <execution>
+                <!--   定义操作的唯一标识   -->
+                <id>format</id>
+                <goals>
+                    <!--  执行应用代码格式化规则，根据<configuration> 中定义的规则去进行格式化
+                                        这里我们注释掉，打包项目的时候并不直接进行代码格式化，而是需要用户自己去主动格式化
+                                        -->
+                    <!--                <goal>apply</goal>-->
+                    <!--  代码格式化检查：如果代码不符合规则，Spotless 插件会抛出构建错误，确保代码风格一致   -->
+                    <goal>check</goal>
+                </goals>
+                <!--  Maven 的生命周期阶段之一：在 compile 阶段之前执行，用于处理源代码   -->
+                <phase>process-sources</phase>
+            </execution>
+        </executions>
+    </plugin>
+
 </project>

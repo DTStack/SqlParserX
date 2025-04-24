@@ -1,7 +1,6 @@
 package com.changlu.lineage.core.select.column;
 
 import com.changlu.enums.ColumnTypeEnum;
-import com.changlu.lineage.domain.Table;
 
 import java.util.Objects;
 

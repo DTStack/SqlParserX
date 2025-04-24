@@ -7,8 +7,8 @@ import com.changlu.enums.ColumnTypeEnum;
 import com.changlu.enums.TableNameMatchStrategy;
 import com.changlu.lineage.column.Column;
 import com.changlu.config.Constant;
-import com.changlu.lineage.domain.Pair;
-import com.changlu.lineage.domain.Table;
+import com.changlu.domain.Pair;
+import com.changlu.lineage.table.Table;
 import com.changlu.utils.TableSourceUtil;
 
 import java.util.*;

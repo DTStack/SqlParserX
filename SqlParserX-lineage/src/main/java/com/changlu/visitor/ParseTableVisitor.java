@@ -4,7 +4,7 @@ import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.core.select.table.SelectTable;
 import com.changlu.lineage.core.select.table.SelectTableSpecialLineageService;
-import com.changlu.lineage.domain.Table;
+import com.changlu.lineage.table.Table;
 import com.changlu.lineage.table.TableLineageResult;
 import com.changlu.lineage.table.TableLineageVisitor;
 import com.changlu.utils.TableSourceUtil;

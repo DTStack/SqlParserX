@@ -10,7 +10,7 @@ import com.changlu.config.Constant;
 import com.changlu.lineage.core.select.column.SelectColumn;
 import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
-import com.changlu.lineage.domain.Table;
+import com.changlu.lineage.table.Table;
 import com.changlu.utils.TableSourceUtil;
 
 import java.util.*;
