@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.alibaba.druid.sql.parser.SQLType;
 import com.changlu.lineage.table.Table;
 import org.junit.Test;
 
@@ -26,6 +27,9 @@ public class TmpDruidTest {
         String sql = "SELECT * FROM batch63.sales_order_details WHERE quantity = (SELECT MAX(quantity) FROM batch63.sales_order_details)";
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.spark);
         SQLSelectStatement stmt = (SQLSelectStatement) parser.parseStatement();
+
+        SQLType sqlType = SQLParserUtils.getSQLType(sql, DbType.spark);
+        System.out.println(sqlType);
         System.out.println(stmt);
     }
 

@@ -459,7 +459,7 @@ public class SelectColumnSpecialLineageService {
      * @param expr
      * @return
      */
-    private SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
+    public SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
         String columnName = "";
         String tableInfo = "";
         if (expr instanceof SQLIdentifierExpr) {

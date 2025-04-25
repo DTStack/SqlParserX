@@ -1,8 +1,13 @@
 package com.changlu.parts.TableSourceUtilTest;
 
 import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.base.AbstractSqlParserTest;
+import com.changlu.lineage.table.Table;
 import com.changlu.utils.TableSourceUtil;
+import com.changlu.visitor.ParseTableVisitor;
 import org.junit.Test;
 
 import java.util.List;
@@ -49,7 +54,20 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         assertEquals(true, tables.contains("new_table"));
     }
 
-//    @Test
+    @Test
+    public void test_03_parseTables_comment_on_column() {
+        String sql = readSqlByIndex(sqlTxtName, 3);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.greenplum);
+        SQLStatement stmt = parser.parseStatement();
+
+        ParseTableVisitor.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        Table mainTable = parseTableResult.getMainTable();
+        assertEquals(true, mainTable.getDb().contains("batch_601"));
+        assertEquals(true, mainTable.getName().contains("employees2"));
+    }
+
+
+    //    @Test
     public void test_temp_parseTables_01() {
         String sql = readSqlByIndex("TableSourceUtilTestTemp.txt", 1);
         System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));

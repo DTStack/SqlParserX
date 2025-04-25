@@ -27,7 +27,16 @@ public class TableSourceUtil implements SQLASTVisitor {
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
         SQLStatement stmt = parser.parseStatement();
         stmt.accept(parseTableVisitor);
-        return new ArrayList<>(parseTableVisitor.getSourceTables());
+        return new ArrayList<>(parseTableVisitor.getAllTableName());
+    }
+
+    /**
+     * 解析真实表
+     */
+    public static ParseTableVisitor.ParseTableResult parseTables(SQLStatement stmt) {
+        ParseTableVisitor parseTableVisitor = new ParseTableVisitor();
+        stmt.accept(parseTableVisitor);
+        return parseTableVisitor.getParseTableResult();
     }
 
     /**
@@ -94,7 +103,25 @@ public class TableSourceUtil implements SQLASTVisitor {
                 }
             }
         }
+        // 针对解析得到的catalog、db、tableName 进行`` or ''去除
+        catalog = removeQuotes(catalog);
+        db = removeQuotes(db);
+        tableName = removeQuotes(tableName);
         return new Table(catalog, db, tableName, null);
     }
+
+    /**
+     * 去除字符串中的反引号(`)和单引号(')
+     * @param input 输入字符串
+     * @return 处理后的字符串，如果输入为null则返回null
+     */
+    public static String removeQuotes(String input) {
+        if (input == null) {
+            return null;
+        }
+        // 去除字符串开头和结尾的反引号或单引号
+        return input.replaceAll("`", "").replaceAll("'", "");
+    }
+
 
 }

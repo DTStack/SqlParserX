@@ -2,11 +2,11 @@ package com.changlu.visitor;
 
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
+import com.changlu.lineage.core.select.column.SelectColumnItem;
+import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.core.select.table.SelectTable;
 import com.changlu.lineage.core.select.table.SelectTableSpecialLineageService;
 import com.changlu.lineage.table.Table;
-import com.changlu.lineage.table.TableLineageResult;
-import com.changlu.lineage.table.TableLineageVisitor;
 import com.changlu.utils.TableSourceUtil;
 
 import java.util.*;
@@ -19,12 +19,11 @@ import java.util.stream.Collectors;
  */
 public class ParseTableVisitor extends SQLASTVisitorAdapter {
 
-    private TableLineageVisitor tableLineageVisitor;
-    private Set<String> allTables = new HashSet<>();
+    private Set<Table> allTables = new HashSet<>();
+    private Table mainTable;
     private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
 
     public ParseTableVisitor() {
-        this.tableLineageVisitor = new TableLineageVisitor();
     }
 
     @Override
@@ -42,6 +41,43 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         return false;
     }
 
+    @Override
+    public boolean visit(SQLDropTableStatement x) {
+        return visitCommonStatement(x.getTableSources());
+    }
+
+    @Override
+    public boolean visit(SQLTruncateStatement x) {
+        return visitCommonStatement(x.getTableSources());
+    }
+
+    @Override
+    public boolean visit(SQLCommentStatement x) {
+        SQLExprTableSource exprTableSource = x.getOn();
+        SQLCommentStatement.Type type = x.getType();
+        // 示范场景：COMMENT ON COLUMN batch_601.employees2.name IS '姓名'
+        if (type == SQLCommentStatement.Type.COLUMN) {
+            SelectColumnSpecialLineageService selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
+            // expr表达式为
+            SelectColumnItem selectColumnItem = selectColumnSpecialLineageService.buildSelectColumnItem(exprTableSource.getExpr());
+            String tableName = selectColumnItem.getTableInfo();
+            mainTable = Table.TableTransfer.parse(tableName);
+        }else {
+            mainTable = TableSourceUtil.extractTable(exprTableSource);
+        }
+        this.allTables.add(mainTable);
+        return false;
+    }
+
+    public boolean visitCommonStatement(List<SQLExprTableSource> tableSources) {
+        mainTable = TableSourceUtil.extractTable(tableSources.get(0));
+
+        for (SQLExprTableSource tableSource : tableSources) {
+            this.allTables.add(TableSourceUtil.extractTable(tableSource));
+        }
+        return false;
+    }
+
     /**
      * 处理create 类型sql
      * @param x druid node sql
@@ -49,14 +85,18 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLCreateTableStatement x) {
-        // 复用表血缘
-        this.tableLineageVisitor.visit(x);
+        // 主表
+        mainTable = TableSourceUtil.extractTable(x.getTableSource());
 
-        TableLineageResult result = this.tableLineageVisitor.getResult();
-        Set<String> tables = result.getSourceTables();
-        String targetTable = result.getTargetTable();
-        this.allTables.addAll(tables);
-        this.allTables.add(targetTable);
+        // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
+        SQLSelect select = x.getSelect();
+        if (select != null) {
+            SQLSelectQuery selectQuery = select.getQuery();
+            // select结构中的来源表
+            List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelectQuery(selectQuery);
+            this.allTables.addAll(transferTables(selectTables));
+        }
+        this.allTables.add(mainTable);
         return false;
     }
 
@@ -67,9 +107,9 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
      */
     @Override
     public boolean visit(SQLInsertStatement x) {
-        // 基本采用表血缘SQLInsertStatement逻辑，但是with as的match匹配应当重新完成匹配
+        // 逻辑步骤与表血缘一致
         // 1、目标表
-        Table targetTable = TableSourceUtil.extractTable(x.getTableSource());
+        mainTable = TableSourceUtil.extractTable(x.getTableSource());
         // 2、获取到主体查询的一组tables
         SQLSelect sqlSelect = x.getQuery();
         List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(sqlSelect);
@@ -83,12 +123,9 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         }
 
         // 处理来源表
-        for (SelectTable selectTable : selectTables) {
-            String[] sourceTableArr = selectTable.getTableInfo().split(",");
-            Collections.addAll(this.allTables, sourceTableArr);
-        }
+        this.allTables.addAll(transferTables(selectTables));
         // 处理目标表
-        this.allTables.add(Table.TableTransfer.transfer(targetTable));
+        this.allTables.add(mainTable);
         return false;
     }
 
@@ -149,7 +186,68 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         return newSelectTables;
     }
 
-    public Set<String> getSourceTables() {
+    private Set<Table> transferTables(List<SelectTable> selectTables) {
+        Set<Table> tables = new HashSet<>();
+        for (SelectTable selectTable : selectTables) {
+            String[] sourceTableArr = selectTable.getTableInfo().split(",");
+            for (String tableName : sourceTableArr) {
+                tables.add(Table.TableTransfer.parse(tableName));
+            }
+        }
+        return tables;
+    }
+
+
+    // 对外暴露
+    public Set<String> getAllTableName() {
+        Set<String> tables = allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(Collectors.toSet());
+        return tables;
+    }
+
+    public Set<Table> getTables() {
         return allTables;
+    }
+
+    public Table getMainTable() {
+        return mainTable;
+    }
+
+    public ParseTableResult getParseTableResult() {
+        return new ParseTableResult(mainTable, allTables);
+    }
+
+    // 解析表结果
+    public static class ParseTableResult {
+        private Table mainTable;
+        private Set<Table> allTables;
+
+        public ParseTableResult(Table mainTable, Set<Table> allTables) {
+            this.mainTable = mainTable;
+            this.allTables = allTables;;
+        }
+
+        public Table getMainTable() {
+            return mainTable;
+        }
+
+        public void setMainTable(Table mainTable) {
+            this.mainTable = mainTable;
+        }
+
+        public Set<Table> getAllTables() {
+            return allTables;
+        }
+
+        public void setAllTables(Set<Table> allTables) {
+            this.allTables = allTables;
+        }
+
+        @Override
+        public String toString() {
+            return "ParseTableResult{" +
+                    "mainTable=" + mainTable +
+                    ", allTables=" + allTables +
+                    '}';
+        }
     }
 }
