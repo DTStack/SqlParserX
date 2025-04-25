@@ -27,4 +27,13 @@ public class ColumnLineageAnalyzer {
 
         return visitor.getResult();
     }
+
+    /**
+     * 传入druid的statement & 字段map集合
+     */
+    public ColumnLineageResult analyze(SQLStatement stmt, Map<String, List<Column>> tableColumnsMap) {
+        ColumnLineageVisitor visitor = new ColumnLineageVisitor(tableColumnsMap);
+        stmt.accept(visitor);
+        return visitor.getResult();
+    }
 }

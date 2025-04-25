@@ -21,4 +21,13 @@ public class TableLineageAnalyzer {
         return visitor.getResult();
     }
 
+    /**
+     * 传入druid的statement
+     */
+    public TableLineageResult analyze(SQLStatement stmt) {
+        TableLineageVisitor visitor = new TableLineageVisitor();
+        stmt.accept(visitor);
+        return visitor.getResult();
+    }
+
 }

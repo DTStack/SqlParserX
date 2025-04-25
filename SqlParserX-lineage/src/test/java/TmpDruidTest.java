@@ -22,6 +22,14 @@ public class TmpDruidTest {
     }
 
     @Test
+    public void tempTest2() {
+        String sql = "SELECT * FROM batch63.sales_order_details WHERE quantity = (SELECT MAX(quantity) FROM batch63.sales_order_details)";
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.spark);
+        SQLSelectStatement stmt = (SQLSelectStatement) parser.parseStatement();
+        System.out.println(stmt);
+    }
+
+    @Test
     public void tempTest_01() {
         String sql = "SELECT \n" +
                 "        id, \n" +
