@@ -1,4 +1,4 @@
-package com.changlu.tables;
+package com.changlu.parser.common.table;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
@@ -7,6 +7,7 @@ import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.core.select.table.SelectTable;
 import com.changlu.lineage.core.select.table.SelectTableSpecialLineageService;
 import com.changlu.lineage.table.Table;
+import com.changlu.parser.IParseTableClient;
 import com.changlu.utils.TableSourceUtil;
 
 import java.util.*;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class ParseTableClient implements IParseTableClient {
 
-    private Set<Table> allTables = new HashSet<>();
-    private Table mainTable;
+    protected Set<Table> allTables = new HashSet<>();
+    protected Table mainTable;
     private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
 
     public ParseTableClient() {
@@ -24,6 +25,7 @@ public class ParseTableClient implements IParseTableClient {
     /**
      * 对外解析表入口
      */
+    @Override
     public ParseTableResult parseTables(SQLStatement stmt) {
         if (stmt instanceof SQLSelectStatement) {
             parseSelectTables((SQLSelectStatement) stmt);
@@ -108,7 +110,7 @@ public class ParseTableClient implements IParseTableClient {
         this.allTables.add(mainTable);
     }
 
-    @Override
+//    @Override
     public void parseInsertTables(SQLInsertStatement x) {
         // 逻辑步骤与表血缘一致
         // 1、目标表

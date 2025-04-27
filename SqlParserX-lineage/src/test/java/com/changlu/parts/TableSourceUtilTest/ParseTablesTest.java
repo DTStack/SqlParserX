@@ -6,7 +6,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.base.AbstractSqlParserTest;
 import com.changlu.lineage.table.Table;
-import com.changlu.tables.ParseTableClient;
+import com.changlu.parser.common.table.ParseTableClient;
 import com.changlu.utils.TableSourceUtil;
 import org.junit.Test;
 

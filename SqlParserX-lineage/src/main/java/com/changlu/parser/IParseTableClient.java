@@ -1,8 +1,12 @@
-package com.changlu.tables;
+package com.changlu.parser;
 
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.parser.common.table.ParseTableClient;
 
 public interface IParseTableClient {
+
+    ParseTableClient.ParseTableResult parseTables(SQLStatement stmt);
 
     void parseSelectTables(SQLSelectStatement sqlSelectStatement);
 

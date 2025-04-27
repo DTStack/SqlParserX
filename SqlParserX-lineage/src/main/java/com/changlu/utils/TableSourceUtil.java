@@ -10,7 +10,10 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.changlu.lineage.table.Table;
-import com.changlu.tables.ParseTableClient;
+import com.changlu.parser.IParseTableClient;
+import com.changlu.parser.ISqlParser;
+import com.changlu.parser.SqlParserFactory;
+import com.changlu.parser.common.table.ParseTableClient;
 
 import java.util.*;
 
@@ -22,21 +25,28 @@ public class TableSourceUtil implements SQLASTVisitor {
     /**
      * 解析真实表
      */
-    public static List<String> parseTables(String sql, DbType dbType) {
+    public static List<String> parseTables(String sql, DbType dbType){
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
         SQLStatement stmt = parser.parseStatement();
-        ParseTableClient ParseTableClient = new ParseTableClient();
-        com.changlu.tables.ParseTableClient.ParseTableResult parseTableResult = ParseTableClient.parseTables(stmt);
+        ParseTableClient parseTableClient = new ParseTableClient();
+        ParseTableClient.ParseTableResult parseTableResult = parseTableClient.parseTables(stmt);
         return new ArrayList<>(parseTableResult.getAllTableName());
     }
 
     /**
      * 解析真实表
      */
-    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt) {
-        ParseTableClient ParseTableClient = new ParseTableClient();
-        com.changlu.tables.ParseTableClient.ParseTableResult parseTableResult = ParseTableClient.parseTables(stmt);
-        return parseTableResult;
+    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt){
+        return parseTables(stmt, null);
+    }
+
+    /**
+     * 解析真实表
+     */
+    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt, DbType dbType){
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+        IParseTableClient parseTableClient = sqlParser.getParseTableClient();
+        return parseTableClient.parseTables(stmt);
     }
 
     /**
