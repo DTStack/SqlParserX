@@ -5,7 +5,6 @@ import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.core.select.table.SelectTable;
-import com.changlu.lineage.core.select.table.SelectTableSpecialLineageService;
 import com.changlu.lineage.table.Table;
 import com.changlu.parser.IParseTableClient;
 import com.changlu.utils.TableSourceUtil;
@@ -17,7 +16,7 @@ public class ParseTableClient implements IParseTableClient {
 
     protected Set<Table> allTables = new HashSet<>();
     protected Table mainTable;
-    private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
+    private final ParseSelectTableService parseSelectTableService = new ParseSelectTableService();
 
     public ParseTableClient() {
     }
@@ -51,7 +50,7 @@ public class ParseTableClient implements IParseTableClient {
     public void parseSelectTables(SQLSelectStatement x) {
         SQLSelect select = x.getSelect();
         if (select != null) {
-            List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(select);
+            List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(select);
             this.mainTable = transferTable(selectTables.get(0));
 
             Set<Table> tables = this.transferTables(selectTables);
@@ -104,7 +103,7 @@ public class ParseTableClient implements IParseTableClient {
         if (select != null) {
             SQLSelectQuery selectQuery = select.getQuery();
             // select结构中的来源表
-            List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelectQuery(selectQuery);
+            List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelectQuery(selectQuery);
             this.allTables.addAll(transferTables(selectTables));
         }
         this.allTables.add(mainTable);
@@ -117,11 +116,11 @@ public class ParseTableClient implements IParseTableClient {
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
         // 2、获取到主体查询的一组tables
         SQLSelect sqlSelect = x.getQuery();
-        List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(sqlSelect);
+        List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(sqlSelect);
         // 3、with as场景处理
         if (x.getWith() != null) {
             // 3.1、构建with map
-            Map<String, List<SelectTable>> tableInfoByTableMap = selectTableSpecialLineageService.buildTableInfoByTableMap(x.getWith());
+            Map<String, List<SelectTable>> tableInfoByTableMap = parseSelectTableService.buildTableInfoByTableMap(x.getWith());
 
             // 3.2、处理with as场景 & 主体select字段情况 过滤掉主体中引用with as 别名表字段情况
             selectTables = matchWithAsAndAddAnotherTables(selectTables, tableInfoByTableMap);

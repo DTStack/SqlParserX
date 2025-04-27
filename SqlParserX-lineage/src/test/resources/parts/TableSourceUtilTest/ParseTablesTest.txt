@@ -27,3 +27,12 @@ insert into new_table
 select * from t1
 --------------------3--------------------
 COMMENT on column batch_601.employees2.name is '姓名'
+--------------------4--------------------
+CREATE TABLE test_2a
+as SELECT cust_name, cust_contact
+FROM Customers
+WHERE cust_id IN (SELECT cust_id
+                  FROM Orders
+                  WHERE order_num IN (SELECT order_num
+                                      FROM OrderItems
+                                      WHERE prod_id = 'RGAN01'));

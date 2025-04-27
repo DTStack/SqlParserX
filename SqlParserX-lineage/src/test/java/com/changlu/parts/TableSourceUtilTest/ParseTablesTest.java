@@ -11,6 +11,7 @@ import com.changlu.utils.TableSourceUtil;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -64,6 +65,22 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         Table mainTable = parseTableResult.getMainTable();
         assertEquals(true, mainTable.getDb().contains("batch_601"));
         assertEquals(true, mainTable.getName().contains("employees2"));
+    }
+
+    @Test
+    public void test_04_parseTables_select_in() {
+        String sql = readSqlByIndex(sqlTxtName, 4);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
+        SQLStatement stmt = parser.parseStatement();
+        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        Table mainTable = parseTableResult.getMainTable();
+        Set<String> tableNames = parseTableResult.getAllTableName();
+        assertEquals(4, tableNames.size());
+        assertEquals(true, mainTable.getName().contains("test_2a"));
+        assertEquals(true, tableNames.contains("test_2a"));
+        assertEquals(true, tableNames.contains("Customers"));
+        assertEquals(true, tableNames.contains("Orders"));
+        assertEquals(true, tableNames.contains("OrderItems"));
     }
 
 

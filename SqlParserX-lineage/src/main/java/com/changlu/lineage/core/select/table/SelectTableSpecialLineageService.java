@@ -36,7 +36,7 @@ public class SelectTableSpecialLineageService {
         return selectTables;
     }
 
-    private List<SelectTable> queryTableBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
+    protected List<SelectTable> queryTableBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
         if (selectQueryBlock == null) return null;
         // 从表字段中筛选得到表
         List<SelectTable> tables = this.queryTableBySQLSelectItems(selectQueryBlock.getSelectList());
@@ -50,7 +50,7 @@ public class SelectTableSpecialLineageService {
     /**
      * 查询出来一组字段中的表
      */
-    private List<SelectTable> queryTableBySQLSelectItems(List<SQLSelectItem> selectList) {
+    protected List<SelectTable> queryTableBySQLSelectItems(List<SQLSelectItem> selectList) {
         List<SelectTable> selectTables = new ArrayList<>();
         for (SQLSelectItem sqlSelectItem : selectList) {
             SQLExpr expr = sqlSelectItem.getExpr();
@@ -73,7 +73,7 @@ public class SelectTableSpecialLineageService {
         return selectTables;
     }
 
-    private List<SelectTable> queryFromTable(SQLTableSource fromTable) {
+    protected List<SelectTable> queryFromTable(SQLTableSource fromTable) {
         List<SelectTable> tables = new ArrayList<>();
         // 不同场景
         // 场景1：from 普通表场景（SQLExprTableSource） 如：from table1  或者 from table1 as t1
