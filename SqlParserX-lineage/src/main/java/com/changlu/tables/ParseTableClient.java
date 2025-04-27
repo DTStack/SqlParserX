@@ -1,7 +1,7 @@
-package com.changlu.visitor;
+package com.changlu.tables;
 
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.core.select.table.SelectTable;
@@ -12,47 +12,71 @@ import com.changlu.utils.TableSourceUtil;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @description 解析真实表
- * @author changlu
- * @date 2025/4/22 19:20
- */
-public class ParseTableVisitor extends SQLASTVisitorAdapter {
+public class ParseTableClient implements IParseTableClient {
 
     private Set<Table> allTables = new HashSet<>();
     private Table mainTable;
     private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
 
-    public ParseTableVisitor() {
+    public ParseTableClient() {
+    }
+
+    /**
+     * 对外解析表入口
+     */
+    public ParseTableResult parseTables(SQLStatement stmt) {
+        if (stmt instanceof SQLSelectStatement) {
+            parseSelectTables((SQLSelectStatement) stmt);
+        }else if (stmt instanceof SQLUpdateStatement) {
+            parseUpdateTables((SQLUpdateStatement) stmt);
+        }else if (stmt instanceof SQLDeleteStatement) {
+            parseDeleteTables((SQLDeleteStatement) stmt);
+        }else if (stmt instanceof SQLDropTableStatement) {
+            parseDropTables((SQLDropTableStatement) stmt);
+        }else if (stmt instanceof SQLTruncateStatement) {
+            parseTruncateTables((SQLTruncateStatement) stmt);
+        }else if (stmt instanceof SQLCommentStatement) {
+            parseCommentTables((SQLCommentStatement) stmt);
+        }else if (stmt instanceof SQLCreateTableStatement) {
+            parseCreateTables((SQLCreateTableStatement) stmt);
+        }else if (stmt instanceof SQLInsertStatement) {
+            parseInsertTables((SQLInsertStatement) stmt);
+        }
+        return getParseTableResult();
     }
 
     @Override
-    public boolean visit(SQLSelectStatement x) {
-        return false;
+    public void parseSelectTables(SQLSelectStatement x) {
+        SQLSelect select = x.getSelect();
+        if (select != null) {
+            List<SelectTable> selectTables = selectTableSpecialLineageService.queryTablesBySqlSelect(select);
+            this.mainTable = transferTable(selectTables.get(0));
+
+            Set<Table> tables = this.transferTables(selectTables);
+            this.allTables.addAll(tables);
+        }
     }
 
     @Override
-    public boolean visit(SQLUpdateStatement x) {
-        return false;
+    public void parseUpdateTables(SQLUpdateStatement x) {
     }
 
     @Override
-    public boolean visit(SQLDeleteStatement x) {
-        return false;
+    public void parseDeleteTables(SQLDeleteStatement x) {
     }
 
     @Override
-    public boolean visit(SQLDropTableStatement x) {
-        return visitCommonStatement(x.getTableSources());
+    public void parseDropTables(SQLDropTableStatement x) {
+        parseCommonStatement(x.getTableSources());
     }
 
     @Override
-    public boolean visit(SQLTruncateStatement x) {
-        return visitCommonStatement(x.getTableSources());
+    public void parseTruncateTables(SQLTruncateStatement x) {
+        parseCommonStatement(x.getTableSources());
     }
 
     @Override
-    public boolean visit(SQLCommentStatement x) {
+    public void parseCommentTables(SQLCommentStatement x) {
         SQLExprTableSource exprTableSource = x.getOn();
         SQLCommentStatement.Type type = x.getType();
         // 示范场景：COMMENT ON COLUMN batch_601.employees2.name IS '姓名'
@@ -66,25 +90,10 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
             mainTable = TableSourceUtil.extractTable(exprTableSource);
         }
         this.allTables.add(mainTable);
-        return false;
     }
 
-    public boolean visitCommonStatement(List<SQLExprTableSource> tableSources) {
-        mainTable = TableSourceUtil.extractTable(tableSources.get(0));
-
-        for (SQLExprTableSource tableSource : tableSources) {
-            this.allTables.add(TableSourceUtil.extractTable(tableSource));
-        }
-        return false;
-    }
-
-    /**
-     * 处理create 类型sql
-     * @param x druid node sql
-     * @return
-     */
     @Override
-    public boolean visit(SQLCreateTableStatement x) {
+    public void parseCreateTables(SQLCreateTableStatement x) {
         // 主表
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
 
@@ -97,16 +106,10 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
             this.allTables.addAll(transferTables(selectTables));
         }
         this.allTables.add(mainTable);
-        return false;
     }
 
-    /**
-     * 处理create 类型sql
-     * @param x druid node sql
-     * @return
-     */
     @Override
-    public boolean visit(SQLInsertStatement x) {
+    public void parseInsertTables(SQLInsertStatement x) {
         // 逻辑步骤与表血缘一致
         // 1、目标表
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
@@ -126,8 +129,16 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         this.allTables.addAll(transferTables(selectTables));
         // 处理目标表
         this.allTables.add(mainTable);
-        return false;
     }
+
+    public void parseCommonStatement(List<SQLExprTableSource> tableSources) {
+        mainTable = TableSourceUtil.extractTable(tableSources.get(0));
+
+        for (SQLExprTableSource tableSource : tableSources) {
+            this.allTables.add(TableSourceUtil.extractTable(tableSource));
+        }
+    }
+
 
     /**
      * with as 场景处理：考虑完成selectTables中具有的别名替换 & 其他未引用别名场景的tables也要添加进来
@@ -186,6 +197,14 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         return newSelectTables;
     }
 
+    private Table transferTable(SelectTable selectTable) {
+        String tableInfo = selectTable.getTableInfo();
+        if (tableInfo.contains(",")) {
+            tableInfo = tableInfo.split(",")[0];
+        }
+        return Table.TableTransfer.parse(tableInfo);
+    }
+
     private Set<Table> transferTables(List<SelectTable> selectTables) {
         Set<Table> tables = new HashSet<>();
         for (SelectTable selectTable : selectTables) {
@@ -194,13 +213,6 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
                 tables.add(Table.TableTransfer.parse(tableName));
             }
         }
-        return tables;
-    }
-
-
-    // 对外暴露
-    public Set<String> getAllTableName() {
-        Set<String> tables = allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(Collectors.toSet());
         return tables;
     }
 
@@ -216,10 +228,14 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
         return new ParseTableResult(mainTable, allTables);
     }
 
+
     // 解析表结果
     public static class ParseTableResult {
         private Table mainTable;
         private Set<Table> allTables;
+
+        public ParseTableResult() {
+        }
 
         public ParseTableResult(Table mainTable, Set<Table> allTables) {
             this.mainTable = mainTable;
@@ -240,6 +256,12 @@ public class ParseTableVisitor extends SQLASTVisitorAdapter {
 
         public void setAllTables(Set<Table> allTables) {
             this.allTables = allTables;
+        }
+
+        // 对外暴露
+        public Set<String> getAllTableName() {
+            Set<String> tables = this.allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(Collectors.toSet());
+            return tables;
         }
 
         @Override

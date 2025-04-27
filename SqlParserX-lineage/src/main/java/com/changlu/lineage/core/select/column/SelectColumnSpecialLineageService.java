@@ -36,6 +36,9 @@ public class SelectColumnSpecialLineageService {
      * @return List<SelectColumn> 每一个SelectColumn中包含字段来源表名 & 字段名
      */
     public List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect) {
+        if (sqlSelect == null) {
+            return new ArrayList<>();
+        }
         // 表查询
         SQLSelectQuery sqlSelectQuery = sqlSelect.getQuery();
         return queryColumnsBySqlSelectQuery(sqlSelectQuery);

@@ -6,8 +6,8 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.base.AbstractSqlParserTest;
 import com.changlu.lineage.table.Table;
+import com.changlu.tables.ParseTableClient;
 import com.changlu.utils.TableSourceUtil;
-import com.changlu.visitor.ParseTableVisitor;
 import org.junit.Test;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.greenplum);
         SQLStatement stmt = parser.parseStatement();
 
-        ParseTableVisitor.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
         Table mainTable = parseTableResult.getMainTable();
         assertEquals(true, mainTable.getDb().contains("batch_601"));
         assertEquals(true, mainTable.getName().contains("employees2"));

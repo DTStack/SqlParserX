@@ -1,8 +1,13 @@
-<!-- Home.vue -->
 <template>
   <div class="home">
     <h1>SQL 工具集</h1>
     <div class="nav-links">
+      <router-link to="/syntax-validator" class="nav-card">
+        <div class="card-content">
+          <h2>在线语法解析验证工具</h2>
+          <p>验证SQL语句的语法正确性</p>
+        </div>
+      </router-link>
       <router-link to="/lineage" class="nav-card">
         <div class="card-content">
           <h2>血缘解析可视化工具</h2>

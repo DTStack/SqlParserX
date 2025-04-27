@@ -13,6 +13,9 @@ import java.util.Map;
 public class SelectTableSpecialLineageService {
 
     public List<SelectTable> queryTablesBySqlSelect(SQLSelect sqlSelect) {
+        if (sqlSelect == null) {
+            return new ArrayList<>();
+        }
         SQLSelectQuery sqlSelectQuery = sqlSelect.getQuery();
         return this.queryTablesBySqlSelectQuery(sqlSelectQuery);
     }

@@ -10,7 +10,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.changlu.lineage.table.Table;
-import com.changlu.visitor.ParseTableVisitor;
+import com.changlu.tables.ParseTableClient;
 
 import java.util.*;
 
@@ -23,20 +23,20 @@ public class TableSourceUtil implements SQLASTVisitor {
      * 解析真实表
      */
     public static List<String> parseTables(String sql, DbType dbType) {
-        ParseTableVisitor parseTableVisitor = new ParseTableVisitor();
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
         SQLStatement stmt = parser.parseStatement();
-        stmt.accept(parseTableVisitor);
-        return new ArrayList<>(parseTableVisitor.getAllTableName());
+        ParseTableClient ParseTableClient = new ParseTableClient();
+        com.changlu.tables.ParseTableClient.ParseTableResult parseTableResult = ParseTableClient.parseTables(stmt);
+        return new ArrayList<>(parseTableResult.getAllTableName());
     }
 
     /**
      * 解析真实表
      */
-    public static ParseTableVisitor.ParseTableResult parseTables(SQLStatement stmt) {
-        ParseTableVisitor parseTableVisitor = new ParseTableVisitor();
-        stmt.accept(parseTableVisitor);
-        return parseTableVisitor.getParseTableResult();
+    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt) {
+        ParseTableClient ParseTableClient = new ParseTableClient();
+        com.changlu.tables.ParseTableClient.ParseTableResult parseTableResult = ParseTableClient.parseTables(stmt);
+        return parseTableResult;
     }
 
     /**
