@@ -36,3 +36,5 @@ WHERE cust_id IN (SELECT cust_id
                   WHERE order_num IN (SELECT order_num
                                       FROM OrderItems
                                       WHERE prod_id = 'RGAN01'));
+--------------------5--------------------
+select id,name from tz where id in(select id from tz2) and name in (select name from tz3)

@@ -1,6 +1,7 @@
 package com.changlu.parser.common.table;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
 import com.alibaba.druid.sql.ast.expr.SQLInSubQueryExpr;
 import com.alibaba.druid.sql.ast.statement.SQLSelect;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
@@ -24,23 +25,28 @@ public class ParseSelectTableService extends SelectTableSpecialLineageService {
     public List<SelectTable> queryTableBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
         List<SelectTable> tables = super.queryTableBySqlSelectQueryBlock(selectQueryBlock);
         // 针对 where in 场景中的真实表解析
-        tables.addAll(queryTableByWhere(selectQueryBlock.getWhere()));
+        tables.addAll(queryTableBySQLExpr(selectQueryBlock.getWhere()));
         return tables;
     }
 
-
-    private List<SelectTable> queryTableByWhere(SQLExpr where) {
+    private List<SelectTable> queryTableBySQLExpr(SQLExpr sqlExpr) {
         List<SelectTable> tables = new ArrayList<>();
-        // 举例：where id in (select * from table)
-        if (where instanceof SQLInSubQueryExpr) {
-            SQLInSubQueryExpr sqlInSubQueryExpr = (SQLInSubQueryExpr) where;
+        // 举例：id in (select * from table)
+        if (sqlExpr instanceof SQLInSubQueryExpr) {
+            SQLInSubQueryExpr sqlInSubQueryExpr = (SQLInSubQueryExpr) sqlExpr;
             // 即为select * from table，查询到表
             SQLSelect sqlSelect = sqlInSubQueryExpr.getSubQuery();
             List<SelectTable> selectTables = super.queryTablesBySqlSelect(sqlSelect);
             tables.addAll(selectTables);
+        }else if (sqlExpr instanceof SQLBinaryOpExpr) {
+            // 举例：id IN ( SELECT id FROM tz2) AND name IN ( SELECT name FROM tz3)
+            SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr) sqlExpr;
+            SQLExpr left = sqlBinaryOpExpr.getLeft();
+            SQLExpr right = sqlBinaryOpExpr.getRight();
+            tables.addAll(this.queryTableBySQLExpr(left));
+            tables.addAll(this.queryTableBySQLExpr(right));
         }
         return tables;
     }
-
 
 }

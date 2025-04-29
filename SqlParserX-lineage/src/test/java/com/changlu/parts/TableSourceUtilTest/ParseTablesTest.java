@@ -83,6 +83,20 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         assertEquals(true, tableNames.contains("OrderItems"));
     }
 
+    @Test
+    public void test_04_parseTables_select_in_and() {
+        String sql = readSqlByIndex(sqlTxtName, 5);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
+        SQLStatement stmt = parser.parseStatement();
+        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        Table mainTable = parseTableResult.getMainTable();
+        Set<String> tableNames = parseTableResult.getAllTableName();
+        assertEquals(3, tableNames.size());
+        assertEquals(true, tableNames.contains("tz"));
+        assertEquals(true, tableNames.contains("tz2"));
+        assertEquals(true, tableNames.contains("tz3"));
+    }
+
 
     //    @Test
     public void test_temp_parseTables_01() {

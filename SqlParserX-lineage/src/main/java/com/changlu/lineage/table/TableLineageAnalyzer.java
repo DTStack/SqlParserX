@@ -6,7 +6,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 
 public class TableLineageAnalyzer {
-    private final DbType dbType;
+    private DbType dbType;
     
     public TableLineageAnalyzer(DbType dbType) {
         this.dbType = dbType;
@@ -24,7 +24,7 @@ public class TableLineageAnalyzer {
     /**
      * 传入druid的statement
      */
-    public TableLineageResult analyze(SQLStatement stmt) {
+    public static TableLineageResult analyze(SQLStatement stmt) {
         TableLineageVisitor visitor = new TableLineageVisitor();
         stmt.accept(visitor);
         return visitor.getResult();

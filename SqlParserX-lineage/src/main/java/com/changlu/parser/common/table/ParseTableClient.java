@@ -51,10 +51,12 @@ public class ParseTableClient implements IParseTableClient {
         SQLSelect select = x.getSelect();
         if (select != null) {
             List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(select);
-            this.mainTable = transferTable(selectTables.get(0));
+            if (!selectTables.isEmpty()) {
+                this.mainTable = transferTable(selectTables.get(0));
 
-            Set<Table> tables = this.transferTables(selectTables);
-            this.allTables.addAll(tables);
+                Set<Table> tables = this.transferTables(selectTables);
+                this.allTables.addAll(tables);
+            }
         }
     }
 

@@ -19,6 +19,15 @@ public class TableRelation {
         return targetTable;
     }
 
+    public Table getSourceTableObj() {
+        return Table.TableTransfer.parse(this.sourceTable);
+    }
+
+    public Table getTargetTableObj() {
+        return Table.TableTransfer.parse(this.targetTable);
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
