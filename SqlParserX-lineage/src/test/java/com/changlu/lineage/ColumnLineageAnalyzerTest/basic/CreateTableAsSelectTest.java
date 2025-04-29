@@ -210,4 +210,22 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "salary", null, null, "tz", "salary_level")));
     }
 
+    /**
+     * 测试用例9
+     */
+    @Test
+    public void test_09() {
+        String sql = readSqlByIndex(sqlTxtName, 9);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        // 校验血缘分析结果
+        result.printColumnLineage();
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+        assertEquals("tz", result.getTargetTable());
+        // 暂未确认
+        assertEquals(28, columnLineages.size());
+    }
+
 }

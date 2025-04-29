@@ -463,6 +463,7 @@ public class SelectColumnSpecialLineageService {
      * @return
      */
     public SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
+        ColumnTypeEnum columnTypeEnum = ColumnTypeEnum.BELONGS_TO_FIELD;
         String columnName = "";
         String tableInfo = "";
         if (expr instanceof SQLIdentifierExpr) {
@@ -476,10 +477,13 @@ public class SelectColumnSpecialLineageService {
             tableInfo = Table.TableTransfer.transfer(TableSourceUtil.extractTable(owner));
         }else if (expr instanceof SQLAggregateExpr || expr instanceof SQLMethodInvokeExpr) {
             // SQLAggregateExpr 聚合表达式场景：如sum、count、avg、concat场景。
-            // SQLMethodInvokeExpr：如concat函数可能带有多个字段场景 如concat(o.id, '_', t.id)
+            // SQLMethodInvokeExpr：now()、concat(id, name)
             SQLMethodInvokeExpr aggregateExpr = (SQLMethodInvokeExpr) expr;
+            // 函数中的参数
             List<SQLExpr> arguments = aggregateExpr.getArguments();
-            // 原始写法
+            // 如concat函数可能带有多个字段场景 如concat(o.id, '_', t.id)
+            if (!arguments.isEmpty()) {
+                // 原始写法
 //            List<String> columnNameItems = new ArrayList<>();
 //            List<String> tableNameItems = new ArrayList<>();
 //            for (SQLExpr argumentExpr : arguments) {
@@ -489,10 +493,16 @@ public class SelectColumnSpecialLineageService {
 //                columnNameItems.add(selectColumnItem.getColumnName());
 //                tableNameItems.add(selectColumnItem.getTableInfo());
 //            }
-            // 复用写法
-            Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(arguments);
-            columnName = columnNameAndTableInfo.getFirst();
-            tableInfo = columnNameAndTableInfo.getSecond();
+                // 复用写法
+                Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(arguments);
+                columnName = columnNameAndTableInfo.getFirst();
+                tableInfo = columnNameAndTableInfo.getSecond();
+            }else {
+                // 函数中无参数场景，如now()
+                columnName = expr.toString();
+                tableInfo = Constant.NO_RELATION_TABLE;
+                columnTypeEnum = ColumnTypeEnum.LITERAL_VALUE;
+            }
         }else if (expr instanceof SQLBinaryOpExpr) {
             // SELECT t5.level + 1 二元表达式场景
             SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr)expr;
@@ -549,9 +559,10 @@ public class SelectColumnSpecialLineageService {
 //            return null;
             // 引入字段匹配table机制之后，可以返回相应的字面量值
             columnName = expr.toString();
-            return new SelectColumnItem(tableInfo, columnName, ColumnTypeEnum.LITERAL_VALUE);
+            tableInfo = Constant.NO_RELATION_TABLE;
+            columnTypeEnum = ColumnTypeEnum.LITERAL_VALUE;
         }
-        return new SelectColumnItem(tableInfo, columnName);
+        return new SelectColumnItem(tableInfo, columnName, columnTypeEnum);
     }
 
     // 优化多个SQLExpr场景需要递归处理场景（通常是聚合函数、表达式情况）
