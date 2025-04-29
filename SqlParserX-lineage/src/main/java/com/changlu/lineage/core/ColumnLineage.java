@@ -5,13 +5,55 @@ import java.util.Objects;
 /**
  * 字段血缘
  */
-public class ColumnLineage extends TableLineage {
+public class ColumnLineage{
+    private String fromCatalog;
+    private String fromDb;
+    private String fromTable;
     private String fromColumn;
-    private String fromColumnType;
-    private String toColumn;
-    private String toColumnType;
 
-    // Getters and Setters
+    private String toCatalog;
+    private String toDb;
+    private String toTable;
+    private String toColumn;
+
+    public ColumnLineage() {
+    }
+
+    public ColumnLineage(String fromCatalog, String fromDb, String fromTable, String fromColumn, String toCatalog, String toDb, String toTable, String toColumn) {
+        this.fromCatalog = fromCatalog;
+        this.fromDb = fromDb;
+        this.fromTable = fromTable;
+        this.fromColumn = fromColumn;
+        this.toCatalog = toCatalog;
+        this.toDb = toDb;
+        this.toTable = toTable;
+        this.toColumn = toColumn;
+    }
+
+    public String getFromCatalog() {
+        return fromCatalog;
+    }
+
+    public void setFromCatalog(String fromCatalog) {
+        this.fromCatalog = fromCatalog;
+    }
+
+    public String getFromDb() {
+        return fromDb;
+    }
+
+    public void setFromDb(String fromDb) {
+        this.fromDb = fromDb;
+    }
+
+    public String getFromTable() {
+        return fromTable;
+    }
+
+    public void setFromTable(String fromTable) {
+        this.fromTable = fromTable;
+    }
+
     public String getFromColumn() {
         return fromColumn;
     }
@@ -20,12 +62,28 @@ public class ColumnLineage extends TableLineage {
         this.fromColumn = fromColumn;
     }
 
-    public String getFromColumnType() {
-        return fromColumnType;
+    public String getToCatalog() {
+        return toCatalog;
     }
 
-    public void setFromColumnType(String fromColumnType) {
-        this.fromColumnType = fromColumnType;
+    public void setToCatalog(String toCatalog) {
+        this.toCatalog = toCatalog;
+    }
+
+    public String getToDb() {
+        return toDb;
+    }
+
+    public void setToDb(String toDb) {
+        this.toDb = toDb;
+    }
+
+    public String getToTable() {
+        return toTable;
+    }
+
+    public void setToTable(String toTable) {
+        this.toTable = toTable;
     }
 
     public String getToColumn() {
@@ -36,47 +94,30 @@ public class ColumnLineage extends TableLineage {
         this.toColumn = toColumn;
     }
 
-    public String getToColumnType() {
-        return toColumnType;
-    }
-
-    public void setToColumnType(String toColumnType) {
-        this.toColumnType = toColumnType;
-    }
-
-    // toString()
-    @Override
-    public String toString() {
-        return "ColumnLineage{" +
-                "fromCatalog='" + getFromCatalog() + '\'' +
-                ", fromDb='" + getFromDb() + '\'' +
-                ", fromTable='" + getFromTable() + '\'' +
-                ", fromColumn='" + fromColumn + '\'' +
-                ", fromColumnType='" + fromColumnType + '\'' +
-                ", toCatalog='" + getToCatalog() + '\'' +
-                ", toDb='" + getToDb() + '\'' +
-                ", toTable='" + getToTable() + '\'' +
-                ", toColumn='" + toColumn + '\'' +
-                ", toColumnType='" + toColumnType + '\'' +
-                '}';
-    }
-
-    // equals()
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         ColumnLineage that = (ColumnLineage) o;
-        return Objects.equals(fromColumn, that.fromColumn) &&
-                Objects.equals(fromColumnType, that.fromColumnType) &&
-                Objects.equals(toColumn, that.toColumn) &&
-                Objects.equals(toColumnType, that.toColumnType);
+        return Objects.equals(fromCatalog, that.fromCatalog) && Objects.equals(fromDb, that.fromDb) && Objects.equals(fromTable, that.fromTable) && Objects.equals(fromColumn, that.fromColumn) && Objects.equals(toCatalog, that.toCatalog) && Objects.equals(toDb, that.toDb) && Objects.equals(toTable, that.toTable) && Objects.equals(toColumn, that.toColumn);
     }
 
-    // hashCode()
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), fromColumn, fromColumnType, toColumn, toColumnType);
+        return Objects.hash(fromCatalog, fromDb, fromTable, fromColumn, toCatalog, toDb, toTable, toColumn);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnLineage{" +
+                "fromCatalog='" + fromCatalog + '\'' +
+                ", fromDb='" + fromDb + '\'' +
+                ", fromTable='" + fromTable + '\'' +
+                ", fromColumn='" + fromColumn + '\'' +
+                ", toCatalog='" + toCatalog + '\'' +
+                ", toDb='" + toDb + '\'' +
+                ", toTable='" + toTable + '\'' +
+                ", toColumn='" + toColumn + '\'' +
+                '}';
     }
 }

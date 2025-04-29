@@ -543,8 +543,9 @@ public class SelectColumnSpecialLineageService {
             // 递归逻辑获取
             SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
             // 若是在当前聚合函数、表达式情况，过滤掉其中的字面量值
-            if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem.getColumnType()))
-                continue;
+            if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem.getColumnType())) continue;
+            // 去除掉重复字段的情况
+            if (columnNameItems.contains(selectColumnItem.getColumnName())) continue;
             columnNameItems.add(selectColumnItem.getColumnName());
             tableNameItems.add(selectColumnItem.getTableInfo());
         }

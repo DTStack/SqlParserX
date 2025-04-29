@@ -5,6 +5,7 @@ import com.changlu.base.BaseColumnLineageAnalyzerTest;
 import com.changlu.lineage.column.Column;
 import com.changlu.lineage.column.ColumnLineageAnalyzer;
 import com.changlu.lineage.column.ColumnLineageResult;
+import com.changlu.lineage.core.ColumnLineage;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -132,6 +133,35 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         assertEquals(2, relations.size());
         assertRelation(relations, "new_table.col3", "table2.col1");
         assertRelation(relations, "new_table.col4", "table2.col2");
+    }
+
+    /**
+     * 测试用例6
+     */
+    @Test
+    public void test_06() {
+        String sql = readSqlByIndex(sqlTxtName, 6);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        // 校验血缘分析结果
+        result.printColumnLineage();
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+        System.out.println("=============");
+        for (ColumnLineage columnLineage : columnLineages) {
+            System.out.println(columnLineage);
+        }
+        System.out.println("=============");
+        System.out.println();
+        assertEquals("tz", result.getTargetTable());
+        assertEquals(6, columnLineages.size());
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EID", null, null, "tz", "ID")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "OBJECTCODE", null, null, "tz", "CompanyCode")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "ADDRESS", null, null, "tz", "LOGOPath")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EITIME", null, null, "tz", "EnterTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EUTIME", null, null, "tz", "UpdateTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EisDel", null, null, "tz", "EISDEL")));
     }
 
 }

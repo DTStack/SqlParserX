@@ -24,3 +24,36 @@ CREATE TABLE new_table AS
 select col3, col4 from (
     select col1 as col3, col2 as col4, col5 from table2
 )as table3
+--------------------6--------------------
+create table tz as SELECT
+  EID AS ID,
+	OBJECTCODE AS CompanyCode,
+	CONCAT(
+	'http://pdf.dfcfw.com/pdf/H6_',
+	UPPER( SUBSTRING_INDEX( ADDRESS, '.', - 1 ) ),
+	SUBSTRING_INDEX( SUBSTRING_INDEX( ADDRESS, '.', 1 ), '/', - 1 ),
+	'_1.',
+	SUBSTRING_INDEX( ADDRESS, '.', - 1 )
+	) AS LOGOPath,
+	EITIME AS EnterTime,
+	EUTIME AS UpdateTime,
+	'choice' AS ResourceID,
+  EisDel AS EISDEL
+FROM
+	(
+SELECT
+  EID,
+	OBJECTCODE,
+	ADDRESS,
+	EisDel,
+	EITIME,
+	EUTIME,
+	row_number ( ) over ( PARTITION BY objectcode ORDER BY PICTURETYPE ) AS porder
+FROM
+	CDSY_PICTURES
+WHERE
+	EDITTYPE NOT IN (101,301,307)
+  AND EUTIME>=DATE_SUB(NOW(),INTERVAL 1 DAY)
+	) A
+WHERE
+	A.porder = 1

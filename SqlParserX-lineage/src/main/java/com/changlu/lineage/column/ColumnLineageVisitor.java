@@ -7,6 +7,7 @@ import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.config.Constant;
+import com.changlu.lineage.core.ColumnLineage;
 import com.changlu.lineage.core.select.column.SelectColumn;
 import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
@@ -21,6 +22,8 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     private Table targetTable;
     // key：写入目标table.column  value：一组来源column
     private final Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = new LinkedHashMap<>();
+    // 记录了每一组血缘的的目标表及关联的来源表及字段 包含有catalog、db、table、column
+    private final List<ColumnLineage> columnLineages = new ArrayList<>();
     // 跟踪当前解析上下文的关键数据结构，用于记录遍历过程中当前语法上下文的栈
     private final Deque<SQLObject> contextStack = new ArrayDeque<>();
     private Map<String, String> fromTables = new HashMap<>(); // 存储FROM子句的表别名映射
@@ -348,10 +351,14 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     private void addRelation(String sourceTable, String sourceColumn,
                              String targetTable, String targetColumn) {
         String relationKey = targetTable + "." + targetColumn;
-        if (sourceTable == null && sourceColumn == null) {
+        // 无来源表 & 无来源字段场景情况
+        if (sourceTable == null && sourceColumn == null
+            || sourceTable != null && sourceTable.isEmpty()  // 无来源表场景（一般是来源字段为一个字面量值，而非一个表的字段,不算作血缘）
+        ) {
             columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>());
             return;
         }
+        // 1、构建血缘关系map组
         // 来源不为空情况
         ColumnLineageResult.ColumnRelation relation = new ColumnLineageResult.ColumnRelation(
                 sourceTable != null ? sourceTable + "." + sourceColumn : sourceColumn,
@@ -359,6 +366,22 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
         );
         columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>())
                 .add(relation);
+
+        // 2、构建血缘关系记录集合
+        ColumnLineage columnLineage = new ColumnLineage();
+        Table sourceTableObj = Table.TableTransfer.parse(sourceTable);
+        Table targetTableObj = Table.TableTransfer.parse(targetTable);
+
+        columnLineage.setFromCatalog(sourceTableObj.getCatalog());
+        columnLineage.setFromDb(sourceTableObj.getDb());
+        columnLineage.setFromTable(sourceTableObj.getName());
+        columnLineage.setFromColumn(sourceColumn);
+
+        columnLineage.setToCatalog(targetTableObj.getCatalog());
+        columnLineage.setToDb(targetTableObj.getDb());
+        columnLineage.setToTable(targetTableObj.getName());
+        columnLineage.setToColumn(targetColumn);
+        columnLineages.add(columnLineage);
     }
 
     /**
@@ -420,6 +443,6 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
     }
 
     public ColumnLineageResult getResult() {
-        return new ColumnLineageResult(Table.TableTransfer.transfer(targetTable), columnRelations);
+        return new ColumnLineageResult(Table.TableTransfer.transfer(targetTable), columnRelations, columnLineages);
     }
 }

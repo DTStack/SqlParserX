@@ -1,18 +1,26 @@
 package com.changlu.lineage.column;
 
+import com.changlu.lineage.core.ColumnLineage;
+
 import java.util.*;
 
 public class ColumnLineageResult {
     private final String targetTable;
     // 字段血缘关系 key:目标字段 value:目标字段来源字段
     private final Map<String, List<ColumnRelation>> columnRelations;
+    private final List<ColumnLineage> columnLineages;
     
     public ColumnLineageResult(String targetTable, 
-                             Map<String, List<ColumnRelation>> columnRelations) {
+                             Map<String, List<ColumnRelation>> columnRelations, List<ColumnLineage> columnLineages) {
         this.targetTable = targetTable;
         this.columnRelations = Collections.unmodifiableMap(columnRelations);
+        this.columnLineages = columnLineages;
     }
-    
+
+    public List<ColumnLineage> getColumnLineages() {
+        return columnLineages;
+    }
+
     public String getTargetTable() {
         return targetTable;
     }
