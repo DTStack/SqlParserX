@@ -522,7 +522,28 @@ public class SelectColumnSpecialLineageService {
                 columnName = columnAndTablePairBySelectColumns.getFirst();
                 tableInfo = columnAndTablePairBySelectColumns.getSecond();
             }
-        } else {
+        } else if (expr instanceof SQLCaseExpr){
+            /**
+             * 示例：
+             * CASE
+             * 	WHEN salary > 10000 THEN 'High'
+             * 	WHEN salary BETWEEN 5000 AND 10000 THEN 'Medium'
+             * 	WHEN salary < 5000 THEN 'Low'
+             * 	ELSE 'Unknown'
+             * END
+             */
+            SQLCaseExpr sqlCaseExpr = (SQLCaseExpr) expr;
+            // when 集合
+            List<SQLCaseExpr.Item> items = sqlCaseExpr.getItems();
+            List<SQLExpr> sqlExprs = new ArrayList<>();
+            for (SQLCaseExpr.Item item : items) {
+                sqlExprs.add(item.getConditionExpr());
+            }
+            // 走通用方法获取到目标字段集合即可
+            Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(sqlExprs);
+            columnName = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getSecond();
+        }else {
             // 其他场景暂无匹配逻辑
             // 目前如字符串类型expr忽略，如 select 'test' 中的'test'，得到的expr类型为：SQLCharExpr
 //            return null;

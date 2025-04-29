@@ -57,3 +57,126 @@ WHERE
 	) A
 WHERE
 	A.porder = 1
+--------------------7--------------------
+create table a as select b1.id1,b1.name1,c1.id2,c1.name2 from b b1 left join c c1 on c1.id2 = b1.id1
+--------------------8--------------------
+create table tz as
+SELECT
+    id,
+    CASE
+        WHEN salary > 10000 THEN 'High'
+        WHEN salary BETWEEN 5000 AND 10000 THEN 'Medium'
+        WHEN salary < 5000 THEN 'Low'
+        ELSE 'Unknown'
+    END as salary_level
+FROM
+    employees;
+--------------------9--------------------
+create table tz as SELECT
+	a.ID,
+	a.RPTCode,
+	a.RPTitle,
+	a.PublishDate,
+	a.PubCompanyCode,
+	a.PubCompanyName,
+	GROUP_CONCAT( DISTINCT b.RelateCode ORDER BY b.RelateCode DESC ) AS Union_PersonCode,
+	GROUP_CONCAT( DISTINCT b.RelateName ORDER BY b.RelateCode DESC ) AS Union_PersonName,
+	GROUP_CONCAT( DISTINCT a.SWDUCode ORDER BY a.SWDUCode DESC ) AS Union_SWCode,
+	GROUP_CONCAT( DISTINCT a.INDSort ORDER BY a.SWDUCode DESC ) AS Union_SWName,
+	NULL AS Union_SecuCode,
+	NULL Union_SecuName,
+	NULL AS SecuTypeCode,
+	a.AttachName,
+	p.ItemName AS AttachType,
+	a.SourceURL,
+	a.Pages,
+	a.ColumnCode,
+	a.ColumnName,
+	a.SratingCode,
+	a.SratingName,
+	a.RatingChange,
+	t.ItemName AS RatingChangeName,
+	a.ReportDate,
+	a.EnterTime,
+	a.UpdateTime,
+	a.RecTime,
+	a.eisdel ,
+	NOW() AS EnterDBTime
+FROM
+	RPT_BaseInfo a
+	INNER JOIN RPT_ReportBaseAdd h ON a.RPTCode = h.RPTCode
+	LEFT JOIN RPT_RelateCode b ON a.RPTCode = b.RPTCode
+	AND b.RelateType = '04'
+	AND b.EisDel = '0'
+	LEFT JOIN RPT_Encode t ON a.RatingChange = t.ItemCode
+	AND t.ItemClassCode = 'RatingChangeCode'
+	LEFT JOIN RPT_Encode p ON a.AttachType = p.ItemCode
+	AND p.ItemClassCode = 'fileTypeCode'
+WHERE
+	a.EisDel = '0'
+	AND a.ResourceID = 'choice'
+	AND a.COLUMNCODE NOT LIKE '002006%'
+	AND a.COLUMNCODE NOT LIKE '002004%' AND a.PubCompanyCode NOT IN ( '10014783', '10004823', '10983760' )
+	AND h.RECTime >= DATE_SUB( CURDATE(), INTERVAL 3 DAY )
+GROUP BY
+	a.RPTCode
+	UNION ALL
+SELECT DISTINCT
+	a.ID,
+	a.RPTCode,
+	a.RPTitle,
+	a.PublishDate,
+	a.PubCompanyCode,
+	a.PubCompanyName,
+	GROUP_CONCAT( DISTINCT b.RelateCode ORDER BY b.RelateCode DESC ) AS Union_PersonCode,
+	GROUP_CONCAT( DISTINCT b.RelateName ORDER BY b.RelateCode DESC ) AS Union_PersonName,
+	GROUP_CONCAT( DISTINCT a.SWDUCode ORDER BY a.SWDUCode DESC ) AS Union_SWCode,
+	GROUP_CONCAT( DISTINCT a.INDSort ORDER BY a.SWDUCode DESC ) AS Union_SWName,
+	GROUP_CONCAT( DISTINCT c.RelateCode ORDER BY c.RelateCode DESC ) AS Union_SecuCode,
+	GROUP_CONCAT( DISTINCT c.RelateName ORDER BY c.RelateCode DESC ) AS Union_SecuName,
+CASE
+	WHEN c.SecuTypeCode = '058001001' THEN
+	'01'
+	WHEN c.SecuTypeCode = '058001002' THEN
+	'02'
+	WHEN c.SecuTypeCode LIKE '058001003%' THEN
+	'03'
+	WHEN c.SecuTypeCode = '058001008' THEN
+	'08' ELSE NULL
+	END AS SecuTypeCode,
+	a.AttachName,
+	p.ItemName AS AttachType,
+	a.SourceURL,
+	a.Pages,
+	a.ColumnCode,
+	a.ColumnName,
+	a.SratingCode,
+	a.SratingName,
+	a.RatingChange,
+	t.ItemName AS RatingChangeName,
+	a.ReportDate,
+	a.EnterTime,
+	a.UpdateTime,
+	a.RecTime,
+	a.eisdel ,
+	NOW() AS EnterDBTime
+FROM
+	RPT_BaseInfo a
+	INNER JOIN RPT_ReportBaseAdd h ON a.RPTCode = h.RPTCode
+	LEFT JOIN RPT_RelateCode b ON a.RPTCode = b.RPTCode
+	AND b.RelateType = '04'
+	AND b.EisDel = '0'
+	LEFT JOIN RPT_RelateCode c ON c.RPTCode = a.RPTCode
+	AND c.RelateType = '01'
+	AND c.EisDel = '0'
+	LEFT JOIN RPT_Encode t ON a.RatingChange = t.ItemCode
+	AND t.ItemClassCode = 'RatingChangeCode'
+	LEFT JOIN RPT_Encode p ON a.AttachType = p.ItemCode
+	AND p.ItemClassCode = 'fileTypeCode'
+WHERE
+	a.EisDel = '0'
+	AND a.ResourceID = 'choice'
+	AND ( a.COLUMNCODE LIKE '002006%' OR a.COLUMNCODE LIKE '002004%' ) AND a.PubCompanyCode NOT IN ( '10014783', '10004823', '10983760' )
+	AND h.RECTime >= DATE_SUB( CURDATE(), INTERVAL 3 DAY )
+GROUP BY
+a.RPTCode

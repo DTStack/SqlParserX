@@ -164,4 +164,50 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EisDel", null, null, "tz", "EISDEL")));
     }
 
+    /**
+     * 测试用例7
+     */
+    @Test
+    public void test_07() {
+        String sql = readSqlByIndex(sqlTxtName, 7);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        // 校验血缘分析结果
+        result.printColumnLineage();
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+//        System.out.println("=============");
+//        for (ColumnLineage columnLineage : columnLineages) {
+//            System.out.println(columnLineage);
+//        }
+//        System.out.println("=============");
+        System.out.println();
+        assertEquals("a", result.getTargetTable());
+        assertEquals(4, columnLineages.size());
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "b", "id1", null, null, "a", "id1")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "b", "name1", null, null, "a", "name1")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "c", "id2", null, null, "a", "id2")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "c", "name2", null, null, "a", "name2")));
+    }
+
+    /**
+     * 测试用例8：支持case when end 场景
+     */
+    @Test
+    public void test_08_case_when_end() {
+        String sql = readSqlByIndex(sqlTxtName, 8);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        // 校验血缘分析结果
+        result.printColumnLineage();
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+        assertEquals("tz", result.getTargetTable());
+        assertEquals(2, columnLineages.size());
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "id", null, null, "tz", "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "salary", null, null, "tz", "salary_level")));
+    }
+
 }
