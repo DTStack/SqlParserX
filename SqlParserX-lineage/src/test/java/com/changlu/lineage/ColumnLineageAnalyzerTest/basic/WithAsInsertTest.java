@@ -1,9 +1,9 @@
 package com.changlu.lineage.ColumnLineageAnalyzerTest.basic;
 
 import com.changlu.base.BaseColumnLineageAnalyzerTest;
-import com.changlu.lineage.column.Column;
-import com.changlu.lineage.column.ColumnLineageAnalyzer;
-import com.changlu.lineage.column.ColumnLineageResult;
+import com.changlu.core.parser.base.lineage.column.Column;
+import com.changlu.core.parser.base.lineage.ColumnLineageAnalyzer;
+import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 import org.junit.Test;
 
 import java.util.*;

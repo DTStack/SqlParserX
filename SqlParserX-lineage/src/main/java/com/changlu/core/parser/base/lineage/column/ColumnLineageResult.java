@@ -1,0 +1,81 @@
+package com.changlu.core.parser.base.lineage.column;
+
+import com.changlu.core.parser.base.lineage.domain.ColumnLineage;
+
+import java.util.*;
+
+public class ColumnLineageResult {
+    private final String targetTable;
+    // 字段血缘关系 key:目标字段 value:目标字段来源字段
+    private final Map<String, List<ColumnRelation>> columnRelations;
+    private final List<ColumnLineage> columnLineages;
+    
+    public ColumnLineageResult(String targetTable, 
+                             Map<String, List<ColumnRelation>> columnRelations, List<ColumnLineage> columnLineages) {
+        this.targetTable = targetTable;
+        this.columnRelations = Collections.unmodifiableMap(columnRelations);
+        this.columnLineages = columnLineages;
+    }
+
+    public List<ColumnLineage> getColumnLineages() {
+        return columnLineages;
+    }
+
+    public String getTargetTable() {
+        return targetTable;
+    }
+    
+    public Map<String, List<ColumnRelation>> getColumnRelations() {
+        return columnRelations;
+    }
+    
+    public static class ColumnRelation {
+        private final String source;
+        private final String target;
+        
+        public ColumnRelation(String source, String target) {
+            this.source = source;
+            this.target = target;
+        }
+        
+        public String getSource() {
+            return source;
+        }
+        
+        public String getTarget() {
+            return target;
+        }
+        
+        @Override
+        public String toString() {
+            return source + " -> " + target;
+        }
+    }
+
+    /**
+     * 打印字段血缘关系
+     */
+    public void printColumnLineage() {
+        Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = this.columnRelations;
+        // 遍历每一个目标字段的血缘情况
+        for (Map.Entry<String, List<ColumnLineageResult.ColumnRelation>> entry : columnRelations.entrySet()) {
+            String targetColumn = entry.getKey();
+            List<ColumnLineageResult.ColumnRelation> value = entry.getValue();
+            if (value != null && !value.isEmpty()) {
+                for (ColumnLineageResult.ColumnRelation relation : value) {
+                    System.out.println(relation);
+                }
+            }else {
+                System.out.println("null -> " + targetColumn);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnLineageResult{" +
+                "targetTable='" + targetTable + '\'' +
+                ", columnRelations=" + columnRelations +
+                '}';
+    }
+}

@@ -1,6 +1,6 @@
 package com.changlu.base;
 
-import com.changlu.lineage.column.ColumnLineageResult;
+import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 
 import java.util.*;
 

@@ -6,7 +6,7 @@ import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.parser.SQLType;
-import com.changlu.lineage.table.Table;
+import com.changlu.core.parser.base.lineage.table.Table;
 import org.junit.Test;
 
 import java.util.ArrayList;

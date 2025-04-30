@@ -2,9 +2,9 @@ package com.changlu.lineage.TableLineageAnalyzerTest.basic;
 
 import com.alibaba.druid.DbType;
 import com.changlu.base.AbstractSqlParserTest;
-import com.changlu.lineage.table.TableLineageAnalyzer;
-import com.changlu.lineage.table.TableLineageResult;
-import com.changlu.lineage.table.TableRelation;
+import com.changlu.core.parser.base.lineage.TableLineageAnalyzer;
+import com.changlu.core.parser.base.lineage.table.TableLineageResult;
+import com.changlu.core.parser.base.lineage.table.TableRelation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
