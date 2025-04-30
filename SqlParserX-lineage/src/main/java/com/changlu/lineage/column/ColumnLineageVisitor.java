@@ -13,10 +13,14 @@ import com.changlu.lineage.core.select.column.SelectColumnItem;
 import com.changlu.lineage.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.lineage.table.Table;
 import com.changlu.utils.TableSourceUtil;
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 
 import java.util.*;
 
 public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
+
+    private Logger log = LoggerFactory.getLogger(ColumnLineageVisitor.class);
 
     // 目标表：主体表
     private Table targetTable;
@@ -267,18 +271,24 @@ public class ColumnLineageVisitor extends SQLASTVisitorAdapter {
             SelectColumnItem targetColumn = targetColumns.get(i);
             SelectColumn selectColumn = selectColumns.get(i);
             // 确认select的字段是否为聚合字段、union字段场景，会出现血缘匹配多条情况
-            String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
-            String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
+            String[] selectColumnNameArr = selectColumn.getColumnName().split(",", -1);
+            String[] selectTableNameArr = selectColumn.getTableInfo().split(",", -1);
             int lineageRelationsCount = selectColumnNameArr.length;
             for (int j = 0; j < lineageRelationsCount; j++) {
-                // 针对最终无匹配表场景情况，应当过滤 举例：select '0' as a from table 这类并不能作为血缘
-                if (selectTableNameArr[j] == null
-                        || selectColumnNameArr[j].isEmpty()
-                        || Constant.NO_RELATION_TABLE.equals(selectTableNameArr[j])) continue;
-                // 添加血缘关系
-                // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
-                // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
-                addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getColumnName());
+                try {
+                    // 针对最终无匹配表场景情况，应当过滤 举例：select '0' as a from table 这类并不能作为血缘
+                    if (selectTableNameArr[j] == null
+                            || selectColumnNameArr[j].isEmpty()
+                            || Constant.NO_RELATION_TABLE.equals(selectTableNameArr[j])) continue;
+                    // 添加血缘关系
+                    // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
+                    // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
+                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getColumnName());
+                }catch (Exception e) {
+                    String msgInfo = String.format("addColumnRelations error! columnName => %s, tableInfo => %s", selectColumn.getColumnName(), selectColumn.getTableInfo());
+                    log.error(msgInfo, e);
+                    throw new RuntimeException(msgInfo);
+                }
             }
         }
     }

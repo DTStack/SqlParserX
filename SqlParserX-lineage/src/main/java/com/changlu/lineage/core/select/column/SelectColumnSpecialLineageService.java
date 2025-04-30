@@ -152,14 +152,15 @@ public class SelectColumnSpecialLineageService {
                 // 场景3（无表名情况）:     tt2,tt3      tmp2
                 String tableInfo = selectColumn.getTableInfo();
                 String columnName = selectColumn.getColumnName();
-                // 1、字段中真实表名为空情况
-                if (tableInfo == null || tableInfo.isEmpty()) {
-                    // 真实表为空情况 需要去匹配根据当前表去匹配
-                    String[] columnNameArr = columnName.split(",");
-                    // 兼容真实表名是否有多个,场景
-                    // 真实字段带有,场景，根据，分隔数量来构造表名的数量
-                    List<String> tableNameList = new ArrayList<>();
-                    for (int i = 0; i < columnNameArr.length; i++) {
+                // -1参数场景："," => ["",""]
+                String[] tableNames = tableInfo.split(",", -1);
+                String[] columnNames = columnName.split(",", -1);
+                // 用于组装tables集合
+                List<String> tableNameList = new ArrayList<>();
+                for (int i = 0; i < tableNames.length; i++) {
+                    String curColumnTableName = tableNames[i];
+                    // 1、字段中真实表名为空情况
+                    if (curColumnTableName == null || curColumnTableName.isEmpty()) {
                         // 2、若字段中真实表名不存在情况
                         //   可进行开关设置：默认就是from的表名 或者 根据外界（表元数据）传入的表字段来进行判断是否有来匹配
                         // 这里直接默认from的表名
@@ -169,34 +170,26 @@ public class SelectColumnSpecialLineageService {
                             tableNameList.add(sourceTableName);
                         }else {
                             // 策略2：根据外界（表元数据）传入的表字段来进行判断是否有来匹配
-                            if (Constant.ALL.equals(columnNameArr[i]) || checkColumnRealExists(columnNameArr[i], sourceTableName)) {
+                            if (Constant.ALL.equals(columnNames[i]) || checkColumnRealExists(columnNames[i], sourceTableName)) {
                                 tableNameList.add(sourceTableName);
                             }else {
                                 // 无来源表情况
                                 tableNameList.add(Constant.NO_RELATION_TABLE);
                             }
                         }
-                    }
-                    sourceTableName = String.join(",", tableNameList);
-                    selectColumn.setTableInfo(sourceTableName);
-                }else {
-                    // 2、真实表不为空情况
-                    // 兼容真实表名是否有多个,场景
-                    if (tableInfo.contains(",")) {
-                        String[] tableNameArr = tableInfo.split(",");
-                        for (int i = 0; i < tableNameArr.length; i++) {
-                            if (tableNameArr[i].equals(aliasSourceTableName)) {
-                                tableNameArr[i] = sourceTableName;
-                            }
-                        }
-                        selectColumn.setTableInfo(String.join(",", tableNameArr));
                     }else {
-                        // 单独tableName
-                        if (tableInfo.equals(aliasSourceTableName)) {
-                            selectColumn.setTableInfo(sourceTableName);
+                        // 2、真实表不为空情况
+                        // 如果字段的表名与当前from表的别名一致，则设置当前from的真实表名
+                        if (curColumnTableName.equals(aliasSourceTableName)) {
+                            tableNameList.add(sourceTableName);
+                        }else {
+                            // 如果不一致，表明当前并非使用的是别名，直接使用当前该字段的表名
+                            tableNameList.add(curColumnTableName);
                         }
                     }
                 }
+                // 替换真实表名
+                selectColumn.setTableInfo(String.join(",", tableNameList));
             }
 
             // 针对参数中 * 场景替换处理
@@ -240,8 +233,8 @@ public class SelectColumnSpecialLineageService {
                                 newBuildSelectColumns.add(selectColumn);
                             }
                         }else {
-                            String[] columnNameArr = columnName.split(",");
-                            String[] tableNameArr = tableInfo.split(",");
+                            String[] columnNameArr = columnName.split(",", -1);
+                            String[] tableNameArr = tableInfo.split(",", -1);
                             List<String> columnNameList = new ArrayList<>();
                             List<String> tableNameList = new ArrayList<>();
                             for (int i = 0; i < columnNameArr.length; i++) {
@@ -463,6 +456,7 @@ public class SelectColumnSpecialLineageService {
      * @return
      */
     public SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
+        if (expr == null) return null;
         ColumnTypeEnum columnTypeEnum = ColumnTypeEnum.BELONGS_TO_FIELD;
         String columnName = "";
         String tableInfo = "";
@@ -546,14 +540,25 @@ public class SelectColumnSpecialLineageService {
             // when 集合
             List<SQLCaseExpr.Item> items = sqlCaseExpr.getItems();
             List<SQLExpr> sqlExprs = new ArrayList<>();
+            // case when xxx else xxx end中的else部分
+            if (sqlCaseExpr.getElseExpr() != null) {
+                sqlExprs.add(sqlCaseExpr.getElseExpr());
+            }
             for (SQLCaseExpr.Item item : items) {
                 sqlExprs.add(item.getConditionExpr());
+                sqlExprs.add(item.getValueExpr());
             }
             // 走通用方法获取到目标字段集合即可
             Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(sqlExprs);
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
-        }else {
+        }else if (expr instanceof SQLCastExpr) {
+            // 场景：select CAST(ROUND(ATTACHNO) AS char)
+            SQLCastExpr sqlCastExpr = (SQLCastExpr) expr;
+            Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(Arrays.asList(sqlCastExpr.getExpr()));
+            columnName = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getSecond();
+        } else {
             // 其他场景暂无匹配逻辑
             // 目前如字符串类型expr忽略，如 select 'test' 中的'test'，得到的expr类型为：SQLCharExpr
 //            return null;
@@ -567,6 +572,8 @@ public class SelectColumnSpecialLineageService {
 
     // 优化多个SQLExpr场景需要递归处理场景（通常是聚合函数、表达式情况）
     private Pair<String, String> getColumnAndTablePairBySQLExpr(List<SQLExpr> sqlExprs) {
+        Set<String> checkColumnNames = new HashSet<>();
+
         List<String> columnNameItems = new ArrayList<>();
         List<String> tableNameItems = new ArrayList<>();
         String columnName = "";
@@ -576,10 +583,25 @@ public class SelectColumnSpecialLineageService {
             SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
             // 若是在当前聚合函数、表达式情况，过滤掉其中的字面量值
             if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem.getColumnType())) continue;
-            // 去除掉重复字段的情况
-            if (columnNameItems.contains(selectColumnItem.getColumnName())) continue;
-            columnNameItems.add(selectColumnItem.getColumnName());
-            tableNameItems.add(selectColumnItem.getTableInfo());
+            // 复杂场景情况去除重复字段
+            String[] selectColumns = selectColumnItem.getColumnName().split(",", -1);
+            String[] selectColumnTables = selectColumnItem.getTableInfo().split(",", -1);
+            List<String> filterSelectColumns = new ArrayList<>();
+            List<String> filterSelectColumnTables = new ArrayList<>();
+            for (int i = 0; i < selectColumns.length; i++) {
+                // 去除掉重复字段的情况
+                if (checkColumnNames.contains(selectColumns[i])) continue;
+                filterSelectColumns.add(selectColumns[i]);
+                filterSelectColumnTables.add(selectColumnTables[i]);
+
+                // 用于check 同名的情况
+                checkColumnNames.add(selectColumns[i]);
+            }
+            // 去除之后只有搜集到的元素>0才可被添加
+            if (!filterSelectColumns.isEmpty()) {
+                columnNameItems.add(String.join(",", filterSelectColumns));
+                tableNameItems.add(String.join(",", filterSelectColumnTables));
+            }
         }
         columnName = String.join(",", columnNameItems);
         tableInfo = String.join(",", tableNameItems);

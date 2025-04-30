@@ -100,7 +100,7 @@ public class TableLineageVisitor extends SQLASTVisitorAdapter {
                         Map.Entry::getKey,
                         entry -> entry.getValue().stream()
                                 .map(SelectTable::getTableInfo) // 获取每个 TableInfo
-                                .flatMap(tableInfo -> Arrays.stream(tableInfo.split(","))) // 将每个 TableInfo 按逗号分割为多个 tableName
+                                .flatMap(tableInfo -> Arrays.stream(tableInfo.split(",", -1))) // 将每个 TableInfo 按逗号分割为多个 tableName
                                 .map(String::trim) // 去除多余的空格
                                 .filter(tableName -> !tableName.equals(entry.getKey())) // 过滤掉与 entryKey 相同的 tableName
                                 .collect(Collectors.joining(",")) // 将剩余的 tableName 拼接为字符串
