@@ -67,8 +67,8 @@ public class SelectColumn{
             return null;
         }
 
-        String[] tableInfos = selectColumn.getTableInfo().split(",");
-        String[] columnNames = selectColumn.getColumnName().split(",");
+        String[] tableInfos = selectColumn.getTableInfo().split(",", -1);
+        String[] columnNames = selectColumn.getColumnName().split(",", -1);
         String aliasName = selectColumn.getAliasName();
 
         if (tableInfos.length != columnNames.length) {

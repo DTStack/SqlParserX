@@ -199,3 +199,127 @@ SELECT EID AS ID, INFOCODE AS LAS_Code, AttachType AS AttachType, AttachName AS 
 	, EUTIME AS UpdateTime, EITIME AS EnterTime, 1 AS ResourceID, EISDEL AS EisDel
 FROM INFO_NW_RELATTACH
 WHERE EUTIME >= DATE_SUB(CURRENT_TIME(), INTERVAL 1 HOUR)
+--------------------11--------------------
+create table tz as select curdate() as STAT_DATE,'6' as STAT_PRD,f.SECURITYCODE,f.SECURITYNAME,
+f.all_num,f.buy_num,f.incr_num,f.neut_num,f.redu_num,f.sell_num,f.tg_num,f.td_num,f.kp_num,f.rat_score,
+case when f.rat_score>=4.5 then '买入'
+			when f.rat_score<4.5 and f.rat_score>=3.5 then '增持'
+			when f.rat_score<3.5 and f.rat_score>=2.5 then '中性'
+			when f.rat_score<2.5 and f.rat_score>=1.5 then '减持'
+			when f.rat_score<1.5  then '卖出'
+end as rat_desc
+from(
+		select p.SECURITYCODE,p.SECURITYNAME,
+		p.all_num,p.buy_num,p.incr_num,p.neut_num,p.redu_num,p.sell_num,p.tg_num,p.td_num,p.kp_num,
+		(p.buy_num*5+p.incr_num*4+p.neut_num*3+p.redu_num*2+p.sell_num)/all_num as rat_score
+		from(
+				select t.SECURITYCODE,t.SECURITYNAME,
+				count(distinct t.COMPANYCODE) all_num,
+				sum(case when t.EMRATINGVALUE=1 then 1 else 0 end) as buy_num,
+				sum(case when t.EMRATINGVALUE=2 then 1 else 0 end) as incr_num,
+				sum(case when t.EMRATINGVALUE=3 then 1 else 0 end) as neut_num,
+				sum(case when t.EMRATINGVALUE=4 then 1 else 0 end) as redu_num,
+				sum(case when t.EMRATINGVALUE=5 then 1 else 0 end) as sell_num,
+				sum(case when t.RATINGCHANGE in(0,2) then 1 else 0 end) as tg_num,
+				sum(case when t.RATINGCHANGE=1 then 1 else 0 end) as td_num,
+				sum(case when t.RATINGCHANGE not in (0,1,2) or t.RATINGCHANGE  is null then 1 else 0 end) as kp_num
+				from (
+						select distinct
+						a.SECURITYCODE,a.SECURITYNAME,a.EMRATINGVALUE,a.EMRATINGNAME,c.RATINGCHANGE,d.PARAMCHNAME,a.COMPANYCODE,a.COMPANYNAME
+						from INFO_RE_RATINGINFO a
+						inner join(
+											select SECURITYCODE,COMPANYCODE,max(PUBLISHDATE) PUBLISHDATE
+											from INFO_RE_RATINGINFO
+											where PUBLISHDATE>=DATE_SUB(curdate(),interval 6 month)
+											group by SECURITYCODE,COMPANYCODE
+											)b on a.SECURITYCODE=b.SECURITYCODE and a.COMPANYCODE=b.COMPANYCODE and a.PUBLISHDATE=b.PUBLISHDATE
+						left join INFO_RE_BASINFO c on a.INFOCODE=c.INFOCODE
+						left join CFP_PVALUE d on c.RATINGCHANGE=d.PARAMCODE and d.NIPMID='138000000404610438'
+						where a.PUBLISHDATE>=DATE_SUB(curdate(),interval 6 month)
+				)t group by t.SECURITYCODE,t.SECURITYNAME
+		)p
+)f
+
+union all
+
+select curdate() as STAT_DATE,'3' as STAT_PRD,f.SECURITYCODE,f.SECURITYNAME,
+f.all_num,f.buy_num,f.incr_num,f.neut_num,f.redu_num,f.sell_num,f.tg_num,f.td_num,f.kp_num,f.rat_score,
+case when f.rat_score>=4.5 then '买入'
+			when f.rat_score<4.5 and f.rat_score>=3.5 then '增持'
+			when f.rat_score<3.5 and f.rat_score>=2.5 then '中性'
+			when f.rat_score<2.5 and f.rat_score>=1.5 then '减持'
+			when f.rat_score<1.5  then '卖出'
+end as rat_desc
+from(
+		select p.SECURITYCODE,p.SECURITYNAME,
+		p.all_num,p.buy_num,p.incr_num,p.neut_num,p.redu_num,p.sell_num,p.tg_num,p.td_num,p.kp_num,
+		(p.buy_num*5+p.incr_num*4+p.neut_num*3+p.redu_num*2+p.sell_num)/all_num as rat_score
+		from(
+				select t.SECURITYCODE,t.SECURITYNAME,
+				count(distinct t.COMPANYCODE) all_num,
+				sum(case when t.EMRATINGVALUE=1 then 1 else 0 end) as buy_num,
+				sum(case when t.EMRATINGVALUE=2 then 1 else 0 end) as incr_num,
+				sum(case when t.EMRATINGVALUE=3 then 1 else 0 end) as neut_num,
+				sum(case when t.EMRATINGVALUE=4 then 1 else 0 end) as redu_num,
+				sum(case when t.EMRATINGVALUE=5 then 1 else 0 end) as sell_num,
+				sum(case when t.RATINGCHANGE in(0,2) then 1 else 0 end) as tg_num,
+				sum(case when t.RATINGCHANGE=1 then 1 else 0 end) as td_num,
+				sum(case when t.RATINGCHANGE not in (0,1,2) or t.RATINGCHANGE  is null then 1 else 0 end) as kp_num
+				from (
+						select distinct
+						a.SECURITYCODE,a.SECURITYNAME,a.EMRATINGVALUE,a.EMRATINGNAME,c.RATINGCHANGE,d.PARAMCHNAME,a.COMPANYCODE,a.COMPANYNAME
+						from INFO_RE_RATINGINFO a
+						inner join(
+											select SECURITYCODE,COMPANYCODE,max(PUBLISHDATE) PUBLISHDATE
+											from INFO_RE_RATINGINFO
+											where PUBLISHDATE>=DATE_SUB(curdate(),interval 3 month)
+											group by SECURITYCODE,COMPANYCODE
+											)b on a.SECURITYCODE=b.SECURITYCODE and a.COMPANYCODE=b.COMPANYCODE and a.PUBLISHDATE=b.PUBLISHDATE
+						left join INFO_RE_BASINFO c on a.INFOCODE=c.INFOCODE
+						left join CFP_PVALUE d on c.RATINGCHANGE=d.PARAMCODE and d.NIPMID='138000000404610438'
+						where a.PUBLISHDATE>=DATE_SUB(curdate(),interval 3 month)
+				)t group by t.SECURITYCODE,t.SECURITYNAME
+		)p
+)f
+
+union all
+
+select curdate() as STAT_DATE,'1' as STAT_PRD,f.SECURITYCODE,f.SECURITYNAME,
+f.all_num,f.buy_num,f.incr_num,f.neut_num,f.redu_num,f.sell_num,f.tg_num,f.td_num,f.kp_num,f.rat_score,
+case when f.rat_score>=4.5 then '买入'
+			when f.rat_score<4.5 and f.rat_score>=3.5 then '增持'
+			when f.rat_score<3.5 and f.rat_score>=2.5 then '中性'
+			when f.rat_score<2.5 and f.rat_score>=1.5 then '减持'
+			when f.rat_score<1.5  then '卖出'
+end as rat_desc
+from(
+		select p.SECURITYCODE,p.SECURITYNAME,
+		p.all_num,p.buy_num,p.incr_num,p.neut_num,p.redu_num,p.sell_num,p.tg_num,p.td_num,p.kp_num,
+		(p.buy_num*5+p.incr_num*4+p.neut_num*3+p.redu_num*2+p.sell_num)/all_num as rat_score
+		from(
+				select t.SECURITYCODE,t.SECURITYNAME,
+				count(distinct t.COMPANYCODE) all_num,
+				sum(case when t.EMRATINGVALUE=1 then 1 else 0 end) as buy_num,
+				sum(case when t.EMRATINGVALUE=2 then 1 else 0 end) as incr_num,
+				sum(case when t.EMRATINGVALUE=3 then 1 else 0 end) as neut_num,
+				sum(case when t.EMRATINGVALUE=4 then 1 else 0 end) as redu_num,
+				sum(case when t.EMRATINGVALUE=5 then 1 else 0 end) as sell_num,
+				sum(case when t.RATINGCHANGE in(0,2) then 1 else 0 end) as tg_num,
+				sum(case when t.RATINGCHANGE=1 then 1 else 0 end) as td_num,
+				sum(case when t.RATINGCHANGE not in (0,1,2) or t.RATINGCHANGE  is null then 1 else 0 end) as kp_num
+				from (
+						select distinct
+						a.SECURITYCODE,a.SECURITYNAME,a.EMRATINGVALUE,a.EMRATINGNAME,c.RATINGCHANGE,d.PARAMCHNAME,a.COMPANYCODE,a.COMPANYNAME
+						from INFO_RE_RATINGINFO a
+						inner join(
+											select SECURITYCODE,COMPANYCODE,max(PUBLISHDATE) PUBLISHDATE
+											from INFO_RE_RATINGINFO
+											where PUBLISHDATE>=DATE_SUB(curdate(),interval 1 month)
+											group by SECURITYCODE,COMPANYCODE
+											)b on a.SECURITYCODE=b.SECURITYCODE and a.COMPANYCODE=b.COMPANYCODE and a.PUBLISHDATE=b.PUBLISHDATE
+						left join INFO_RE_BASINFO c on a.INFOCODE=c.INFOCODE
+						left join CFP_PVALUE d on c.RATINGCHANGE=d.PARAMCODE and d.NIPMID='138000000404610438'
+						where a.PUBLISHDATE>=DATE_SUB(curdate(),interval 1 month)
+				)t group by t.SECURITYCODE,t.SECURITYNAME
+		)p
+)f

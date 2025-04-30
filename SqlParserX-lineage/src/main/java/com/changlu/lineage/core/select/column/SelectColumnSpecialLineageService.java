@@ -371,16 +371,31 @@ public class SelectColumnSpecialLineageService {
             String aliasName = selectColumn.getAliasName();
             //2、拿select某条字段中的【真实字段】尝试去匹配子查询全部字段的【别名字段】
             String columnName = selectColumn.getColumnName();
-            if (subQuerySelectMap.containsKey(columnName)) {
-                SelectColumn subQuerySelectColumn = subQuerySelectMap.get(columnName);
-                // 保留原始的真实字段、真实表名
-                curSelectColumn.setColumnName(subQuerySelectColumn.getColumnName());
-                curSelectColumn.setTableInfo(subQuerySelectColumn.getTableInfo());
-                // 设置当前select字段中的别名替换替换
-                curSelectColumn.setAliasName(aliasName);
-            }else {
-                curSelectColumn = selectColumn;
+
+            // 使用真实字段去匹配表中的别名字段
+            // 注：其中的真实字段里可能有多条字段场景
+            String[] columnNames = columnName.split(",", -1);
+            String[] columnTableNames = selectColumn.getTableInfo().split(",", -1);
+            List<String> filterColumnNames = new ArrayList<>();
+            List<String> filterColumnTableNames = new ArrayList<>();
+            for (int i = 0; i < columnNames.length; i++) {
+                String curColumnName = columnNames[i];
+                String curColumnTableName = columnTableNames[i];
+                // core match alias name
+                if (subQuerySelectMap.containsKey(curColumnName)) {
+                    SelectColumn subQuerySelectColumn = subQuerySelectMap.get(curColumnName);
+                    filterColumnNames.add(subQuerySelectColumn.getColumnName());
+                    filterColumnTableNames.add(subQuerySelectColumn.getTableInfo());
+                }else {
+                    filterColumnNames.add(curColumnName);
+                    filterColumnTableNames.add(curColumnTableName);
+                }
             }
+
+            // 设置字段、table以及别名
+            curSelectColumn.setColumnName(String.join(",", filterColumnNames));
+            curSelectColumn.setTableInfo(String.join(",", filterColumnTableNames));
+            curSelectColumn.setAliasName(aliasName);
 
             res.add(curSelectColumn);
         }
@@ -555,7 +570,21 @@ public class SelectColumnSpecialLineageService {
         }else if (expr instanceof SQLCastExpr) {
             // 场景：select CAST(ROUND(ATTACHNO) AS char)
             SQLCastExpr sqlCastExpr = (SQLCastExpr) expr;
-            Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(Arrays.asList(sqlCastExpr.getExpr()));
+            Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(Arrays.asList(sqlCastExpr.getExpr()));
+            columnName = columnNameAndTableInfo.getFirst();
+            tableInfo = columnNameAndTableInfo.getSecond();
+        } else if (expr instanceof SQLInListExpr) {
+            // 场景：select sum(case when t.RATINGCHANGE in(0,2) then 1 else 0 end) as tg_num
+            //      其中t.RATINGCHANGE in(0,2)为一个SQLInListExpr
+            SQLInListExpr sqlInListExpr = (SQLInListExpr) expr;
+            List<SQLExpr> sqlExprs = new ArrayList<>();
+            sqlExprs.add(sqlInListExpr.getExpr());
+            if (sqlInListExpr.getTargetList() != null) {
+                for (SQLExpr sqlExpr : sqlInListExpr.getTargetList()) {
+                    sqlExprs.add(sqlExpr);
+                }
+            }
+            Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(sqlExprs);
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
         } else {
