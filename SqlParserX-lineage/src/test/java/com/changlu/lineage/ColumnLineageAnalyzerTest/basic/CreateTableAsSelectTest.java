@@ -8,10 +8,7 @@ import com.changlu.lineage.column.ColumnLineageResult;
 import com.changlu.lineage.core.ColumnLineage;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -282,26 +279,17 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         assertEquals("tz", result.getTargetTable());
         // 暂未确认（后期可再验证）
         assertEquals(15, columnLineages.size());
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EID", null, null, "tz", "ID")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "LAS_Code")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachType", null, null, "tz", "AttachType")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachName", null, null, "tz", "AttachName")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachNo", null, null, "tz", "AttachNo")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "AttachOrigName")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachSize", null, null, "tz", "AttachSize")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachPages", null, null, "tz", "AttachPages")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "SOUATTACHNAME", null, null, "tz", "SouAttchname")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "D_Path")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Name")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "F_Name")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null, null, "tz", "F_Name")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Type")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null, null, "tz", "F_Url")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Url")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "F_Url")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EUTIME", null, null, "tz", "UpdateTime")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EITIME", null, null, "tz", "EnterTime")));
-//        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EISDEL", null, null, "tz", "EisDel")));
+    }
+
+    @Test
+    public void test_12() {
+        String sql = readSqlByIndex(sqlTxtName, 12);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = result.getColumnRelations();
+        assertEquals(true, !columnRelations.isEmpty());
     }
 
 }

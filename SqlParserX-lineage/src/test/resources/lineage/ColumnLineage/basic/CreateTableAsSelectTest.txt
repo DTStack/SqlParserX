@@ -323,3 +323,43 @@ from(
 				)t group by t.SECURITYCODE,t.SECURITYNAME
 		)p
 )f
+--------------------12--------------------
+create table tz as SELECT distinct
+    a.SWDUCode  AS Union_SWCode,
+    case when a.ColumnCode like '002001%' then substr(a.ColumnCode,1,9) else substr(a.ColumnCode,1,6) end as Xh_ColumnCode,
+    t.ItemName AS RatingChangeName,
+    NOW() AS EnterDBTime
+FROM RPT_BaseInfo a
+    INNER JOIN RPT_ReportBaseAdd h ON a.RPTCode = h.RPTCode
+    LEFT JOIN RPT_RelateCode b ON a.RPTCode = b.RPTCode
+    LEFT JOIN RPT_Encode t ON a.RatingChange = t.ItemCode
+    LEFT JOIN RPT_Encode p ON a.AttachType = p.ItemCode
+WHERE a.EisDel = '0'
+    AND h.RECTime >= DATE_SUB( CURDATE(), INTERVAL 3 DAY )
+GROUP BY a.RPTCode
+    UNION ALL
+SELECT DISTINCT
+    a.PubCompanyName,
+    a.INDSort  AS Union_SWName,
+CASE
+    WHEN c.SecuTypeCode = '058001001' THEN
+    '01'
+    WHEN c.SecuTypeCode = '058001002' THEN
+    '02'
+    WHEN c.SecuTypeCode LIKE '058001003%' THEN
+    '03'
+    WHEN c.SecuTypeCode = '058001008' THEN
+    '08' ELSE NULL
+    END AS SecuTypeCode,
+    case when a.ColumnCode like '002001%' then substr(a.ColumnCode,1,9) else substr(a.ColumnCode,1,6) end as Xh_ColumnCode,
+    NOW() AS EnterDBTime
+FROM RPT_BaseInfo a
+    INNER JOIN RPT_ReportBaseAdd h ON a.RPTCode = h.RPTCode
+    LEFT JOIN RPT_RelateCode b ON a.RPTCode = b.RPTCode
+    LEFT JOIN RPT_RelateCode c ON c.RPTCode = a.RPTCode
+    LEFT JOIN RPT_Encode t ON a.RatingChange = t.ItemCode
+    LEFT JOIN RPT_Encode p ON a.AttachType = p.ItemCode
+WHERE
+a.PubCompanyCode NOT IN ( '10014783', '10004823', '10983760' )
+AND h.RECTime >= DATE_SUB(CURDATE(), INTERVAL 3 DAY )
+GROUP BY a.RPTCode

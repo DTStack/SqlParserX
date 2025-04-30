@@ -10,11 +10,15 @@ import com.changlu.config.Constant;
 import com.changlu.domain.Pair;
 import com.changlu.lineage.table.Table;
 import com.changlu.utils.TableSourceUtil;
+import com.sun.org.slf4j.internal.Logger;
+import com.sun.org.slf4j.internal.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectColumnSpecialLineageService {
+
+    private Logger log = LoggerFactory.getLogger(SelectColumnSpecialLineageService.class);
 
     // 真实表&字段关联关系（用于外部查询元数据）
     private final Map<String, List<Column>> tableColumnsMap;
@@ -64,7 +68,7 @@ public class SelectColumnSpecialLineageService {
             for (int i = 1; i < relations.size(); i++) {
                 List<SelectColumn> curSelectColumns = queryColumnsBySqlSelectQuery(relations.get(i));
                 if (curSelectColumns != null && curSelectColumns.size() != firstSelectColumnSize) {
-                    throw new RuntimeException("select union查询匹配的字段不一致，请检查sql");
+                    log.error("检测到select union查询匹配的字段不一致，请检查sql写法是否有问题！");
                 }
                 // 实现合并字段逻辑
                 preSelectColumnList = unionMergeSelectColumns(preSelectColumnList, curSelectColumns);
@@ -89,14 +93,18 @@ public class SelectColumnSpecialLineageService {
      *   col1,col1         cc1       table1, table4
      *   col2,col2         cc2       table1, table5
      *
+     *  额外处理：针对union all 场景中前后字段数量不一致时，我们依旧支持匹配处理
+     *
      * @param preSelectColumnList
      * @param curSelectColumns
      * @return
      */
     public List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
-        int size = preSelectColumnList.size();
+        int minSize = Math.min(preSelectColumnList.size(), curSelectColumns.size());
+        int maxSize = Math.max(preSelectColumnList.size(), curSelectColumns.size());
         List<SelectColumn> unionSelectColumns = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        // 遍历前minSize个字段
+        for (int i = 0; i < minSize; i++) {
             String tableName = preSelectColumnList.get(i).getTableInfo() + "," + curSelectColumns.get(i).getTableInfo();
             String columnName = preSelectColumnList.get(i).getColumnName() + "," + curSelectColumns.get(i).getColumnName();
             String aliasName = preSelectColumnList.get(i).getAliasName();
@@ -104,6 +112,20 @@ public class SelectColumnSpecialLineageService {
             // 过滤处理，针对别名相同情况，真实表名 & 真实字段名 相同情况只保留一个
             selectColumn = SelectColumn.filterDuplicateRealColumns(selectColumn);
             unionSelectColumns.add(selectColumn);
+        }
+        // 处理额外情况：针对union all 场景中前后字段数量不一致时，我们依旧支持匹配处理
+        if (maxSize != minSize) {
+            // 识别到最多字段的一组
+            List<SelectColumn> moreSelectColumns = preSelectColumnList.size() > curSelectColumns.size() ? preSelectColumnList : curSelectColumns;
+            // 举例：min=2、max=3，
+            // 0     1    2
+            // id   name  age
+            // id1  name1
+            for (int i = minSize; i < maxSize; i++) {
+                SelectColumn curSelectColumn = moreSelectColumns.get(i);
+                SelectColumn selectColumn = SelectColumn.filterDuplicateRealColumns(curSelectColumn);
+                unionSelectColumns.add(selectColumn);
+            }
         }
         return unionSelectColumns;
     }
@@ -323,17 +345,40 @@ public class SelectColumnSpecialLineageService {
 
     /**
      * select id from table1 场景，判断id是否真实存在table1中
+     *
+     * 兼容场景为：
+     *  this.tableColumnsMap中的key可能会出现db.table或者.table场景
+     *      若是map中的key为table1    匹配table1 应当可以匹配到
+     *      若是map中的key为.table1   匹配table1 应当可以匹配到
+     *      若是map中的key为db.table2 匹配table2 应当可以匹配到
+     *
      * @param columnName sql中的字段
      * @param sourceTableName 测试验证的表名
      * @return true：存在，false：不存在
      */
     private boolean checkColumnRealExists(String columnName, String sourceTableName) {
+        // 先尝试直接匹配 避免全扫描一遍
         if (this.tableColumnsMap.containsKey(sourceTableName)) {
-            List<Column> columns = this.tableColumnsMap.get(sourceTableName);
-            for (Column column : columns) {
-                if (column.getColumnName().equals(columnName)) {
-                    return true;
-                }
+            return checkColumns(this.tableColumnsMap.get(sourceTableName), columnName);
+        }
+
+        // 再尝试匹配带数据库前缀的情况
+        for (Map.Entry<String, List<Column>> entry : this.tableColumnsMap.entrySet()) {
+            String tableKey = entry.getKey();
+            // 兼容.table情况，所以这里去匹配后缀
+            if (tableKey.endsWith(sourceTableName)) {
+                return checkColumns(entry.getValue(), columnName);
+            }
+        }
+
+        return false;
+    }
+
+    // 辅助方法，检查列是否存在
+    private boolean checkColumns(List<Column> columns, String columnName) {
+        for (Column column : columns) {
+            if (column.getColumnName().equals(columnName)) {
+                return true;
             }
         }
         return false;
