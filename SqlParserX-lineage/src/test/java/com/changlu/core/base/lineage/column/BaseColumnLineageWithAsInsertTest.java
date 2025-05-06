@@ -1,8 +1,10 @@
-package com.changlu.lineage.ColumnLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.column;
 
-import com.changlu.base.BaseColumnLineageAnalyzerTest;
+import com.alibaba.druid.DbType;
+import com.changlu.core.common.BaseColumnLineageAnalyzerTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.column.Column;
-import com.changlu.core.parser.base.lineage.ColumnLineageAnalyzer;
 import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 import org.junit.Test;
 
@@ -13,14 +15,14 @@ import java.util.*;
  * @author changlu
  * @date 2025/4/22 11:00
  */
-public class WithAsInsertTest extends BaseColumnLineageAnalyzerTest {
+public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzerTest {
 
-    private ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "WithAsInsertTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/ColumnLineage/basic/";
+        return "/base/lineage/column/";
     }
 
     /**
@@ -77,8 +79,7 @@ public class WithAsInsertTest extends BaseColumnLineageAnalyzerTest {
         for (int i = 0; i < insertSqlList.size(); i++) {
             String insertSql = insertSqlList.get(i);
 
-            ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-            ColumnLineageResult result = analyzer.analyze(insertSql, tableColumnsMap);
+            ColumnLineageResult result = sqlParser.parseColumnLineages(insertSql, tableColumnsMap);
             Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
 
             assertRelation(relations, "digua_ceshi.result_table.id", "digua_ceshi.demo_table_digua.id");

@@ -1,8 +1,9 @@
-package com.changlu.lineage.TableLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.table;
 
 import com.alibaba.druid.DbType;
-import com.changlu.base.AbstractSqlParserTest;
-import com.changlu.core.parser.base.lineage.TableLineageAnalyzer;
+import com.changlu.core.common.AbstractSqlParserTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.core.parser.base.lineage.table.TableRelation;
 import org.junit.Test;
@@ -10,14 +11,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class InsertSelectTest extends AbstractSqlParserTest {
+public class BaseTableLineageInsertSelectTest extends AbstractSqlParserTest {
 
-    private TableLineageAnalyzer analyzer = new TableLineageAnalyzer(DbType.mysql);
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "InsertSelectTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/TableLineage/basic/";
+        return "/base/lineage/table/";
     }
 
     /**
@@ -26,7 +27,7 @@ public class InsertSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_01_select_allcolumn_from() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("dws_jyjs0504", result.getTargetTable());
         assertEquals(1, result.getSourceTables().size());
@@ -39,7 +40,7 @@ public class InsertSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_02_select_allcolumn_from() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("dws_jyjs0504", result.getTargetTable());
         assertEquals(1, result.getSourceTables().size());
@@ -55,7 +56,7 @@ public class InsertSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_03_insert_into() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("dws_jyjs0504", result.getTargetTable());
         assertEquals(1, result.getSourceTables().size());

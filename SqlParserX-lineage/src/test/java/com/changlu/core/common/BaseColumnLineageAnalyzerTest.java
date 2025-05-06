@@ -1,4 +1,4 @@
-package com.changlu.base;
+package com.changlu.core.common;
 
 import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 

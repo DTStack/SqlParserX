@@ -1,4 +1,4 @@
-package com.changlu.base;
+package com.changlu.core.common;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

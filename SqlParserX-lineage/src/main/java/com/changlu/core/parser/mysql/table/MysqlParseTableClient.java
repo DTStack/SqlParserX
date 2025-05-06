@@ -4,6 +4,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement;
 import com.changlu.core.parser.base.table.ParseTableClient;
 import com.changlu.core.parser.base.lineage.table.Table;
+import com.changlu.core.parser.base.table.domain.ParseTableResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +28,8 @@ public class MysqlParseTableClient extends ParseTableClient {
         List<MySqlRenameTableStatement.Item> items = mySqlRenameTableStatement.getItems();
         List<String> tableNames = items.stream().map(item -> item.getName().getSimpleName()).collect(Collectors.toList());
         if (!tableNames.isEmpty()) {
-            if (tableNames.size() > 1) {
-                this.mainTable = Table.TableTransfer.parse(tableNames.get(0));
-                tableNames.remove(0);
-                this.allTables = tableNames.stream().map(Table.TableTransfer::parse).collect(Collectors.toSet());
-            }else {
-                this.mainTable = Table.TableTransfer.parse(tableNames.get(0));
-            }
+            this.mainTable = Table.TableTransfer.parse(tableNames.get(0));
+            this.allTables = tableNames.stream().map(Table.TableTransfer::parse).collect(Collectors.toSet());
         }
     }
 

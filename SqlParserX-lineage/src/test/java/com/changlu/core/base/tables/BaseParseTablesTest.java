@@ -1,12 +1,14 @@
-package com.changlu.parts.TableSourceUtilTest;
+package com.changlu.core.base.tables;
 
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
-import com.changlu.base.AbstractSqlParserTest;
+import com.changlu.core.common.AbstractSqlParserTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.table.Table;
-import com.changlu.core.parser.base.table.ParseTableClient;
+import com.changlu.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.core.utils.TableSourceUtil;
 import org.junit.Test;
 
@@ -20,13 +22,13 @@ import static org.junit.Assert.assertEquals;
  * @author changlu
  * @date 2025/4/22 19:08
  */
-public class ParseTablesTest extends AbstractSqlParserTest {
+public class BaseParseTablesTest extends AbstractSqlParserTest {
 
     private String sqlTxtName = "ParseTablesTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/parts/TableSourceUtilTest/";
+        return "/base/tables/";
     }
 
     @Test
@@ -61,7 +63,7 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.greenplum);
         SQLStatement stmt = parser.parseStatement();
 
-        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
         Table mainTable = parseTableResult.getMainTable();
         assertEquals(true, mainTable.getDb().contains("batch_601"));
         assertEquals(true, mainTable.getName().contains("employees2"));
@@ -72,7 +74,7 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         String sql = readSqlByIndex(sqlTxtName, 4);
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
         SQLStatement stmt = parser.parseStatement();
-        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
         Table mainTable = parseTableResult.getMainTable();
         Set<String> tableNames = parseTableResult.getAllTableName();
         assertEquals(4, tableNames.size());
@@ -88,7 +90,7 @@ public class ParseTablesTest extends AbstractSqlParserTest {
         String sql = readSqlByIndex(sqlTxtName, 5);
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
         SQLStatement stmt = parser.parseStatement();
-        ParseTableClient.ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
         Table mainTable = parseTableResult.getMainTable();
         Set<String> tableNames = parseTableResult.getAllTableName();
         assertEquals(3, tableNames.size());
@@ -98,10 +100,9 @@ public class ParseTablesTest extends AbstractSqlParserTest {
     }
 
 
-    //    @Test
-    public void test_temp_parseTables_01() {
-        String sql = readSqlByIndex("TableSourceUtilTestTemp.txt", 1);
-        System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));
-    }
-
+//    @Test
+//    public void test_temp_parseTables_01() {
+//        String sql = readSqlByIndex("TableSourceUtilTestTemp.txt", 1);
+//        System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));
+//    }
 }

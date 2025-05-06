@@ -1,8 +1,9 @@
-package com.changlu.lineage.TableLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.table;
 
 import com.alibaba.druid.DbType;
-import com.changlu.base.AbstractSqlParserTest;
-import com.changlu.core.parser.base.lineage.TableLineageAnalyzer;
+import com.changlu.core.common.AbstractSqlParserTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.core.parser.base.lineage.table.TableRelation;
 import org.junit.Test;
@@ -10,14 +11,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CreateTableAsSelectTest extends AbstractSqlParserTest {
+public class BaseTableLineageCreateTableAsSelectTest extends AbstractSqlParserTest {
 
-    private TableLineageAnalyzer analyzer = new TableLineageAnalyzer(DbType.mysql);
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "CreateTableAsSelectTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/TableLineage/basic/";
+        return "/base/lineage/table/";
     }
 
     /**
@@ -26,7 +27,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_01_CreateTable() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("students", result.getTargetTable());
         assertEquals(0, result.getSourceTables().size());
@@ -40,7 +41,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_02_SimpleCreateTableAsSelectByCatalogSchemaTableColumn() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals(1, result.getSourceTables().size());
         assertTrue(result.getSourceTables().contains("default_catalog.changluya_db.orders"));
@@ -55,7 +56,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_03_SimpleCreateTableByAsSelect() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
         assertEquals("new_table", result.getTargetTable());
         assertEquals(1, result.getSourceTables().size());
         assertTrue(result.getSourceTables().contains("source_table"));
@@ -70,7 +71,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_04_ComplexCreateTableAsSelect() {
         String sql = readSqlByIndex(sqlTxtName, 4);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("user_order_summary", result.getTargetTable());
         assertEquals(2, result.getSourceTables().size());
@@ -88,7 +89,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_05_createTableAsSelectSubQuery() {
         String sql = readSqlByIndex(sqlTxtName, 5);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("new_table", result.getTargetTable());
         assertEquals(1, result.getSourceTables().size());
@@ -104,7 +105,7 @@ public class CreateTableAsSelectTest extends AbstractSqlParserTest {
     @Test
     public void test_06_createTableAsComplexFrom() {
         String sql = readSqlByIndex(sqlTxtName, 6);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("new_table", result.getTargetTable());
         assertEquals(6, result.getSourceTables().size());

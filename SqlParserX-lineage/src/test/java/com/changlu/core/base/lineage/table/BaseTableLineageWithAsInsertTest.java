@@ -1,8 +1,9 @@
-package com.changlu.lineage.TableLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.table;
 
 import com.alibaba.druid.DbType;
-import com.changlu.base.AbstractSqlParserTest;
-import com.changlu.core.parser.base.lineage.TableLineageAnalyzer;
+import com.changlu.core.common.AbstractSqlParserTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.core.parser.base.lineage.table.TableRelation;
 import org.junit.Test;
@@ -10,14 +11,14 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class WithAsInsertTest extends AbstractSqlParserTest {
+public class BaseTableLineageWithAsInsertTest extends AbstractSqlParserTest {
 
-    private TableLineageAnalyzer analyzer = new TableLineageAnalyzer(DbType.mysql);
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "WithAsInsertTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/TableLineage/basic/";
+        return "/base/lineage/table/";
     }
 
     /**
@@ -26,7 +27,7 @@ public class WithAsInsertTest extends AbstractSqlParserTest {
     @Test
     public void test_01_insert_into_withas() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("new_table", result.getTargetTable());
         assertEquals(8, result.getSourceTables().size());
@@ -56,7 +57,7 @@ public class WithAsInsertTest extends AbstractSqlParserTest {
     @Test
     public void test_02_insert_into_withas_complex() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("digua_ceshi.result_table", result.getTargetTable());
         assertEquals(5, result.getSourceTables().size());
@@ -80,7 +81,7 @@ public class WithAsInsertTest extends AbstractSqlParserTest {
     @Test
     public void test_03_insert_into() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        TableLineageResult result = analyzer.analyze(sql);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
 
         assertEquals("digua_ceshi.result_table", result.getTargetTable());
         assertEquals(5, result.getSourceTables().size());

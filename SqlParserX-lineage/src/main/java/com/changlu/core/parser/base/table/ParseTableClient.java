@@ -2,6 +2,7 @@ package com.changlu.core.parser.base.table;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.core.service.select.column.SelectColumnItem;
 import com.changlu.core.service.select.column.SelectColumnSpecialLineageService;
 import com.changlu.core.service.select.table.SelectTable;
@@ -231,48 +232,4 @@ public class ParseTableClient implements IParseTableClient {
         return new ParseTableResult(mainTable, allTables);
     }
 
-
-    // 解析表结果
-    public static class ParseTableResult {
-        private Table mainTable;
-        private Set<Table> allTables;
-
-        public ParseTableResult() {
-        }
-
-        public ParseTableResult(Table mainTable, Set<Table> allTables) {
-            this.mainTable = mainTable;
-            this.allTables = allTables;;
-        }
-
-        public Table getMainTable() {
-            return mainTable;
-        }
-
-        public void setMainTable(Table mainTable) {
-            this.mainTable = mainTable;
-        }
-
-        public Set<Table> getAllTables() {
-            return allTables;
-        }
-
-        public void setAllTables(Set<Table> allTables) {
-            this.allTables = allTables;
-        }
-
-        // 对外暴露
-        public Set<String> getAllTableName() {
-            Set<String> tables = this.allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(Collectors.toSet());
-            return tables;
-        }
-
-        @Override
-        public String toString() {
-            return "ParseTableResult{" +
-                    "mainTable=" + mainTable +
-                    ", allTables=" + allTables +
-                    '}';
-        }
-    }
 }

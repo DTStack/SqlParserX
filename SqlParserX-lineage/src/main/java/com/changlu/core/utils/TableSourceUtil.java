@@ -14,6 +14,7 @@ import com.changlu.core.parser.ISqlParser;
 import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.table.ParseTableClient;
 import com.changlu.core.parser.base.lineage.table.Table;
+import com.changlu.core.parser.base.table.domain.ParseTableResult;
 
 import java.util.*;
 
@@ -26,24 +27,22 @@ public class TableSourceUtil implements SQLASTVisitor {
      * 解析真实表
      */
     public static List<String> parseTables(String sql, DbType dbType){
-        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
-        SQLStatement stmt = parser.parseStatement();
-        ParseTableClient parseTableClient = new ParseTableClient();
-        ParseTableClient.ParseTableResult parseTableResult = parseTableClient.parseTables(stmt);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+        ParseTableResult parseTableResult = sqlParser.parseTables(sql);
         return new ArrayList<>(parseTableResult.getAllTableName());
     }
 
     /**
      * 解析真实表
      */
-    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt){
+    public static ParseTableResult parseTables(SQLStatement stmt){
         return parseTables(stmt, null);
     }
 
     /**
      * 解析真实表
      */
-    public static ParseTableClient.ParseTableResult parseTables(SQLStatement stmt, DbType dbType){
+    public static ParseTableResult parseTables(SQLStatement stmt, DbType dbType){
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
         IParseTableClient parseTableClient = sqlParser.getParseTableClient();
         return parseTableClient.parseTables(stmt);

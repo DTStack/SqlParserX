@@ -1,9 +1,10 @@
-package com.changlu.lineage.ColumnLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.column;
 
 import com.alibaba.druid.DbType;
-import com.changlu.base.BaseColumnLineageAnalyzerTest;
+import com.changlu.core.common.BaseColumnLineageAnalyzerTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.column.Column;
-import com.changlu.core.parser.base.lineage.ColumnLineageAnalyzer;
 import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 import com.changlu.core.parser.base.lineage.domain.ColumnLineage;
 import org.junit.Test;
@@ -17,14 +18,14 @@ import static org.junit.Assert.assertEquals;
  * @author changlu
  * @date 2025/4/22 11:00
  */
-public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
+public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
 
-    private ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "CreateTableAsSelectTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/ColumnLineage/basic/";
+        return "/base/lineage/column/";
     }
 
     /**
@@ -33,7 +34,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_01_CreateTable() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        ColumnLineageResult analyze = analyzer.analyze(sql);
+        ColumnLineageResult analyze = sqlParser.parseColumnLineages(sql, new HashMap<>());
 
         assertEquals("students", analyze.getTargetTable());
         assertEquals(0, analyze.getColumnRelations().size());
@@ -46,8 +47,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_02_SimpleCreateTableAsSelectByCatalogSchemaTableColumn() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, new HashMap<>());
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
         System.out.println(result);
     }
 
@@ -63,8 +63,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
             }
         };
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
 //        result.printColumnLineage();
         assertEquals("new_table", result.getTargetTable());
@@ -93,8 +92,8 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
             }
         };
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap, DbType.hive);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.hive);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
 //        result.printColumnLineage();
         assertEquals("user_order_summary", result.getTargetTable());
@@ -121,8 +120,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
             }
         };
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
 //        result.printColumnLineage();
         assertEquals("new_table", result.getTargetTable());
@@ -140,8 +138,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 6);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -169,8 +166,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 7);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -196,8 +192,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 8);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -215,8 +210,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 9);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -233,8 +227,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 10);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -271,8 +264,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 11);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         // 校验血缘分析结果
         result.printColumnLineage();
         List<ColumnLineage> columnLineages = result.getColumnLineages();
@@ -286,8 +278,7 @@ public class CreateTableAsSelectTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 12);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = result.getColumnRelations();
         assertEquals(true, !columnRelations.isEmpty());
     }

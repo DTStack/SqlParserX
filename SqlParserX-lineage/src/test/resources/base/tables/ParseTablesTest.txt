@@ -1,0 +1,84 @@
+--------------------1--------------------
+with t8 as (
+    select * from table8
+)
+insert into new_table
+select * from table1 as t1
+  left join (
+    select * from table3 as tt3 left join table4 as tt4 on tt3.id = tt4.id
+    union
+    select * from table2
+  ) as t34 on t1.id = t34.id
+union
+select * from table1
+union
+select * from table4 as t4
+union
+select
+  id,
+  (SELECT MAX(col1) FROM table5 as t5) AS col2,
+  (SELECT COUNT(*) FROM table6 as t6 WHERE t6.age > 10) AS col3
+from table7
+union
+select * from t8
+--------------------2--------------------
+with t1 as (select * from table1), t2 as (select * from table2)
+insert into new_table
+select * from t1
+--------------------3--------------------
+COMMENT on column batch_601.employees2.name is '姓名'
+--------------------4--------------------
+CREATE TABLE test_2a
+as SELECT cust_name, cust_contact
+FROM Customers
+WHERE cust_id IN (SELECT cust_id
+                  FROM Orders
+                  WHERE order_num IN (SELECT order_num
+                                      FROM OrderItems
+                                      WHERE prod_id = 'RGAN01'));
+--------------------5--------------------
+select id,name from tz where id in(select id from tz2) and name in (select name from tz3)
+--------------------6--------------------
+ -- name sql_test_0414
+ -- type Inceptor SQL
+ -- author admin@dtstack.com
+ -- create time 2025-04-14 16:25:17
+ -- desc
+ INSERT OVERWRITE TABLE  CMI.LOAN_ACCT_INFO_TEMP
+     SELECT
+         V_ETL_DATE AS DATE_STAT,
+         A.ITEMNO   COD_IDSTR,
+         A.ITEMNAME TXT_IDSTR,
+         B.ITEMNO   COD_ONE_IDSTR,
+         B.ITEMNAME TXT_ONE_IDSTR,
+         C.ITEMNO   COD_TWO_IDSTR,
+         C.ITEMNAME TXT_TWO_IDSTR,
+         D.ITEMNO   COD_THREE_IDSTR,
+         D.ITEMNAME TXT_THREE_IDSTR
+     FROM OMI.CM_CODE_LIBRARY_HS A    --信贷参数表
+     LEFT JOIN OMI.CM_CODE_LIBRARY_HS B
+             ON B.ITEMNO = SUBSTR(A.ITEMNO,1,1)
+             AND B.CODENO         = 'IndustryType'
+             AND LENGTH(B.ITEMNO) = '1'
+             AND B.BEGNDT <= v_etl_date
+             AND B.OVERDT > v_etl_date
+             AND B.PARTID = v_partid
+     LEFT JOIN omi.cm_code_library_hs C
+             ON C.ITEMNO = SUBSTR(A.ITEMNO,1,3)
+             AND C.CODENO         = 'IndustryType'
+             AND LENGTH(C.ITEMNO) = '3'
+             AND C.BEGNDT <= v_etl_date
+             AND C.OVERDT > v_etl_date
+             AND C.PARTID = v_partid
+     LEFT JOIN omi.cm_code_library_hs D
+             ON D.ITEMNO = SUBSTR(A.ITEMNO,1,4)
+             AND D.CODENO         = 'IndustryType'
+             AND LENGTH(D.ITEMNO) = '4'
+             AND D.BEGNDT <= v_etl_date
+             AND D.OVERDT > v_etl_date
+             AND D.PARTID = v_partid
+     WHERE A.CODENO = 'IndustryType'
+             AND LENGTH(A.ITEMNO) = '5'
+             AND A.BEGNDT <= v_etl_date
+             AND A.OVERDT > v_etl_date
+             AND A.PARTID = v_partid;

@@ -1,9 +1,10 @@
-package com.changlu.lineage.ColumnLineageAnalyzerTest.basic;
+package com.changlu.core.base.lineage.column;
 
 import com.alibaba.druid.DbType;
-import com.changlu.base.BaseColumnLineageAnalyzerTest;
+import com.changlu.core.common.BaseColumnLineageAnalyzerTest;
+import com.changlu.core.parser.ISqlParser;
+import com.changlu.core.parser.SqlParserFactory;
 import com.changlu.core.parser.base.lineage.column.Column;
-import com.changlu.core.parser.base.lineage.ColumnLineageAnalyzer;
 import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
 import org.junit.Test;
 
@@ -19,14 +20,14 @@ import static org.junit.Assert.assertEquals;
  * @author changlu
  * @date 2025/4/22 11:00
  */
-public class InsertSelectTest extends BaseColumnLineageAnalyzerTest {
+public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzerTest {
 
-    private ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
+    private final ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
     private String sqlTxtName = "InsertSelectTest.txt";
 
     @Override
     public String getSqlTestPath() {
-        return "/lineage/ColumnLineage/basic/";
+        return "/base/lineage/column/";
     }
 
     // ************ select * from **************
@@ -46,8 +47,7 @@ public class InsertSelectTest extends BaseColumnLineageAnalyzerTest {
                         ));
             }
         };
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
         assertEquals(4, relations.size());
         assertRelation(relations, "dws_jyjs0504.gh", "dwd_jszt_jyjs0504.gh");
@@ -69,8 +69,8 @@ public class InsertSelectTest extends BaseColumnLineageAnalyzerTest {
                         ));
             }
         };
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
-        ColumnLineageResult result = analyzer.analyze(sql, tableColumnsMap, DbType.hive);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.hive);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
         assertEquals(4, relations.size());
         assertRelation(relations, "dws_jyjs0504.gh", "dwd_jszt_jyjs0504.gh");

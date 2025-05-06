@@ -25,7 +25,7 @@ public class TableLineageAnalyzer {
     /**
      * 传入druid的statement
      */
-    public TableLineageResult analyze(SQLStatement stmt, DbType dbType) {
+    public static TableLineageResult analyze(SQLStatement stmt, DbType dbType) {
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
         ITableLineageClient tableLineageClient = sqlParser.getTableLineageClient();
         return tableLineageClient.parseTableLineages(stmt);
