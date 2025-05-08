@@ -1,0 +1,375 @@
+--------------------1--------------------
+insert into hive.hzfh_pri.net_report_valid_cust_warning_df (proj_no,rule,cert_no,cdate)
+
+------1.有放款无授信
+
+----借呗
+select distinct 'ALIPAY' as proj_no,'有放款无授信' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_alipay_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('ALIPAY','XZD_ALIPAY')
+)
+
+union
+
+---花呗
+select distinct 'HUABEI' as proj_no,'有放款无授信' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_huabei_bill_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('HUABEI','XZD_HUABEI')
+)
+
+union
+
+---网商贷
+
+select distinct 'MYBANK' as proj_no,'有放款无授信' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_mybank_loan_detail_dfh_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('MYBANK')
+)
+
+
+---------2.该笔放款我行授信已清退
+union
+----借呗
+select distinct 'ALIPAY' as proj_no,'该笔放款我行授信已清退' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_alipay_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no in
+(
+select distinct cert_no from hive.hzfh_pri.net_ods_icp_loan_after_clear_up_detail_di WHERE proj_no in ('XZD_ALIPAY') and status = '2'
+)
+
+
+union
+
+---花呗
+select distinct 'HUABEI' as proj_no,'该笔放款我行授信已清退' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_huabei_bill_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no in
+(
+select distinct cert_no from hive.hzfh_pri.net_ods_icp_loan_after_clear_up_detail_di WHERE proj_no in ('XZD_HUABEI') and status = '2'
+)
+
+
+union
+
+---网商贷
+select distinct 'MYBANK' as proj_no,'该笔放款我行授信已清退' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_mybank_loan_detail_dfh_allbranch_di where cdate = '${cdate}' and cert_no in
+(
+select distinct cert_no from hive.hzfh_pri.net_ods_icp_loan_after_clear_up_detail_di WHERE proj_no in ('MYBANK') and status = '2'
+)
+
+
+union
+
+------3.文件中的有效户在我行未匹配到授信记录
+
+
+---借呗
+select 'ALIPAY' as proj_no,'文件有效户在我行未匹配到授信记录' as rule,common_string_1 as cert_no, '${cdate}'
+from net_ods_alipay_info_change_di where cdate = '${cdate}' and change_type = 'TOTAL_CREDIT_AMT' and common_string_1 not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('ALIPAY','XZD_ALIPAY')
+)
+
+union
+
+---花呗
+
+select 'HUABEI' as proj_no,'文件有效户在我行未匹配到授信记录' as rule,common_string_1 as cert_no, '${cdate}'
+from net_ods_huabei_bill_daily_change_memo_di where cdate = '${cdate}' and change_type = 'TOTAL_CREDIT_AMT' and common_string_1 not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('HUABEI','XZD_HUABEI')
+)
+
+
+union
+
+---网商贷
+
+
+
+select 'MYBANK' as proj_no,'文件有效户在我行未匹配到授信记录' as rule,cert_no , '${cdate}'
+from hive.hzfh_pri.net_ods_mybank_credit_detail_dfh_di where cdate = '${cdate}' and status = 'ENABLE' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where quota_status in (1,2) and proj_no in ('MYBANK')
+)
+
+
+union
+
+----4.非有效户有放款
+
+----借呗
+select distinct 'ALIPAY' as proj_no,'该笔放款我行授信已清退' as rule,cert_no, '${cdate}'
+from hive.hzfh_pri.net_ods_alipay_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where proj_no in ('ALIPAY','XZD_ALIPAY')
+)
+
+union
+
+---花呗
+
+select distinct 'HUABEI' as proj_no,'该笔放款我行授信已清退' as rule,cert_no , '${cdate}'
+from hive.hzfh_pri.net_ods_huabei_bill_loan_detail_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where proj_no in ('HUABEI','XZD_HUABEI')
+)
+
+union
+
+----网商贷
+
+select distinct 'MYBANK' as proj_no,'该笔放款我行授信已清退' as rule,cert_no , '${cdate}'
+from hive.hzfh_pri.net_ods_mybank_loan_detail_dfh_allbranch_di where cdate = '${cdate}' and cert_no not in
+(
+select distinct cert_no from net_dw_loan_apply_valid where proj_no in ('MYBANK')
+)
+
+
+
+-----5.增量文件中的额度高于我行授信额度
+
+---借呗
+union
+
+select 'ALIPAY' as proj_no,'增量文件中的额度高于我行授信额度' as rule,a.cert_no, '${cdate}'  from
+(
+select common_string_1 as cert_no,cast(common_string_4 as decimal(16,2))/100 as credit_quota
+from net_ods_alipay_info_change_di where cdate = '${cdate}' and change_type = 'TOTAL_CREDIT_AMT'
+)a
+left join
+(
+select cert_no,credit_quota from
+(
+select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+from net_dw_loan_apply_valid where proj_no in ('ALIPAY','XZD_ALIPAY') and quota_status in (1,2)  and credit_date <= '${cdate}'
+)tt
+where rn = 1
+)b
+on a.cert_no = b.cert_no
+where a.credit_quota > b.credit_quota
+
+union
+
+---花呗
+
+select 'HUABEI' as proj_no,'增量文件中的额度高于我行授信额度' as rule,a.cert_no, '${cdate}' from
+(
+select common_string_1 as cert_no,cast(common_string_4 as decimal(16,2))/100 as credit_quota
+from net_ods_huabei_bill_daily_change_memo_di where cdate = '${cdate}' and change_type = 'TOTAL_CREDIT_AMT'
+)a
+left join
+(
+select cert_no,credit_quota from
+(
+select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+from net_dw_loan_apply_valid where proj_no in ('HUABEI','XZD_HUABEI') and quota_status in (1,2)  and credit_date <= '${cdate}'
+)tt
+where rn = 1
+)b
+on a.cert_no = b.cert_no
+where a.credit_quota > b.credit_quota
+
+union
+
+---网商贷
+
+select 'MYBANK' as proj_no,'增量文件中的额度不等于我行授信额度' as rule,a.cert_no, '${cdate}' from
+(
+select cert_no,cast(block_amt as decimal(16,2))/100 as credit_quota
+from net_ods_mybank_credit_detail_dfh_di where cdate = '${cdate}' and status = 'ENABLE'
+)a
+left join
+(
+select cert_no,credit_quota from
+(
+select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+from net_dw_loan_apply_valid where proj_no in ('MYBANK') and quota_status in (1,2) and credit_date <= '${cdate}'
+)tt
+where rn = 1
+)b
+on a.cert_no = b.cert_no
+where a.credit_quota <> b.credit_quota
+
+union
+
+---放款客户与授信客户分流行号是否一致
+select 'MYBANK' as proj_no,'放款客户与授信客户分流行号不一致' as rule,a.cert_no, '${cdate}' from
+(
+select distinct cert_no,bhid from hive.hzfh_pri.net_ods_mybank_loan_detail_dfh_allbranch_di where cdate = '${cdate}'
+) a
+left join
+(
+select distinct cert_no,bhid from net_dw_loan_apply_valid where proj_no = 'MYBANK' and quota_status in (1,2) and credit_date <= '${cdate}'
+)b
+on a.cert_no = b.cert_no
+where a.bhid <> b.bhid
+
+
+
+union
+
+---T日有放款且T-1日贷款余额小于等于T日最新授信额度且T日贷款余额大于T日授信额度
+
+----借呗
+
+select  'ALIPAY' as proj_no,'T日有放款且T-1日贷款余额小于等于T日最新授信额度且T日贷款余额大于T日授信额度' as rule,a.cert_no, '${cdate}' from
+(
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from net_dwd_alipay_loan_stat_allbranch_df where cdate = '${yesterday}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('ALIPAY','XZD_ALIPAY') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal <= credit_quota
+)a
+join
+(
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from net_dwd_alipay_loan_stat_allbranch_df where cdate = '${cdate}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('ALIPAY','XZD_ALIPAY') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal > credit_quota
+)b
+on a.cert_no = b.cert_no
+join
+(
+select distinct cert_no from hive.hzfh_pri.net_ods_alipay_loan_detail_allbranch_di where cdate = '${cdate}' --and substr(encash_date,1,10) = '${cdate}'
+)c
+on a.cert_no = c.cert_no
+
+union
+
+----花呗
+
+
+select  'HUABEI' as proj_no,'T日有放款且T-1日贷款余额小于等于T日最新授信额度且T日贷款余额大于T日授信额度' as rule,a.cert_no, '${cdate}' from
+(
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from hive.hzfh_pri.net_dwd_huabei_loan_stat_allbranch_df where cdate = '${yesterday}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('HUABEI','XZD_HUABEI') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal <= credit_quota
+)a
+join
+(
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from hive.hzfh_pri.net_dwd_huabei_loan_stat_allbranch_df where cdate = '${cdate}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('HUABEI','XZD_HUABEI') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal > credit_quota
+)b
+on a.cert_no = b.cert_no
+join
+(
+select distinct cert_no from hive.hzfh_pri.net_ods_huabei_bill_loan_detail_allbranch_di
+where cdate = '${cdate}' --and substr(encash_date,1,10) = '${cdate}'
+)c
+on a.cert_no = c.cert_no
+
+
+union
+
+---网商贷
+
+
+select  'MYBANK' as proj_no,'T日有放款且T-1日贷款余额小于等于T日最新授信额度且T日贷款余额大于T日授信额度' as rule,a.cert_no, '${cdate}' from
+(
+----T-1日贷款余额小于等于T日最新授信
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from hive.hzfh_pri.net_dwd_mybank_loan_stat_dfh_allbranch_df
+where cdate = '${yesterday}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('MYBANK') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal > credit_quota
+)a
+join
+(
+--T日贷款余额大于T日最新授信
+select distinct aa.cert_no from
+(
+select cert_no,sum(cast(prin_bal+ovd_prin_bal as decimal(16,2)))/100 as loan_bal
+from hive.hzfh_pri.net_dwd_mybank_loan_stat_dfh_allbranch_df
+where cdate = '${cdate}'
+group by cert_no
+)aa
+left join
+(
+select cert_no,credit_quota from
+(
+    select cert_no,credit_quota,row_number() over (partition by cert_no order by credit_date desc) as rn
+    from net_dw_loan_apply_valid where proj_no in ('MYBANK') and quota_status in (1,2) and substr(credit_date,1,10) <= '${cdate}'
+)tt
+where rn = 1
+)bb
+on aa.cert_no = bb.cert_no
+where loan_bal > credit_quota
+)b
+on a.cert_no = b.cert_no
+join
+(
+----T日有放款
+select distinct cert_no from hive.hzfh_pri.net_ods_mybank_loan_detail_dfh_allbranch_di
+where cdate = '${cdate}' and substr(encash_date,1,10) = '${cdate}'
+)c
+on a.cert_no = c.cert_no

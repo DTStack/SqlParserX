@@ -1,7 +1,7 @@
 package com.changlu.sqlparserx.controller;
 
 import com.alibaba.druid.DbType;
-import com.changlu.core.utils.SQLSplitterUtil;
+import com.dtstack.sqlparser.sqlparserx.core.utils.SQLSplitterUtil;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import org.springframework.web.bind.annotation.*;
 

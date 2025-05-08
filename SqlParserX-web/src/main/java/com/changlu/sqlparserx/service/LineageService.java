@@ -1,9 +1,9 @@
 package com.changlu.sqlparserx.service;
 
 import com.alibaba.druid.DbType;
-import com.changlu.core.parser.base.lineage.ColumnLineageAnalyzer;
-import com.changlu.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.core.parser.base.lineage.column.ColumnLineageResult.ColumnRelation;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.ColumnLineageAnalyzer;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult.ColumnRelation;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import org.springframework.stereotype.Service;
 import java.util.*;
