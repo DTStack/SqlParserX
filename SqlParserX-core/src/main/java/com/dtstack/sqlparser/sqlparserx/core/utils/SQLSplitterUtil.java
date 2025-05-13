@@ -17,26 +17,26 @@ import java.util.List;
 public class SQLSplitterUtil {
     public static void main(String[] args) {
         // 1. 输入包含多条 SQL 的字符串
-        String sql = "CREATE OR REPLACE TRIGGER kaifa_transactions_trg\n" +
-                     "BEFORE INSERT ON kaifa_transactions\n" +
-                     "FOR EACH ROW\n" +
-                     "BEGIN\n" +
-                     "SELECT kaifa_transactions_seq.NEXTVAL\n" +
-                     "INTO :NEW.id\n" +
-                     "FROM dual;\n" +
-                     "END;\n" +
-                     "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';";
-//        String sql = "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';" +
-//                "CREATE OR REPLACE TRIGGER kaifa_transactions_trg\n" +
-//                "-- 测试; /\n" +
-//                "BEFORE INSERT ON kaifa_transactions\n" +
-//                "FOR EACH ROW\n" +
-//                "BEGIN\n" +
-//                "SELECT kaifa_transactions_seq.NEXTVAL\n" +
-//                "INTO :NEW.id\n" +
-//                "FROM dual;\n" +
-//                "END;\n" +
-//                "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';";
+//        String sql = "CREATE OR REPLACE TRIGGER kaifa_transactions_trg\n" +
+//                     "BEFORE INSERT ON kaifa_transactions\n" +
+//                     "FOR EACH ROW\n" +
+//                     "BEGIN\n" +
+//                     "SELECT kaifa_transactions_seq.NEXTVAL\n" +
+//                     "INTO :NEW.id\n" +
+//                     "FROM dual;\n" +
+//                     "END;\n" +
+//                     "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';";
+        String sql = "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';" +
+                "CREATE OR REPLACE TRIGGER kaifa_transactions_trg\n" +
+                "-- 测试; /\n" +
+                "BEFORE INSERT ON kaifa_transactions\n" +
+                "FOR EACH ROW\n" +
+                "BEGIN\n" +
+                "SELECT kaifa_transactions_seq.NEXTVAL\n" +
+                "INTO :NEW.id\n" +
+                "FROM dual;\n" +
+                "END;\n" +
+                "SELECT id, name FROM student WHERE id = 1 AND name = 'changlu';";
 //        String sql = "CREATE OR REPLACE FUNCTION add_numbers(\n" +
 //                "    p_num1 IN NUMBER,\n" +
 //                "    p_num2 IN NUMBER \n" +
@@ -60,7 +60,11 @@ public class SQLSplitterUtil {
         // 2. 调用切分方法
 //        List<SQLStatement> stmtList = SQLUtils.parseStatements(sql, DbType.oracle);
 //        System.out.println(stmtList);
-        List<String> splitSQLs = splitSQL(sql, DbType.oracle);
+//        List<String> splitSQLs = splitSQL(sql, DbType.oracle);
+        List<String> splitSQLs = SQLParserUtils.split(sql, DbType.oracle);
+        for (String splitSQL : splitSQLs) {
+            System.out.println(splitSQL);
+        }
 //
 //        // 3. 输出切分结果
 //        System.out.println("Splitted SQL Statements:");

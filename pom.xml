@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>SqlParserX-lineage</module>
+        <module>SqlParserX-core</module>
         <module>SqlParserX-web</module>
     </modules>
 

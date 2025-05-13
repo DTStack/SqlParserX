@@ -3,14 +3,19 @@ package com.dtstack.sqlparser.sqlparserx.core;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
-import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
+import com.alibaba.druid.sql.ast.expr.SQLAllColumnExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlSelectQueryBlock;
+import com.alibaba.druid.sql.parser.SQLParserFeature;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.parser.SQLType;
+import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.Table;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -195,6 +200,24 @@ public class TmpDruidTest {
                 e -> e instanceof SQLExprTableSource
         );
         System.out.println(tables);
+    }
+
+    @Test
+    public void testParser() {
+        String sql = "select name name1 from kano where id = %${id}%";
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql, SQLParserFeature.KeepSourceLocation);
+//        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
+        SQLStatement sqlStatement = parser.parseStatement();
+        System.out.println(sqlStatement);
+        sqlStatement.accept(new SQLASTVisitor() {
+            @Override
+            public boolean visit(SQLVariantRefExpr x) {
+                String name = x.getName();
+                x.setName("changlu");
+                return SQLASTVisitor.super.visit(x);
+            }
+        });
+        System.out.println(sqlStatement);
     }
 
 }

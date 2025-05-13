@@ -10,7 +10,7 @@
     </parent>
 
     <packaging>jar</packaging>
-    <artifactId>SqlParserX-lineage</artifactId>
+    <artifactId>SqlParserX-core</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
