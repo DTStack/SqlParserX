@@ -22,7 +22,7 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
 
     @Override
     public String getSqlTestPath() {
-        return "/base/lineage/column/";
+        return "/core/base/lineage/column/";
     }
 
     /**

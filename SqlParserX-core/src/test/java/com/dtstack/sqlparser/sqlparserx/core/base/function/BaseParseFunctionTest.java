@@ -20,7 +20,7 @@ public class BaseParseFunctionTest extends AbstractSqlParserTest {
 
     @Override
     public String getSqlTestPath() {
-        return "/base/function/";
+        return "/core/base/function/";
     }
 
     @Test

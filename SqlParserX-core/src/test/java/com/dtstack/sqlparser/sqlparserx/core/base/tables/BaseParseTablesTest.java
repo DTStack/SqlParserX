@@ -26,7 +26,7 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
 
     @Override
     public String getSqlTestPath() {
-        return "/base/tables/";
+        return "/core/base/tables/";
     }
 
     @Test

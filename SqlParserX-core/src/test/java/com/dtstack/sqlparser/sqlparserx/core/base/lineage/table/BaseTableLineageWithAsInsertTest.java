@@ -18,7 +18,7 @@ public class BaseTableLineageWithAsInsertTest extends AbstractSqlParserTest {
 
     @Override
     public String getSqlTestPath() {
-        return "/base/lineage/table/";
+        return "/core/base/lineage/table/";
     }
 
     /**

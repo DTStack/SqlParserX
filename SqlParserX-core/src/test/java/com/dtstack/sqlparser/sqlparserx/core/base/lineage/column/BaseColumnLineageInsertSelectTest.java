@@ -27,7 +27,7 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
 
     @Override
     public String getSqlTestPath() {
-        return "/base/lineage/column/";
+        return "/core/base/lineage/column/";
     }
 
     // ************ select * from **************

@@ -18,7 +18,7 @@ public class BaseTableLineageCreateTableAsSelectTest extends AbstractSqlParserTe
 
     @Override
     public String getSqlTestPath() {
-        return "/base/lineage/table/";
+        return "/core/base/lineage/table/";
     }
 
     /**

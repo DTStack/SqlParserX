@@ -25,7 +25,7 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
 
     @Override
     public String getSqlTestPath() {
-        return "/base/lineage/column/";
+        return "/core/base/lineage/column/";
     }
 
     /**
