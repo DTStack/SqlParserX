@@ -754,6 +754,86 @@ public class SelectColumnSpecialLineageService {
         return columnInfoByTableMap;
     }
 
+    /**
+     * 处理with as场景 & 主体selct字段情况  消除掉主体select引用with as别名问题
+     * @param selectColumns 主体select字段
+     * @param columnInfoByTableMap with as map场景
+     * @return 消除掉主体select引用with as别名后得到的一组selectColumns
+     */
+    public List<SelectColumn> matchWithAsAndSelectColumns(List<SelectColumn> selectColumns, Map<String, List<SelectColumn>> columnInfoByTableMap) {
+        List<SelectColumn> result = new ArrayList<>();
+
+        // 遍历每个SELECT列
+        for (SelectColumn selectColumn : selectColumns) {
+            // 拆分表信息和列名(可能包含多个以逗号分隔的值)
+            String[] tableInfos = selectColumn.getTableInfo().split(",");
+            String[] columnNames = selectColumn.getColumnName().split(",");
+            String aliasName = selectColumn.getAliasName();
+
+            // 验证表信息和列名数量是否匹配
+            if (tableInfos.length != columnNames.length) {
+                throw new IllegalArgumentException("SELECT列中的表信息和列名数量不匹配");
+            }
+
+            List<String> newTableInfos = new ArrayList<>();
+            List<String> newColumnNames = new ArrayList<>();
+
+            // 处理每个表/列对
+            for (int i = 0; i < tableInfos.length; i++) {
+                String tableInfo = tableInfos[i];
+                String columnName = columnNames[i];
+
+                // 检查别名是否是WITH AS表(存在于map中)
+                if (columnInfoByTableMap.containsKey(tableInfo)) {
+                    List<SelectColumn> curMatchMapColumns = columnInfoByTableMap.get(tableInfo);
+                    // * 场景直接匹配全部返回
+                    if (Constant.ALL.equals(columnName)) {
+                        if (!curMatchMapColumns.isEmpty()){
+                            for (SelectColumn curMatchMapColumn : curMatchMapColumns) {
+                                result.add(curMatchMapColumn.cloneOwn());
+                            }
+                        }
+                    }else {
+                        // 非*场景
+                        boolean found = false;
+                        // 在WITH AS表的列中搜索匹配项
+                        for (SelectColumn withColumn : curMatchMapColumns) {
+                            // 匹配列名与WITH AS表中的别名
+                            if (columnName.equals(withColumn.getAliasName())) {
+                                newTableInfos.add(withColumn.getTableInfo());
+                                newColumnNames.add(withColumn.getColumnName());
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            // 未在WITH AS表中找到匹配项，保留原始值
+                            newTableInfos.add(tableInfo);
+                            newColumnNames.add(columnName);
+                        }
+                    }
+                }else {
+                    // 无匹配到，表示该表名非with as中，保留原始值
+                    newTableInfos.add(tableInfo);
+                    newColumnNames.add(columnName);
+                }
+            }
+
+            // 过滤掉无匹配到with as表情况
+            if (newTableInfos.isEmpty()) continue;;
+
+            // 创建新的SelectColumn对象(使用解析后的引用)
+            SelectColumn newColumn = new SelectColumn(
+                    String.join(",", newTableInfos),
+                    String.join(",", newColumnNames),
+                    aliasName
+            );
+            result.add(newColumn);
+        }
+
+        return result;
+    }
+
     public Map<String, List<Column>> getTableColumnsMap() {
         return tableColumnsMap;
     }
