@@ -9,6 +9,7 @@ import com.dtstack.sqlparser.sqlparserx.core.enums.TableNameMatchStrategy;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparser.sqlparserx.core.config.Constant;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.Table;
+import com.dtstack.sqlparser.sqlparserx.core.select.table.SelectTable;
 import com.dtstack.sqlparser.sqlparserx.core.utils.TableSourceUtil;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
@@ -707,6 +708,50 @@ public class SelectColumnSpecialLineageService {
         columnName = String.join(",", columnNameItems);
         tableInfo = String.join(",", tableNameItems);
         return Pair.of(columnName, tableInfo);  // 返回不可变的 Pair
+    }
+
+    /**
+     * 构建with map
+     *    key：with as别名   value：List<SelectColumn>
+     * @param with SQLWithSubqueryClause
+     * @return Map<String, List<SelectColumn>>
+     */
+    public Map<String, List<SelectColumn>> buildColumnInfoByTableMap(SQLWithSubqueryClause with) {
+        Map<String, List<SelectColumn>> columnInfoByTableMap = new HashMap<>();
+        if (with != null) {
+            List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
+            if (!entries.isEmpty()) {
+                // 遍历每一组with as结构
+                for (SQLWithSubqueryClause.Entry entry : entries) {
+                    // as 的别名
+                    String aliasTableName = entry.getAlias();
+                    // select 主体过滤得到的字段记录含追溯真实表记录
+                    List<SelectColumn> withAsTableSelectColumns = this.queryColumnsBySqlSelect(entry.getSubQuery());
+                    List<SelectColumn> filterSelectColumns = new ArrayList<>();
+                    // with as 递归CTE场景 去除tableInfo中相对应匹配别名table相对应的字段记录信息
+                    for (SelectColumn selectColumn : withAsTableSelectColumns) {
+                        List<String> selectColumnNames = new ArrayList<>();
+                        List<String> seletTableNames = new ArrayList<>();
+                        String[] selectColumnNameArr = selectColumn.getColumnName().split(",");
+                        String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
+                        for (int i = 0; i < selectColumnNameArr.length; i++) {
+                            // 核心过滤掉递归CTE场景的字段依赖别名情况
+                            if (aliasTableName.equals(selectTableNameArr[i])) continue;
+                            selectColumnNames.add(selectColumnNameArr[i]);
+                            seletTableNames.add(selectTableNameArr[i]);
+                        }
+                        // 若是去除引入别名字段依赖情况后，数组数量为空情况，则跳过（一般不会出现该问题）
+                        if (selectColumnNames.isEmpty()) continue;
+                        selectColumn.setColumnName(String.join(",", selectColumnNames));
+                        selectColumn.setTableInfo(String.join(",", seletTableNames));
+                        filterSelectColumns.add(selectColumn);
+                    }
+
+                    columnInfoByTableMap.put(aliasTableName, filterSelectColumns);
+                }
+            }
+        }
+        return columnInfoByTableMap;
     }
 
     public Map<String, List<Column>> getTableColumnsMap() {
