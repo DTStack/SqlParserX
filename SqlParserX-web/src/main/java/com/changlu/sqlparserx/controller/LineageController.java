@@ -2,10 +2,7 @@ package com.changlu.sqlparserx.controller;
 
 import com.changlu.sqlparserx.service.LineageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -21,8 +18,8 @@ public class LineageController {
      * @param sql 要分析的SQL语句（通过请求参数传入）
      * @return 字段血缘分析结果
      */
-    @GetMapping("/query")
-    public Map<String, Object> query(@RequestParam String sql, @RequestParam Integer datasourceType) {
+    @PostMapping("/query")
+    public Map<String, Object> query(@RequestParam Integer datasourceType, @RequestBody String sql) {
         // 调用服务层方法并返回结果
         return lineageService.getLineage(sql, datasourceType);
     }

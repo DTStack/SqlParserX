@@ -1,0 +1,4 @@
+--------------------1--------------------
+select c.id, name,age from test_table as c
+--------------------2--------------------
+SELECT name, c.id FROM  test_table as c

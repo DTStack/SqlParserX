@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.dtstack.sqlparser.sqlparserx.core.common.AbstractSqlParserTest;
+import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.Table;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.dtstack.sqlparser.sqlparserx.core.utils.TableSourceUtil;
@@ -95,6 +96,16 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
         assertEquals(true, tableNames.contains("tz"));
         assertEquals(true, tableNames.contains("tz2"));
         assertEquals(true, tableNames.contains("tz3"));
+    }
+
+    @Test
+    public void test_05_parseTables_select_subquery_union() {
+        String sql = readSqlByIndex(sqlTxtName, 6);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
+        SQLStatement stmt = parser.parseStatement();
+        ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
+        Set<Table> allTables = parseTableResult.getAllTables();
+        System.out.println(allTables);
     }
 
 

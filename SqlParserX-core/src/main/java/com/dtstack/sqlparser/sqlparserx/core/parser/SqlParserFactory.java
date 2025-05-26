@@ -22,6 +22,11 @@ import com.dtstack.sqlparser.sqlparserx.core.parser.trino.TrinoSqlParser;
  */
 public class SqlParserFactory {
 
+    /**
+     * 基于Druid的dbType来实现
+     * @param dbType DbType
+     * @return ISqlParser
+     */
     public static ISqlParser getSqlParser(DbType dbType) {
         if (dbType == DbType.mysql) {
             return new MySqlParser();
@@ -54,5 +59,7 @@ public class SqlParserFactory {
         }
         return new BaseSqlParser();
     }
+
+    // 根据可接入不同场景去自行提供转换
 
 }

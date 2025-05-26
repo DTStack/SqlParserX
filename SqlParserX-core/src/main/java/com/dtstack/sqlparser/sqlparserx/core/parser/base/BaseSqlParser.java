@@ -12,6 +12,10 @@ import com.dtstack.sqlparser.sqlparserx.core.parser.IParseTableClient;
 import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparser.sqlparserx.core.parser.ITableLineageClient;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.DataTypeColumn;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.ParamInfo;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
@@ -92,5 +96,17 @@ public class BaseSqlParser implements ISqlParser {
             });
         }
         return res;
+    }
+
+    @Override
+    public ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck, Map<String, List<DataTypeColumn>> tableColumnsMap) {
+        SQLStatement statement = this.createStatement(sql);
+        return getParseParameterClient().parseParameterSql(statement, isIgnoreSyntaxCheck, tableColumnsMap);
+    }
+
+    @Override
+    public PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams, Map<String, ParamInfo> columns) {
+        SQLStatement statement = this.createStatement(sql);
+        return getParseParameterClient().buildSqlByPrepareCompile(statement, inParams, columns);
     }
 }

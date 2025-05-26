@@ -112,18 +112,26 @@ public class ParseTableClient implements IParseTableClient {
         this.allTables.add(mainTable);
     }
 
-//    @Override
+    @Override
     public void parseInsertTables(SQLInsertStatement x) {
         // 逻辑步骤与表血缘一致
         // 1、目标表
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
         // 2、获取到主体查询的一组tables
-        SQLSelect sqlSelect = x.getQuery();
-        List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(sqlSelect);
+        SQLSelect query = x.getQuery();
+        List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(query);
         // 3、with as场景处理
-        if (x.getWith() != null) {
+        // check是否是with as结构
+        // 情况1：with 在 insert 上场景 【x.getWith()】 => 大部分数据源
+        SQLWithSubqueryClause withSubqueryClause = x.getWith();
+        // 场景2：with 在 insert 下场景 【x.getQuery().getWithSubQuery()】=> doris
+        if (withSubqueryClause == null && query != null) {
+            withSubqueryClause = query.getWithSubQuery();
+        }
+        // check是否满足with as场景
+        if (withSubqueryClause != null) {
             // 3.1、构建with map
-            Map<String, List<SelectTable>> tableInfoByTableMap = parseSelectTableService.buildTableInfoByTableMap(x.getWith());
+            Map<String, List<SelectTable>> tableInfoByTableMap = parseSelectTableService.buildTableInfoByTableMap(withSubqueryClause);
 
             // 3.2、处理with as场景 & 主体select字段情况 过滤掉主体中引用with as 别名表字段情况
             selectTables = matchWithAsAndAddAnotherTables(selectTables, tableInfoByTableMap);

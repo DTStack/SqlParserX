@@ -1,6 +1,8 @@
 package com.changlu.sqlparserx.service;
 
 import com.alibaba.druid.DbType;
+import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
+import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.ColumnLineageAnalyzer;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult.ColumnRelation;
@@ -12,10 +14,10 @@ import java.util.*;
 public class LineageService {
 
     public Map<String, Object> getLineage(String sql, Integer datasourceType) {
-        ColumnLineageAnalyzer analyzer = new ColumnLineageAnalyzer();
         // 无匹配的数据源则走
         DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
-        ColumnLineageResult columnLineageResult = analyzer.analyze(sql, null, dbType);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+        ColumnLineageResult columnLineageResult = sqlParser.parseColumnLineages(sql, null);
 
         Set<String> allTables = new HashSet<>();
         Map<String, Set<String>> tableFields = new HashMap<>();

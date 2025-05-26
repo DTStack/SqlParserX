@@ -97,4 +97,46 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
         }
     }
 
+    @Test
+    public void test_01_02_insert_complex_sql111() {
+        String sql = "INSERT INTO b\n" +
+                "WITH cte AS (\n" +
+                "    SELECT *\n" +
+                "    FROM a\n" +
+                ")\n" +
+                "SELECT * FROM cte;";
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+            {
+                this.put("digua_ceshi.a",
+                        Arrays.asList(new Column("id", 0)
+                                , new Column("name", 1)
+                        ));
+            }
+        };
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        System.out.println(relations);
+    }
+
+    @Test
+    public void test_01_02_insert_complex_sql1112() {
+        String sql = "INSERT INTO wwz_00001(id,name)\n" +
+                "WITH wwz_00003 AS (\n" +
+                "    SELECT *\n" +
+                "    FROM wwz_00002\n" +
+                ")\n" +
+                "SELECT * FROM wwz_00003;";
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+            {
+                this.put("digua_ceshi.wwz_00002",
+                        Arrays.asList(new Column("id", 0)
+                                , new Column("name", 1)
+                        ));
+            }
+        };
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        System.out.println(relations);
+    }
+
 }

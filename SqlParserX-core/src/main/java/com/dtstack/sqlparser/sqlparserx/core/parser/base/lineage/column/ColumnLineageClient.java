@@ -95,9 +95,16 @@ public class ColumnLineageClient implements IColumnLineageClient {
 
         // 3、with as场景处理
         // check是否是with as结构
-        if (x.getWith() != null) {
+        // 情况1：with 在 insert 上场景 【x.getWith()】 => 大部分数据源
+        SQLWithSubqueryClause withSubqueryClause = x.getWith();
+        // 场景2：with 在 insert 下场景 【x.getQuery().getWithSubQuery()】=> doris
+        if (withSubqueryClause == null && query != null) {
+            withSubqueryClause = query.getWithSubQuery();
+        }
+        // check是否满足with as场景
+        if (withSubqueryClause != null) {
             // 3.1、构建with map
-            Map<String, List<SelectColumn>> columnInfoByTableMap = selectColumnSpecialLineageService.buildColumnInfoByTableMap(x.getWith());
+            Map<String, List<SelectColumn>> columnInfoByTableMap = selectColumnSpecialLineageService.buildColumnInfoByTableMap(withSubqueryClause);
 
             // 3.2、处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
             selectColumns = selectColumnSpecialLineageService.matchWithAsAndSelectColumns(selectColumns, columnInfoByTableMap);

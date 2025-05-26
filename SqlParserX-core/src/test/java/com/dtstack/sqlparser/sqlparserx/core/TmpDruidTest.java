@@ -15,7 +15,6 @@ import com.alibaba.druid.sql.visitor.SQLASTVisitor;
 import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.Table;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 
 import java.util.ArrayList;

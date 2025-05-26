@@ -104,7 +104,7 @@ export default {
       currentLines: [],
       defaultLineColor: '#66b1ff40',
       activeLineColor: '#66b1ff',
-      API_BASE_URL: 'http://127.0.0.1:8090',
+      API_BASE_URL: import.meta.env.VITE_API_URL,
       selectedDataSource: 1, // 默认选中MySQL
       dataSources: [], // 初始化为空数组
       fieldRelationsMap: {}, // 存储字段间的映射关系
@@ -301,7 +301,14 @@ export default {
       try {
         const encodedSQL = encodeURIComponent(sql);
         const response = await fetch(
-            `${this.API_BASE_URL}/api/lineage/query?sql=${encodedSQL}&datasourceType=${this.selectedDataSource}`
+            `${this.API_BASE_URL}/api/lineage/query?datasourceType=${this.selectedDataSource}`,
+            {
+              method: 'POST', // 改为POST方法
+              headers: {
+                'Content-Type': 'text/plain' // 保持纯文本格式
+              },
+              body: sql // 直接将SQL作为请求体
+            }
         );
 
         if (!response.ok) {

@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
+    "dev": "vite --mode development",
+    "pro": "vite --mode production",
+    "build:dev": "vite build --mode development",
+    "build:prod": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "echarts": "^5.4.0",
     "element-ui": "^2.15.14",
     "vue": "^2.7.16",
@@ -16,6 +19,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue2": "^2.3.1",
+    "cross-env": "^7.0.3",
     "vite": "^5.4.0"
   }
 }

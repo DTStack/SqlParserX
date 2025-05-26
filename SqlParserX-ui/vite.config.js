@@ -3,13 +3,11 @@ import vue2 from '@vitejs/plugin-vue2'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue2()],
-  server: {
-    historyApiFallback: true, // 支持 history 模式
-  },
+  base: './', // 打包的静态资源引用路径
+  plugins: [vue2()], // 放插件用的
   resolve: {
     alias: {
-      '@': '/src'
+      '@': '/src' // 配置@/提示符
     }
-  }
+  },
 })

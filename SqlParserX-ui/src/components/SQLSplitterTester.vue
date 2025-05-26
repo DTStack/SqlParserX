@@ -63,7 +63,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
       selectedDataSource: 1, // 默认选中ORACLE
       dataSources: [], // 初始化为空数组
       splitResults: [],
-      API_BASE_URL: 'http://127.0.0.1:8090'
+      API_BASE_URL: import.meta.env.VITE_API_URL,
     };
   },
   mounted() {

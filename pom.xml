@@ -26,6 +26,7 @@
                <artifactId>guava</artifactId>
                <version>30.1-jre</version>
            </dependency>
+            <!--     二开druid源码      -->
            <dependency>
                <groupId>com.alibaba</groupId>
                <artifactId>druid</artifactId>

@@ -193,6 +193,7 @@ public class SelectColumnSpecialLineageService {
                             tableNameList.add(sourceTableName);
                         }else {
                             // 策略2：根据外界（表元数据）传入的表字段来进行判断是否有来匹配
+//                            tableNameList.add(sourceTableName);
                             if (Constant.ALL.equals(columnNames[i]) || checkColumnRealExists(columnNames[i], sourceTableName)) {
                                 tableNameList.add(sourceTableName);
                             }else {
@@ -228,7 +229,7 @@ public class SelectColumnSpecialLineageService {
                 }
 
                 // 是否有匹配到元数据表填充字段
-                List<Column> metaTableColumns = this.tableColumnsMap.get(sourceTableName);
+                List<Column> metaTableColumns = this.getColumnByRealTable(sourceTableName);
                 if (isMatchHasAllColumns && metaTableColumns != null && !metaTableColumns.isEmpty()) {
                     List<SelectColumn> newBuildSelectColumns = new ArrayList<>();
                     // 真实表替换后 => 针对字段 * 构建逻辑
@@ -373,6 +374,28 @@ public class SelectColumnSpecialLineageService {
         }
 
         return false;
+    }
+
+    /**
+     * 与checkColumnRealExists方法进行check保持一致
+     * @param sourceTableName String
+     * @return List<Column>
+     */
+    private List<Column> getColumnByRealTable(String sourceTableName) {
+        // 先尝试直接匹配 避免全扫描一遍
+        if (this.tableColumnsMap.containsKey(sourceTableName)) {
+            return this.tableColumnsMap.get(sourceTableName);
+        }
+
+        // 再尝试匹配带数据库前缀的情况
+        for (Map.Entry<String, List<Column>> entry : this.tableColumnsMap.entrySet()) {
+            String tableKey = entry.getKey();
+            // 兼容.table情况，所以这里去匹配后缀
+            if (tableKey.endsWith(sourceTableName)) {
+                return this.tableColumnsMap.get(tableKey);
+            }
+        }
+        return new ArrayList<>();
     }
 
     // 辅助方法，检查列是否存在
