@@ -1,0 +1,23 @@
+--------------------1--------------------
+INSERT INTO wwz_0111 (id, name)
+WITH wwz_0133 AS (
+    SELECT id, name
+    FROM wwz_0122
+)
+SELECT id, name FROM wwz_0133;
+--------------------2--------------------
+INSERT INTO wwz_011 (id, name)
+WITH wwz_013 AS (
+    SELECT *
+    FROM wwz_012
+)
+SELECT * FROM wwz_013;
+--------------------3--------------------
+INSERT OVERWRITE table wwz_011
+SELECT *
+FROM wwz_012
+UNION ALL
+SELECT *
+FROM wwz_013;
+--------------------4--------------------
+insert into ks0526_3_1 select id,name from ks0526_3_2 where id in (select id from ks0526_3_3 where id>1);

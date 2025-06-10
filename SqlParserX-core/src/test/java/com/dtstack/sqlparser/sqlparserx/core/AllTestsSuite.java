@@ -1,6 +1,7 @@
 package com.dtstack.sqlparser.sqlparserx.core;
 
 import com.dtstack.sqlparser.sqlparserx.core.base.BaseSuite;
+import com.dtstack.sqlparser.sqlparserx.core.datasource.DatasourceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -14,6 +15,7 @@ import org.junit.runners.Suite;
         // 基础通用模板测试
         BaseSuite.class,
         // 数据源集合测试
+        DatasourceSuite.class
 })
 public class AllTestsSuite {
 }

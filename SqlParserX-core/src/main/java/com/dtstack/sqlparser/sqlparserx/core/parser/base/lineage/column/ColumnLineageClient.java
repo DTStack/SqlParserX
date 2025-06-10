@@ -89,11 +89,8 @@ public class ColumnLineageClient implements IColumnLineageClient {
             targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns);
         }
 
-        // 2、获取到主体查询的一组columns
+        // 2、优先with as场景处理
         SQLSelect query = x.getQuery();
-        List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelect(query);
-
-        // 3、with as场景处理
         // check是否是with as结构
         // 情况1：with 在 insert 上场景 【x.getWith()】 => 大部分数据源
         SQLWithSubqueryClause withSubqueryClause = x.getWith();
@@ -102,13 +99,22 @@ public class ColumnLineageClient implements IColumnLineageClient {
             withSubqueryClause = query.getWithSubQuery();
         }
         // check是否满足with as场景
+        Map<String, List<SelectColumn>> columnInfoByTableMap = null;
+        Set<String> withSqlAliasTableNames = new HashSet<>();
         if (withSubqueryClause != null) {
-            // 3.1、构建with map
-            Map<String, List<SelectColumn>> columnInfoByTableMap = selectColumnSpecialLineageService.buildColumnInfoByTableMap(withSubqueryClause);
+            // 2.1、构建with map 别名与一组字段关系
+            columnInfoByTableMap = selectColumnSpecialLineageService.buildColumnInfoByTableMap(withSubqueryClause);
+            withSqlAliasTableNames = columnInfoByTableMap.keySet();
+        }
 
-            // 3.2、处理with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
+        // 3、获取到主体查询的一组columns
+        List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelect(query, withSqlAliasTableNames);
+
+        // 处理含有with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
+        if (columnInfoByTableMap != null) {
             selectColumns = selectColumnSpecialLineageService.matchWithAsAndSelectColumns(selectColumns, columnInfoByTableMap);
         }
+
 
         // 4、若是没有指定insert的字段，那么此时targetColumns为空，此时需要从主体select中获取字段信息
         if (insertTableColumns.isEmpty() || targetColumns.isEmpty()) {

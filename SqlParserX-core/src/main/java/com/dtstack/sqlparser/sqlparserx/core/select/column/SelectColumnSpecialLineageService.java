@@ -25,6 +25,8 @@ public class SelectColumnSpecialLineageService {
     private final Map<String, List<Column>> tableColumnsMap;
     // 策略选择控制
     private TableNameMatchStrategy tableNameStrategy = TableNameMatchStrategy.CHECK_COLUMN_EXISTS;
+    // 临时存储withsql 表别名
+    private Set<String> withSqlAliasTableNames = new HashSet<>();
 
     public SelectColumnSpecialLineageService() {
         this.tableColumnsMap = new HashMap<>();
@@ -33,6 +35,24 @@ public class SelectColumnSpecialLineageService {
 
     public SelectColumnSpecialLineageService(Map<String, List<Column>> tableColumnsMap) {
         this.tableColumnsMap = tableColumnsMap;
+    }
+
+    /**
+     * 查询到SQLSelect中所有涉及字段 匹配 真实表所关联的信息
+     * @param sqlSelect SQLSelect
+     * @return List<SelectColumn> 每一个SelectColumn中包含字段来源表名 & 字段名
+     */
+    public List<SelectColumn> queryColumnsBySqlSelect(SQLSelect sqlSelect, Set<String> withSqlAliasTableNames) {
+        if (sqlSelect == null) {
+            return new ArrayList<>();
+        }
+        // 临时保存with表
+        this.withSqlAliasTableNames = withSqlAliasTableNames;
+        // 表查询
+        SQLSelectQuery sqlSelectQuery = sqlSelect.getQuery();
+        List<SelectColumn> result = queryColumnsBySqlSelectQuery(sqlSelectQuery);
+        this.withSqlAliasTableNames = new HashSet<>();
+        return result;
     }
 
     /**
@@ -194,7 +214,9 @@ public class SelectColumnSpecialLineageService {
                         }else {
                             // 策略2：根据外界（表元数据）传入的表字段来进行判断是否有来匹配
 //                            tableNameList.add(sourceTableName);
-                            if (Constant.ALL.equals(columnNames[i]) || checkColumnRealExists(columnNames[i], sourceTableName)) {
+                            if (Constant.ALL.equals(columnNames[i]) ||
+                                    checkExistInWithTables(sourceTableName) ||
+                                        checkColumnRealExists(columnNames[i], sourceTableName)) {
                                 tableNameList.add(sourceTableName);
                             }else {
                                 // 无来源表情况
@@ -310,6 +332,15 @@ public class SelectColumnSpecialLineageService {
         }
 
         return selectColumns;
+    }
+
+    /**
+     * check是否在with sql中有该表名，如果有，那么就设置其为true
+     * @param sourceTableName String
+     * @return boolean
+     */
+    private boolean checkExistInWithTables(String sourceTableName) {
+        return withSqlAliasTableNames.contains(sourceTableName);
     }
 
     /**
