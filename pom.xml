@@ -11,6 +11,7 @@
     <modules>
         <module>SqlParserX-core</module>
         <module>SqlParserX-web</module>
+        <module>SqlParserX-mcp-server-sse</module>
     </modules>
 
     <properties>
