@@ -1,5 +1,6 @@
 package com.dtstack.sqlparser.sqlparserx.core.parser;
 
+import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageClient;
@@ -12,6 +13,7 @@ import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.ParamI
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.BaseSqlFilterClient;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.ParseTableClient;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
@@ -90,6 +92,14 @@ public interface ISqlParser{
      */
     PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams, Map<String, ParamInfo> columns);
 
+    /**
+     * 行级权限过滤
+     * @param sql 原始SQL语句
+     * @param permissionParams 权限过滤参数列表
+     * @return 返回结果中的standardSql为生成的行级权限过滤的SQL语句
+     * @throws Exception 如果发生异常
+     */
+    String getRowLevelPermissionSql(String sql, List<RowLevelPermissionFilterParam> permissionParams);
 
     default IParseTableClient getParseTableClient() {
         return new ParseTableClient();
@@ -104,11 +114,16 @@ public interface ISqlParser{
     }
 
     default ISqlFilterClient getSqlFilterClient() {
-        return new BaseSqlFilterClient();
+        return new BaseSqlFilterClient(getDbType());
     }
 
     default IParseParameterClient getParseParameterClient() {
         return new BaseParseParameterClient();
+    }
+
+    default DbType getDbType() {
+        // null -> SQLStatementParser
+        return null;
     }
 
 

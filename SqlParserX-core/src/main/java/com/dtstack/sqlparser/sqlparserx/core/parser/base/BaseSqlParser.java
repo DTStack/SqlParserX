@@ -7,15 +7,13 @@ import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
-import com.dtstack.sqlparser.sqlparserx.core.parser.IColumnLineageClient;
-import com.dtstack.sqlparser.sqlparserx.core.parser.IParseTableClient;
-import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
-import com.dtstack.sqlparser.sqlparserx.core.parser.ITableLineageClient;
+import com.dtstack.sqlparser.sqlparserx.core.parser.*;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.DataTypeColumn;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.ParamInfo;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
@@ -24,11 +22,6 @@ import java.util.*;
 
 
 public class BaseSqlParser implements ISqlParser {
-
-    public DbType getDbType() {
-        // null -> SQLStatementParser
-        return null;
-    }
 
     private SQLStatement createStatement(String sql) {
         SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, this.getDbType());
@@ -108,5 +101,11 @@ public class BaseSqlParser implements ISqlParser {
     public PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams, Map<String, ParamInfo> columns) {
         SQLStatement statement = this.createStatement(sql);
         return getParseParameterClient().buildSqlByPrepareCompile(statement, inParams, columns);
+    }
+
+    @Override
+    public String getRowLevelPermissionSql(String sql, List<RowLevelPermissionFilterParam> permissionParams) {
+        ISqlFilterClient sqlFilterClient = this.getSqlFilterClient();
+        return sqlFilterClient.getRowLevelPermissionSql(sql, permissionParams);
     }
 }

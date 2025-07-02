@@ -12,8 +12,6 @@ import java.util.Map;
 
 public class BaseParseParameterClient implements IParseParameterClient {
 
-    
-
     @Override
     public ParseParameterResult parseParameterSql(SQLStatement stmt, Boolean isIgnoreSyntaxCheck, Map<String, List<DataTypeColumn>> tableColumnsMap) {
         return null;

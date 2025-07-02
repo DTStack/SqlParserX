@@ -39,6 +39,7 @@ public class DataSourceController {
         try {
             SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
             SQLStatement stmt = parser.parseStatement();
+            System.out.println(stmt.toString());
             res.put("code", 200);
         } catch (Exception e) {
             msg = e.getMessage();
