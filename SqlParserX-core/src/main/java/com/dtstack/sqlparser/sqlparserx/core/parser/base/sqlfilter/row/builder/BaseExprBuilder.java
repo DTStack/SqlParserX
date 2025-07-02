@@ -1,9 +1,9 @@
-package com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.builder;
+package com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.builder;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.*;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.TableInfo;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.TableInfo;
 
 import java.util.Arrays;
 import java.util.Collections;

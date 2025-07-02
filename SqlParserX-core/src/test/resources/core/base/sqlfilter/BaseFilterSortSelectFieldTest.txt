@@ -78,8 +78,11 @@ WHERE o.region = 'beijing'
 	AND p.name = 'hammer'
 	AND s.is_arrived = false
 --------------------13--------------------
-update orders1 set region = 'shanghai'
+update orders set region = 'shanghai'
 --------------------14--------------------
+UPDATE orders
+SET region = 'shanghai'
+WHERE region = 'beijing'
 --------------------15--------------------
 SELECT key, salted_key, value
 FROM (
@@ -88,6 +91,13 @@ FROM (
 ) t
 JOIN another_table ON t.salted_key = another_table.salted_key
 --------------------16--------------------
+SELECT key, salted_key, value
+FROM (
+	SELECT key, concat(key, random_salt) AS salted_key, value
+	FROM source_table
+	WHERE key IN ('beijing', 'hangzhou')
+) t
+	JOIN another_table ON t.salted_key = another_table.salted_key
 --------------------17--------------------
 --------------------18--------------------
 --------------------19--------------------

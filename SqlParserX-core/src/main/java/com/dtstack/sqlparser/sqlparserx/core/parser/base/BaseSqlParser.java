@@ -1,6 +1,5 @@
 package com.dtstack.sqlparser.sqlparserx.core.parser.base;
 
-import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
 import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
@@ -13,7 +12,7 @@ import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.DataTy
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.ParamInfo;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.TableLineageResult;

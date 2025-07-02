@@ -1,7 +1,8 @@
 package com.dtstack.sqlparser.sqlparserx.core.parser;
 
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.builder.BaseExprBuilder;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.RowLevelPermissionHandler;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.builder.BaseExprBuilder;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,11 +37,10 @@ public interface ISqlFilterClient {
     String getRowLevelPermissionSql(String sql, List<RowLevelPermissionFilterParam> permissionParams);
 
     /**
-     * 获取Expr构建器
-     * @return BaseExprBuilder
+     * 获取行级权限执行器
+     * @param
+     * @return RowLevelPermissionHandler
      */
-    default BaseExprBuilder getExprBuilder() {
-        return new BaseExprBuilder();
-    }
+    RowLevelPermissionHandler getRowLevelPermissionHandler();
 
 }

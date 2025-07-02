@@ -7,7 +7,7 @@ import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.dtstack.sqlparser.sqlparserx.core.common.AbstractSqlParserTest;
 import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -202,8 +202,8 @@ public class BaseFilterSortSelectFieldTest extends AbstractSqlParserTest {
         // 测试join
         String sql = readSqlByIndex(sqlTxtName, 13);
         String rowLevelPermissionSql = sqlParser.getRowLevelPermissionSql(sql, permissionFilterParams);
-//        Assert.assertEquals(rowLevelPermissionSql, readSqlByIndex(sqlTxtName, 14));
-        System.out.println(rowLevelPermissionSql);
+        Assert.assertEquals(rowLevelPermissionSql, readSqlByIndex(sqlTxtName, 14));
+//        System.out.println(rowLevelPermissionSql);
     }
 
     @Test
@@ -219,7 +219,8 @@ public class BaseFilterSortSelectFieldTest extends AbstractSqlParserTest {
         // 测试join
         String sql = readSqlByIndex(sqlTxtName, 15);
         String rowLevelPermissionSql = sqlParser.getRowLevelPermissionSql(sql, permissionFilterParams);
-        Assert.assertEquals(rowLevelPermissionSql, readSqlByIndex(sqlTxtName, 14));
+        Assert.assertEquals(rowLevelPermissionSql, readSqlByIndex(sqlTxtName, 16));
+//        System.out.println(rowLevelPermissionSql);
     }
 
 

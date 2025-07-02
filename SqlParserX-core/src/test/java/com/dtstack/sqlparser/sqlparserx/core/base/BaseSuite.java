@@ -2,6 +2,7 @@ package com.dtstack.sqlparser.sqlparserx.core.base;
 
 import com.dtstack.sqlparser.sqlparserx.core.base.function.BaseParseFunctionTest;
 import com.dtstack.sqlparser.sqlparserx.core.base.lineage.BaseLineageSuite;
+import com.dtstack.sqlparser.sqlparserx.core.base.sqlfilter.BaseFilterSortSelectFieldTest;
 import com.dtstack.sqlparser.sqlparserx.core.base.tables.BaseParseTablesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -13,7 +14,9 @@ import org.junit.runners.Suite;
         // 解析表单测
         BaseParseTablesTest.class,
         // 解析函数单测
-        BaseParseFunctionTest.class
+        BaseParseFunctionTest.class,
+        // 解析函数单测
+        BaseFilterSortSelectFieldTest.class
 })
 public class BaseSuite {
 }

@@ -13,7 +13,7 @@ import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.domain.ParamI
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.BaseSqlFilterClient;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.ParseTableClient;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 

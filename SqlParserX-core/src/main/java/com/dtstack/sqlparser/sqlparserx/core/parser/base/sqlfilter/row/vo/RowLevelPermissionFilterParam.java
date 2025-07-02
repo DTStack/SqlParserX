@@ -1,4 +1,4 @@
-package com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.vo;
+package com.dtstack.sqlparser.sqlparserx.core.parser.base.sqlfilter.row.vo;
 import java.util.List;
 
 public class RowLevelPermissionFilterParam {
