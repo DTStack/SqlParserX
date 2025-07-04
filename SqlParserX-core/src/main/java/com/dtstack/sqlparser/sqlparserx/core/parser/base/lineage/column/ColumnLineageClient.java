@@ -14,8 +14,8 @@ import com.dtstack.sqlparser.sqlparserx.core.select.column.SelectColumn;
 import com.dtstack.sqlparser.sqlparserx.core.select.column.SelectColumnItem;
 import com.dtstack.sqlparser.sqlparserx.core.select.column.SelectColumnSpecialLineageService;
 import com.dtstack.sqlparser.sqlparserx.core.utils.TableSourceUtil;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 

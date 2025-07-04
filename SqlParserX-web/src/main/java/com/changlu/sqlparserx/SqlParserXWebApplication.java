@@ -1,13 +1,20 @@
 package com.changlu.sqlparserx;
 
+import com.changlu.sqlparserx.env.SystemPropertyUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 public class SqlParserXWebApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SqlParserXWebApplication.class, args);
+        SystemPropertyUtil.setSystemUserDir();
+        System.out.println("Static resources path: " + System.getProperty("user.dir.conf") + "/static/");
+        new SpringApplicationBuilder(SqlParserXWebApplication.class)
+                .properties(
+                        "spring.config.location=file:${user.dir.conf}/application.properties"
+                ).run(args);
     }
 
 }

@@ -11,7 +11,6 @@
     <modules>
         <module>SqlParserX-core</module>
         <module>SqlParserX-web</module>
-        <module>SqlParserX-mcp-server-sse</module>
     </modules>
 
     <properties>
@@ -20,26 +19,41 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-   <dependencyManagement>
-       <dependencies>
-           <dependency>
-               <groupId>com.google.guava</groupId>
-               <artifactId>guava</artifactId>
-               <version>30.1-jre</version>
-           </dependency>
-            <!--     二开druid源码      -->
-           <dependency>
-               <groupId>com.alibaba</groupId>
-               <artifactId>druid</artifactId>
-               <version>7.0.1-SNAPSHOT-druid1.2.24</version>
-           </dependency>
-           <dependency>
-               <groupId>junit</groupId>
-               <artifactId>junit</artifactId>
-               <version>4.13.2</version>
-               <scope>test</scope>
-           </dependency>
-       </dependencies>
-   </dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>30.1-jre</version>
+            </dependency>
+            <!-- 二开druid源码 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>7.0.1-SNAPSHOT-druid1.2.24</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.2</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
