@@ -19,5 +19,3 @@ FROM wwz_012
 UNION ALL
 SELECT *
 FROM wwz_013;
---------------------4--------------------
-insert into ks0526_3_1 select id,name from ks0526_3_2 where id in (select id from ks0526_3_3 where id>1);

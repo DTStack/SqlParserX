@@ -363,3 +363,10 @@ WHERE
 a.PubCompanyCode NOT IN ( '10014783', '10004823', '10983760' )
 AND h.RECTime >= DATE_SUB(CURDATE(), INTERVAL 3 DAY )
 GROUP BY a.RPTCode
+--------------------12--------------------
+create table newTable as
+select id, name from (
+    select id, name from table1
+    union all
+    select id, name from table2
+) as t1

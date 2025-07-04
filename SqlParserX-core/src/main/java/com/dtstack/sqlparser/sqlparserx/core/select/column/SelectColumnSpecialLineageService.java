@@ -9,10 +9,9 @@ import com.dtstack.sqlparser.sqlparserx.core.enums.TableNameMatchStrategy;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparser.sqlparserx.core.config.Constant;
 import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.Table;
-import com.dtstack.sqlparser.sqlparserx.core.select.table.SelectTable;
 import com.dtstack.sqlparser.sqlparserx.core.utils.TableSourceUtil;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -312,14 +311,10 @@ public class SelectColumnSpecialLineageService {
             SQLSubqueryTableSource sqlSubqueryTableSource = (SQLSubqueryTableSource) fromTable;
             SQLSelect select = sqlSubqueryTableSource.getSelect();
             // 查询到子查询中的字段集合
-            List<SelectColumn> subquerySelectColumns = queryColumnsBySqlSelect(select);
+            List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelect(select);
 
-            // subquerySelectColumns中 外层属性* 切带有子查询情况
-            //   举例：select * from (select * from new_table) as t; 外层的* 字段取决于子查询中的所有字段
-            selectColumns = dealSubQuerySelectColumnsByAllColumns(selectColumns, subquerySelectColumns);
-
-            // selectColumns & subquerySelectColumns 进行match匹配操作
-            selectColumns = matchSubQuerySelectColumns(selectColumns, subquerySelectColumns);
+            // 实现当前一组columns & 子查询columns合并处理
+            selectColumns = doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
         else if (fromTable instanceof SQLJoinTableSource){
             SQLJoinTableSource sqlJoinTableSource = (SQLJoinTableSource) fromTable;
@@ -329,8 +324,30 @@ public class SelectColumnSpecialLineageService {
             selectColumns = queryFromTableByColumns(left, selectColumns);
             // 右表匹配扫描
             selectColumns = queryFromTableByColumns(right, selectColumns);
+        }else if (fromTable instanceof SQLUnionQueryTableSource) {
+            SQLUnionQueryTableSource sqlUnionQueryTableSource = (SQLUnionQueryTableSource) fromTable;
+            SQLUnionQuery sqlUnionQuery = sqlUnionQueryTableSource.getUnion();
+            List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelectQuery(sqlUnionQuery);
+
+            // 实现当前一组columns & 子查询columns合并处理
+            this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
         }
 
+        return selectColumns;
+    }
+
+    /**
+     * 合并当前最新的一组selectColumns & 子查询的一组columns
+     * @param selectColumns List<SelectColumn>
+     * @param subquerySelectColumns List<SelectColumn>
+     * @return List<SelectColumn>
+     */
+    private List<SelectColumn> doMergeSubqueryColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns) {
+        // subquerySelectColumns中 外层属性* 切带有子查询情况
+        //   举例：select * from (select * from new_table) as t; 外层的* 字段取决于子查询中的所有字段
+        selectColumns = dealSubQuerySelectColumnsByAllColumns(selectColumns, subquerySelectColumns);
+        // selectColumns & subquerySelectColumns 进行match匹配操作
+        selectColumns = matchSubQuerySelectColumns(selectColumns, subquerySelectColumns);
         return selectColumns;
     }
 
@@ -457,7 +474,7 @@ public class SelectColumnSpecialLineageService {
                         (existing, replacement) -> {  // 处理重复key的情况
                             // 这里可以根据业务需求决定保留哪个
                             // 例如记录日志或抛出异常
-                            System.out.println("Duplicate aliasName found: " + existing.getAliasName());
+                            log.info("Duplicate aliasName found: {}", existing.getAliasName());
                             return existing;  // 默认保留已存在的
                         }
                 ));

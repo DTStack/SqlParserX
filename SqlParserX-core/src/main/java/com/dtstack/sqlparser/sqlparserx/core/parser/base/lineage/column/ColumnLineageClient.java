@@ -214,59 +214,6 @@ public class ColumnLineageClient implements IColumnLineageClient {
     }
 
     /**
-     * 获取到union的第一个select
-     * @param selectQuery
-     * @return
-     */
-    private SQLSelectQueryBlock findFirstSelectQueryBlock(SQLSelectQuery selectQuery) {
-        if (selectQuery instanceof SQLSelectQueryBlock) {
-            return (SQLSelectQueryBlock) selectQuery;
-        } else if (selectQuery instanceof SQLUnionQuery) {
-            SQLUnionQuery unionQuery = (SQLUnionQuery) selectQuery;
-            List<SQLSelectQuery> relations = unionQuery.getRelations();
-            if (!relations.isEmpty()) {
-                return findFirstSelectQueryBlock(relations.get(0));
-            }
-        }
-        throw new RuntimeException("findFirstSelectQueryBlock error，selectQuery type: " + selectQuery.getClass().getName() + "暂无相应处理");
-    }
-
-    private String findSourceTableForColumn(String columnName) {
-        List<String> possibleTables = new ArrayList<>();
-
-        // 收集所有包含该字段的表
-        for (Map.Entry<String, String> entry : fromTables.entrySet()) {
-            String realTable = entry.getValue();
-
-            // 后续需要check是否有对应真实表及字段名
-            if (hasColumn(realTable, columnName)) {
-                possibleTables.add(realTable);
-                break;
-            }
-        }
-
-        // 处理查询结果
-        if (possibleTables.isEmpty()) {
-            return columnName; // 字段不属于任何已知表
-        } else if (possibleTables.size() == 1) {
-            return possibleTables.get(0); // 唯一匹配
-        } else {
-            // 多表包含相同字段名，需要表名限定 （可以理解为最终的sql执行不过）
-            throw new IllegalStateException("Ambiguous column '" + columnName +
-                    "' in tables: " + possibleTables);
-        }
-    }
-
-    // 模拟元数据服务检查表是否包含某字段
-    private boolean hasColumn(String tableName, String columnName) {
-        List<Column> columns = this.tableColumnsMap.get(tableName);
-        for (Column column : columns) {
-            if (column.getColumnName().contains(columnName)) return true;
-        }
-        return false;
-    }
-
-    /**
      * 添加关联关系
      * @param sourceTable 原始表
      * @param sourceColumn 原始字段
@@ -307,64 +254,6 @@ public class ColumnLineageClient implements IColumnLineageClient {
         columnLineage.setToTable(targetTableObj.getName());
         columnLineage.setToColumn(targetColumn);
         columnLineages.add(columnLineage);
-    }
-
-    /**
-     * 匹配获取到select中的第一组columns
-     * @param sqlSelectQuery
-     * @return
-     */
-    private List<SelectColumn> matchFirstSelectColumns(SQLSelectQuery sqlSelectQuery) {
-        List<SelectColumn> selectColumns = new ArrayList<>();
-        if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
-            SQLSelectQueryBlock sqlSelectQueryBlock = (SQLSelectQueryBlock) sqlSelectQuery;
-            List<SQLSelectItem> selectList = sqlSelectQueryBlock.getSelectList();
-            selectColumns = selectColumnSpecialLineageService.buildSelectColumnsBySelectItems(selectList);
-        }else if (sqlSelectQuery instanceof SQLUnionQuery) {
-            SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
-            // 优先匹配到左侧的
-            SQLSelectQuery left = sqlUnionQuery.getLeft();
-            return matchFirstSelectColumns(left);
-        }
-        return selectColumns;
-    }
-
-    /**
-     * 处理多种场景
-     *   场景1: create table (id, name, xxx) as select xx, xx, xx 【无该场景】
-     *   场景2：create table as select
-     * @param selectQueryBlock
-     * @return
-     */
-    private List<String> getTargetColumns(SQLSelectQueryBlock selectQueryBlock) {
-        List<String> columns = new ArrayList<>();
-        // 方式2：如果没有显式定义列，则使用SELECT项的别名（直接create table as select 这种形式，无列名场景）
-        if (selectQueryBlock != null) {
-            List<SQLSelectItem> selectList = selectQueryBlock.getSelectList();
-            for (int i = 0; i < selectList.size(); i++) {
-                String columnName = extractRealColumnName(selectList.get(i), i);
-                columns.add(columnName);
-            }
-        }
-        return columns;
-    }
-
-    private String extractRealColumnName(SQLSelectItem selectItem, int index) {
-        // 优先使用别名
-        if (selectItem.getAlias() != null) {
-            return selectItem.getAlias();
-        }
-
-        // 没有别名则从表达式中提取
-        SQLExpr expr = selectItem.getExpr();
-        if (expr instanceof SQLIdentifierExpr) {
-            return ((SQLIdentifierExpr) expr).getName();
-        } else if (expr instanceof SQLPropertyExpr) {
-            return ((SQLPropertyExpr) expr).getName();
-        }
-
-        // 复杂表达式默认使用列位置
-        return "column_" + (index + 1);
     }
 
     public ColumnLineageResult getResult() {

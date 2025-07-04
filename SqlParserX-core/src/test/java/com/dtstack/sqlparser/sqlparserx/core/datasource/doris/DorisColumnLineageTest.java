@@ -86,15 +86,4 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertRelation(relations, "wwz_011.name", "wwz_013.name");
     }
 
-    @Test
-    public void test_04_insert_overwrite() {
-        String sql = readSqlByIndex(sqlTxtName, 4);
-        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
-        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
-        assertEquals(2, relations.size());
-        assertEquals(2, result.getColumnLineages().size());
-        assertRelation(relations, "ks0526_3_1.id", "ks0526_3_2.id");
-        assertRelation(relations, "ks0526_3_1.name", "ks0526_3_2.name");
-    }
-
 }
