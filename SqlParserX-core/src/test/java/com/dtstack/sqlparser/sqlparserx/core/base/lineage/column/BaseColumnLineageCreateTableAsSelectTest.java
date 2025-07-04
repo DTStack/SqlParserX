@@ -279,8 +279,13 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
         // 实现字段血缘分析
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
-        Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = result.getColumnRelations();
-        assertEquals(true, !columnRelations.isEmpty());
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+        assertEquals("newTable", result.getTargetTable());
+        assertEquals(4, columnLineages.size());
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "id", null, null, "newTable", "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "name", null, null, "newTable", "name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "id", null, null, "newTable", "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "name", null, null, "newTable", "name")));
     }
 
 }

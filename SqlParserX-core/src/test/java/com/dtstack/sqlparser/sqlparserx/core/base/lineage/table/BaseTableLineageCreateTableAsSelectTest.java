@@ -125,4 +125,22 @@ public class BaseTableLineageCreateTableAsSelectTest extends AbstractSqlParserTe
         assertTrue(result.getRelations().contains(new TableRelation("table7", "new_table")));
     }
 
+    /**
+     * 测试用例7-子查询+union_all
+     */
+    @Test
+    public void test_07_subquery_union() {
+        String sql = readSqlByIndex(sqlTxtName, 7);
+        TableLineageResult result = sqlParser.parseTableLineages(sql);
+
+        assertEquals("newTable", result.getTargetTable());
+        assertEquals(2, result.getSourceTables().size());
+        assertTrue(result.getSourceTables().contains("table1"));
+        assertTrue(result.getSourceTables().contains("table2"));
+
+        assertEquals(2, result.getRelations().size());
+        assertTrue(result.getRelations().contains(new TableRelation("table1", "newTable")));
+        assertTrue(result.getRelations().contains(new TableRelation("table2", "newTable")));
+    }
+
 }

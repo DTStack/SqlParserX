@@ -78,7 +78,7 @@ public class SelectColumnSpecialLineageService {
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             return queryColumnsBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
         }else if (sqlSelectQuery instanceof SQLUnionQuery) {
-            // #feat4：select union 场景特殊化处理含合并逻辑
+            // 场景4：select union 场景特殊化处理含合并逻辑
             SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
             List<SQLSelectQuery> relations = sqlUnionQuery.getRelations();
             if (relations == null || relations.isEmpty()) return selectColumns;
@@ -314,7 +314,7 @@ public class SelectColumnSpecialLineageService {
             List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelect(select);
 
             // 实现当前一组columns & 子查询columns合并处理
-            selectColumns = doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
+            selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
         else if (fromTable instanceof SQLJoinTableSource){
             SQLJoinTableSource sqlJoinTableSource = (SQLJoinTableSource) fromTable;
@@ -324,13 +324,14 @@ public class SelectColumnSpecialLineageService {
             selectColumns = queryFromTableByColumns(left, selectColumns);
             // 右表匹配扫描
             selectColumns = queryFromTableByColumns(right, selectColumns);
-        }else if (fromTable instanceof SQLUnionQueryTableSource) {
+        } // 场景5：select union场景
+        else if (fromTable instanceof SQLUnionQueryTableSource) {
             SQLUnionQueryTableSource sqlUnionQueryTableSource = (SQLUnionQueryTableSource) fromTable;
             SQLUnionQuery sqlUnionQuery = sqlUnionQueryTableSource.getUnion();
             List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelectQuery(sqlUnionQuery);
 
             // 实现当前一组columns & 子查询columns合并处理
-            this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
+            selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns);
         }
 
         return selectColumns;

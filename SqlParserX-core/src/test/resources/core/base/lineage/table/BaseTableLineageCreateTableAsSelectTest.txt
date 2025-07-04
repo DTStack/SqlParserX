@@ -38,3 +38,10 @@ select
   (SELECT MAX(col1) FROM table5 as t5) AS col2,
   (SELECT COUNT(*) FROM table6 as t6 WHERE t6.age > 10) AS col3
 from table7
+--------------------7--------------------
+create table newTable as
+select id, name from (
+    select id, name from table1
+    union all
+    select id, name from table2
+) as t1

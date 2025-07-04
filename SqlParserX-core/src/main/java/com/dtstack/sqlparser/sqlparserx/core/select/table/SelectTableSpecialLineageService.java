@@ -94,14 +94,9 @@ public class SelectTableSpecialLineageService {
             //    table3      tt3
             //    table4      tt4
             List<SelectTable> subQuerySelectTables = this.queryTablesBySqlSelect(select);
-            // 合并为一条表记录
-            //      真实表          表别名
-            // table3, table4        t34
-            List<String> tableGroup = new ArrayList<>();
-            for (SelectTable subQuerySelectTable : subQuerySelectTables) {
-                tableGroup.add(subQuerySelectTable.getTableInfo());
-            }
-            tables.add(new SelectTable(String.join(",", tableGroup), aliasTableName));
+
+            SelectTable selectTable = this.doMergeSubqueryTables(subQuerySelectTables, aliasTableName);
+            tables.add(selectTable);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
         else if (fromTable instanceof SQLJoinTableSource){
             SQLJoinTableSource sqlJoinTableSource = (SQLJoinTableSource) fromTable;
@@ -111,8 +106,34 @@ public class SelectTableSpecialLineageService {
             tables.addAll(queryFromTable(left));
 //            // 右表匹配扫描
             tables.addAll(queryFromTable(right));
+        } // 场景5：子查询+union结构（SQLUnionQueryTableSource） 与场景2基本一致
+        else if (fromTable instanceof SQLUnionQueryTableSource) {
+            SQLUnionQueryTableSource sqlUnionQueryTableSource = (SQLUnionQueryTableSource) fromTable;
+            SQLUnionQuery sqlUnionQuery = sqlUnionQueryTableSource.getUnion();
+            String aliasTableName = sqlUnionQueryTableSource.getAlias();
+
+            List<SelectTable> subQuerySelectTables = this.queryTablesBySqlSelectQuery(sqlUnionQuery);
+
+            SelectTable selectTable = this.doMergeSubqueryTables(subQuerySelectTables, aliasTableName);
+            tables.add(selectTable);
         }
         return tables;
+    }
+
+    /**
+     * 将子查询中的一组表 合并 为一个SelectTable
+     * @param subQuerySelectTables List<SelectTable>
+     * @return SelectTable
+     */
+    public SelectTable doMergeSubqueryTables(List<SelectTable> subQuerySelectTables, String aliasTableName) {
+        // 合并为一条表记录
+        //      真实表          表别名
+        // table3, table4        t34
+        List<String> tableGroup = new ArrayList<>();
+        for (SelectTable subQuerySelectTable : subQuerySelectTables) {
+            tableGroup.add(subQuerySelectTable.getTableInfo());
+        }
+        return new SelectTable(String.join(",", tableGroup), aliasTableName);
     }
 
     /**
