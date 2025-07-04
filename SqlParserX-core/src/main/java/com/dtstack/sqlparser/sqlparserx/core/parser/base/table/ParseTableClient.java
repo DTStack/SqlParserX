@@ -47,8 +47,7 @@ public class ParseTableClient implements IParseTableClient {
         return getParseTableResult();
     }
 
-    @Override
-    public void parseSelectTables(SQLSelectStatement x) {
+    protected void parseSelectTables(SQLSelectStatement x) {
         SQLSelect select = x.getSelect();
         if (select != null) {
             List<SelectTable> selectTables = parseSelectTableService.queryTablesBySqlSelect(select);
@@ -61,26 +60,21 @@ public class ParseTableClient implements IParseTableClient {
         }
     }
 
-    @Override
-    public void parseUpdateTables(SQLUpdateStatement x) {
+    protected void parseUpdateTables(SQLUpdateStatement x) {
     }
 
-    @Override
-    public void parseDeleteTables(SQLDeleteStatement x) {
+    protected void parseDeleteTables(SQLDeleteStatement x) {
     }
 
-    @Override
-    public void parseDropTables(SQLDropTableStatement x) {
+    protected void parseDropTables(SQLDropTableStatement x) {
         parseCommonStatement(x.getTableSources());
     }
 
-    @Override
-    public void parseTruncateTables(SQLTruncateStatement x) {
+    protected void parseTruncateTables(SQLTruncateStatement x) {
         parseCommonStatement(x.getTableSources());
     }
 
-    @Override
-    public void parseCommentTables(SQLCommentStatement x) {
+    protected void parseCommentTables(SQLCommentStatement x) {
         SQLExprTableSource exprTableSource = x.getOn();
         SQLCommentStatement.Type type = x.getType();
         // 示范场景：COMMENT ON COLUMN batch_601.employees2.name IS '姓名'
@@ -96,8 +90,7 @@ public class ParseTableClient implements IParseTableClient {
         this.allTables.add(mainTable);
     }
 
-    @Override
-    public void parseCreateTables(SQLCreateTableStatement x) {
+    protected void parseCreateTables(SQLCreateTableStatement x) {
         // 主表
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
 
@@ -112,8 +105,7 @@ public class ParseTableClient implements IParseTableClient {
         this.allTables.add(mainTable);
     }
 
-    @Override
-    public void parseInsertTables(SQLInsertStatement x) {
+    protected void parseInsertTables(SQLInsertStatement x) {
         // 逻辑步骤与表血缘一致
         // 1、目标表
         mainTable = TableSourceUtil.extractTable(x.getTableSource());
