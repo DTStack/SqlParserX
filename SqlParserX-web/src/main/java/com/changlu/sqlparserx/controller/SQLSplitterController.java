@@ -1,6 +1,7 @@
 package com.changlu.sqlparserx.controller;
 
 import com.alibaba.druid.DbType;
+import com.changlu.sqlparserx.domain.ResponseResult;
 import com.dtstack.sqlparser.sqlparserx.core.utils.SQLSplitterUtil;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,11 @@ import java.util.List;
 public class SQLSplitterController {
 
     @PostMapping("/split")
-    public List<String> splitSQL(@RequestParam Integer datasourceType, @RequestBody String sql) {
+    public ResponseResult splitSQL(@RequestParam Integer datasourceType, @RequestBody String sql) {
         // 获取对应的DbType
         DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
+        List<String> sqls = SQLSplitterUtil.splitSQL(sql, dbType);
         // 切分SQL
-        return SQLSplitterUtil.splitSQL2(sql, dbType);
+        return ResponseResult.success(sqls);
     }
 }

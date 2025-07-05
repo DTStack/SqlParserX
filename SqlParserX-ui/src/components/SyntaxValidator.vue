@@ -45,8 +45,8 @@
                 {{ validationResult.msg }}
               </div>
               <!-- 添加堆栈信息显示 -->
-              <div class="stack-trace" v-if="validationResult.stackTrace">
-                <pre>{{ validationResult.stackTrace }}</pre>
+              <div class="stack-trace" v-if="validationResult.data">
+                <pre>{{ validationResult.data }}</pre>
               </div>
             </div>
           </div>
@@ -60,6 +60,9 @@
 </template>
 
 <script>
+import { validateSQL } from '@/api/sqlparser'
+import { fetchDataSourceTypes } from '@/api/DatasourceApi'
+
 export default {
   name: 'SyntaxValidator',
   data() {
@@ -83,42 +86,25 @@ export default {
       }
 
       try {
-        const response = await fetch(
-            `${this.API_BASE_URL}/api/datasource/grammarCheck?datasourceType=${this.selectedDataSource}`,
-            {
-              method: 'POST', // 改为POST方法
-              headers: {
-                'Content-Type': 'text/plain' // 保持纯文本格式
-              },
-              body: sql // 直接将SQL作为请求体
-            }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        this.validationResult = await response.json();
+        this.validationResult = await validateSQL(sql, this.selectedDataSource);
       } catch (error) {
+        console.error("validationResult=>", validationResult)
         console.error('验证失败:', error);
         this.$message.error('验证失败: ' + error.message);
         this.validationResult = {
           code: 500,
           msg: error.message,
-          stackTrace: error.stack // 前端错误也记录堆栈
+          data: error.stack
         };
       }
     },
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetch(`${this.API_BASE_URL}/api/datasource/types`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data source types');
-        }
-        this.dataSources = await response.json();
+        const response = await fetchDataSourceTypes()
+        this.dataSources = response.data
       } catch (error) {
-        console.error('Error fetching data source types:', error);
+        console.error('Error fetching data source types:', error)
         // 设置默认值作为回退
         this.dataSources = [
           { value: 3, label: 'MYSQL' },
@@ -126,9 +112,9 @@ export default {
           { value: 11, label: 'POSTGRESQL' },
           { value: 17, label: 'SQLSERVER' },
           { value: 25, label: 'HIVE' }
-        ];
+        ]
       }
-    }
+    },
   }
 };
 </script>

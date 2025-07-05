@@ -4,6 +4,7 @@ import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.changlu.sqlparserx.domain.ResponseResult;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import com.changlu.sqlparserx.enums.DatasourceTypeEnum;
 import org.slf4j.Logger;
@@ -25,33 +26,29 @@ public class DataSourceController {
     private static final Logger log = LoggerFactory.getLogger(DataSourceController.class);
 
     @GetMapping("/types")
-    public List<DataSourceOption> getDataSourceTypes() {
-        return Arrays.stream(DatasourceTypeEnum.values())
+    public ResponseResult getDataSourceTypes() {
+        List<DataSourceOption> dataSourceOptions = Arrays.stream(DatasourceTypeEnum.values())
                 .map(type -> new DataSourceOption(type.getCode(), type.name()))
                 .collect(Collectors.toList());
+        return ResponseResult.success(dataSourceOptions);
     }
 
     @PostMapping("/grammarCheck")
-    public Map<String, Object> grammarCheck(@RequestParam Integer datasourceType, @RequestBody String sql) {
+    public ResponseResult grammarCheck(@RequestParam Integer datasourceType, @RequestBody String sql) {
         DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
-        Map<String, Object> res = new HashMap<>();
-        String msg = "success!";
         try {
             SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, dbType);
             SQLStatement stmt = parser.parseStatement();
-            System.out.println(stmt.toString());
-            res.put("code", 200);
+            log.info("stmt: \n" + stmt.toString());
         } catch (Exception e) {
-            msg = e.getMessage();
+            String msg = e.getMessage();
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             String stackTrace = sw.toString();
             log.info("grammarCheck error!", e);
-            res.put("code", 500);
-            res.put("msg", msg);
-            res.put("stackTrace", stackTrace); // 添加堆栈信息
+            return ResponseResult.error(msg, stackTrace);
         }
-        return res;
+        return ResponseResult.success("成功!");
     }
 
     public static class DataSourceOption {

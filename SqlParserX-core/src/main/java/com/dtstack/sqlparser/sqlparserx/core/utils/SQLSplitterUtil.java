@@ -117,6 +117,12 @@ public class SQLSplitterUtil {
         return result;
     }
 
+    /**
+     * 最稳的切割sql，解析语法树，然后转sql
+     * @param sql String
+     * @param dbType DbType
+     * @return List<String>
+     */
     public static List<String> splitSQL2(String sql, DbType dbType) {
         List<String> result = new ArrayList<>();
         // 使用 Druid 的 SQL 解析器
@@ -127,6 +133,26 @@ public class SQLSplitterUtil {
             result.add(statement.toString());
         });
         return result;
+    }
+
+    /**
+     * 基于官方druid提供的切分sql 【有问题例如：oracle的
+     * CREATE OR REPLACE FUNCTION add_numbers(
+     *     p_num1 IN NUMBER,
+     *     p_num2 IN NUMBER
+     * ) RETURN NUMBER IS
+     * BEGIN
+     *     RETURN p_num1 + p_num2;
+     * END add_numbers;
+     *
+     * select * from WWV_FLOW_FILE_OBJECTS$;
+     * 】
+     * @param sql String
+     * @param dbType DbType
+     * @return List<String>
+     */
+    public static List<String> splitSQL3(String sql, DbType dbType) {
+        return SQLParserUtils.split(sql, dbType);
     }
 
 }

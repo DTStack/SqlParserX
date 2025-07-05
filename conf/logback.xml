@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_HOME" value="./logs"/>
+    <property name="LOG_PATTERN"
+              value="[%d{'yy-MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}[%L] - %m%n"/>
+    <!-- 彩色日志格式 -->
+    <property name="CONSOLE_COLOR_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %boldYellow([%thread])  %cyan(%logger{15}) %msg%n"/>
+    <property name="LOG_CHARSET" value="UTF-8"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--   日志格式配置   -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--   引用上面的键值对及输出的格式   -->
+            <pattern>${CONSOLE_COLOR_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="allAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${user.dir}/logs/sqlparserx.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${user.dir}/logs/history/sqlparserx_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>5</MaxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!--    <logger name="com.dtstack.knowledge" level="info" additivity="false">-->
+<!--        <appender-ref ref="allAppender"/>-->
+<!--    </logger>-->
+
+    <!-- Configure so that it outputs to both console and log file -->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="allAppender" />
+    </root>
+
+</configuration>

@@ -9,4 +9,4 @@ mkdir -p $basedir/run
 java \
 -Xdebug \
 -Xrunjdwp:server=y,transport=dt_socket,address=*:40569,suspend=n \
--jar SqlParserX-web-0.0.1-SNAPSHOT.jar
+-jar /opt/tools/sqlparserx/lib/SqlParserX-web-0.0.1-SNAPSHOT.jar

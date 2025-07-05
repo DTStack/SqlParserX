@@ -83,6 +83,8 @@
 <script>
 import * as echarts from 'echarts';
 import { fullscreen, exitFullscreen } from '@/utils/fullscreen'; // 假设有这个工具函数
+import { analyzeSQL } from '@/api/LineageApi'
+import { fetchDataSourceTypes } from '@/api/DatasourceApi'
 
 export default {
   name: 'LineageVisualizer',
@@ -299,38 +301,20 @@ export default {
 
     async analyzeSQL(sql) {
       try {
-        const encodedSQL = encodeURIComponent(sql);
-        const response = await fetch(
-            `${this.API_BASE_URL}/api/lineage/query?datasourceType=${this.selectedDataSource}`,
-            {
-              method: 'POST', // 改为POST方法
-              headers: {
-                'Content-Type': 'text/plain' // 保持纯文本格式
-              },
-              body: sql // 直接将SQL作为请求体
-            }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
+        const response = await analyzeSQL(sql, this.selectedDataSource)
+        return response.data
       } catch (error) {
-        console.error('Error in analyzeSQL:', error);
-        throw error;
+        console.error('Error in analyzeSQL:', error)
+        throw error
       }
     },
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetch(`${this.API_BASE_URL}/api/datasource/types`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data source types');
-        }
-        this.dataSources = await response.json();
+        const response = await fetchDataSourceTypes()
+        this.dataSources = response.data
       } catch (error) {
-        console.error('Error fetching data source types:', error);
+        console.error('Error fetching data source types:', error)
         // 设置默认值作为回退
         this.dataSources = [
           { value: 3, label: 'MYSQL' },
@@ -338,7 +322,7 @@ export default {
           { value: 11, label: 'POSTGRESQL' },
           { value: 17, label: 'SQLSERVER' },
           { value: 25, label: 'HIVE' }
-        ];
+        ]
       }
     },
 

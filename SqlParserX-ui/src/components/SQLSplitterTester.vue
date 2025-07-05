@@ -47,6 +47,9 @@
 </template>
 
 <script>
+import { splitSQL } from '@/api/sqlparser'
+import { fetchDataSourceTypes } from '@/api/DatasourceApi'
+
 export default {
   name: 'SQLSplitterTester',
   data() {
@@ -73,42 +76,30 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
     async splitSQL() {
       const sql = this.sqlInput.trim();
       if (!sql) {
-        alert('请输入SQL语句');
+        this.$message.error('请输入SQL语句');
         return;
       }
 
       try {
-        const response = await fetch(
-            `${this.API_BASE_URL}/api/sql/split?datasourceType=${this.selectedDataSource}`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'text/plain'
-              },
-              body: sql
-            }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await splitSQL(sql, this.selectedDataSource);
+        if (response.code === 200) {
+          this.splitResults = response.data;
+          this.$message.success('SQL切分成功');
+        } else {
+          this.$message.error(response.msg || 'SQL切分失败');
         }
-
-        this.splitResults = await response.json();
       } catch (error) {
         console.error('切分失败:', error);
-        alert('切分失败: ' + error.message);
+        this.$message.error('切分失败: ' + (error.response?.data?.msg || error.message));
       }
     },
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetch(`${this.API_BASE_URL}/api/datasource/types`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data source types');
-        }
-        this.dataSources = await response.json();
+        const response = await fetchDataSourceTypes()
+        this.dataSources = response.data
       } catch (error) {
-        console.error('Error fetching data source types:', error);
+        console.error('Error fetching data source types:', error)
         // 设置默认值作为回退
         this.dataSources = [
           { value: 3, label: 'MYSQL' },
@@ -116,9 +107,9 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
           { value: 11, label: 'POSTGRESQL' },
           { value: 17, label: 'SQLSERVER' },
           { value: 25, label: 'HIVE' }
-        ];
+        ]
       }
-    }
+    },
   }
 };
 </script>
