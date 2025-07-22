@@ -5,11 +5,11 @@ import com.changlu.sqlparserx.enums.DatasourceTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.alibaba.druid.DbType;
-import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
-import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 

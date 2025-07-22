@@ -8,5 +8,8 @@ mkdir -p $basedir/run
 # 启动脚本
 java \
 -Xdebug \
--Xrunjdwp:server=y,transport=dt_socket,address=*:40569,suspend=n \
--jar /opt/tools/sqlparserx/lib/SqlParserX-web-0.0.1-SNAPSHOT.jar
+-Xrunjdwp:server=y,transport=dt_socket,address=0.0.0.0:40889,suspend=n \
+-cp /opt/tools/sqlparserx/lib/*:/opt/tools/sqlparserx/dtstack/* \
+com.changlu.sqlparserx.SqlParserXWebApplication
+
+java -cp /Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/lib/*:/Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/dtstack/* com.changlu.sqlparserx.SqlParserXWebApplication

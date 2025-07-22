@@ -26,7 +26,12 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Home',
+  created() {
+    // 在 Vue 组件或任何 JS 文件中
+    console.log("import.meta.env=>", import.meta.env)
+    console.log("import.meta.env.VITE_API_URL=>", import.meta.env.VITE_API_URL)
+  }
 }
 </script>
 

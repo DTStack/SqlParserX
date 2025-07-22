@@ -27,10 +27,6 @@
         </encoder>
     </appender>
 
-<!--    <logger name="com.dtstack.knowledge" level="info" additivity="false">-->
-<!--        <appender-ref ref="allAppender"/>-->
-<!--    </logger>-->
-
     <!-- Configure so that it outputs to both console and log file -->
     <root level="info">
         <appender-ref ref="STDOUT" />

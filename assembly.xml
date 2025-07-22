@@ -1,0 +1,29 @@
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>dt_public_service</id>
+    <includeBaseDirectory>true</includeBaseDirectory>
+
+    <!-- 输出格式为linux下的dir格式格式-->
+    <formats>
+        <format>dir</format>
+    </formats>
+
+    <dependencySets>
+        <!-- 依赖所属jar包目录存储-->
+        <dependencySet>
+            <useProjectArtifact>true</useProjectArtifact>
+            <!-- 改动解释：需要提出当前对应的源码包的打包，目的是将对应的依赖拆分出来
+                com.changlu 指的是groupId，后缀SqlParserX-*指的是artifactId
+            -->
+            <excludes>
+                <exclude>com.changlu:SqlParserX-*</exclude>
+            </excludes>
+            <outputDirectory>lib</outputDirectory>
+            <outputFileNameMapping>${artifact.groupId}-${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+            <scope>runtime</scope>
+        </dependencySet>
+
+    </dependencySets>
+</assembly>

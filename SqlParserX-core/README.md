@@ -17,16 +17,16 @@
 示范：
 
 ```java
-package com.dtstack.sqlparser.sqlparserx.core;
+package com.changlu.sqlparser.core;
 
 import com.alibaba.druid.DbType;
-import com.dtstack.sqlparser.sqlparserx.core.parser.ISqlParser;
-import com.dtstack.sqlparser.sqlparserx.core.parser.SqlParserFactory;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.Column;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.domain.TableLineage;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
-import com.dtstack.sqlparser.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.changlu.sqlparserx.core.parser.base.lineage.domain.TableLineage;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import org.junit.Test;
 
 import java.util.*;
@@ -116,6 +116,6 @@ public class READMETest {
 
 而对于通用的ParseTableClient里没有对MySqlRenameTableStatement处理，此时我们就可以在包目录下：
 
-com.dtstack.sqlparser.sqlparserx.core.parser.base.table.client.mysql
+com.changlu.sqlparserx.core.parser.base.table.client.mysql
 
 自定义一个MySqlParseTableClient类，继承ParseTableClient，重写parseTables方法，额外对MySqlRenameTableStatement进行解析处理即可。

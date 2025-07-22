@@ -13,7 +13,8 @@ public class SqlParserXWebApplication {
         System.out.println("Static resources path: " + System.getProperty("user.dir.conf") + "/static/");
         new SpringApplicationBuilder(SqlParserXWebApplication.class)
                 .properties(
-                        "spring.config.location=file:${user.dir.conf}/application.properties"
+                        "spring.config.location=file:${user.dir.conf}/application.properties",
+                        "spring.resources.static-locations=file:${user.dir.conf}/static/"
                 ).run(args);
     }
 
