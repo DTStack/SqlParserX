@@ -86,4 +86,28 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertRelation(relations, "wwz_011.name", "wwz_013.name");
     }
 
+    @Test
+    public void test_04_insert_overwrite() {
+        String sql = readSqlByIndex(sqlTxtName, 4);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+            {
+                this.put("t1",
+                        Arrays.asList(new Column("id1", 0)
+                                , new Column("name1", 1)
+                        ));
+                this.put("t2",
+                        Arrays.asList(new Column("ID", 0)
+                                , new Column("NAME", 1)
+                        ));
+            }
+        };
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        assertEquals(2, relations.size());
+        assertEquals(2, result.getColumnLineages().size());
+        // 目前针对目标表的字段列名以SQL中的字段为准，而不是以表中的字段为准
+        assertRelation(relations, "t1.id1", "t2.id");
+        assertRelation(relations, "t1.name1", "t2.name");
+    }
+
 }

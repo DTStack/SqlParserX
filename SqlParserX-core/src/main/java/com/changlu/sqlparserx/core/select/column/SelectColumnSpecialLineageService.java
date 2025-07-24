@@ -3,8 +3,10 @@ package com.changlu.sqlparserx.core.select.column;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.*;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.sql.parser.SQLParserFeature;
 import com.changlu.sqlparserx.core.domain.Pair;
 import com.changlu.sqlparserx.core.enums.ColumnTypeEnum;
+import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.enums.TableNameMatchStrategy;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.config.Constant;
@@ -26,14 +28,17 @@ public class SelectColumnSpecialLineageService {
     private TableNameMatchStrategy tableNameStrategy = TableNameMatchStrategy.CHECK_COLUMN_EXISTS;
     // 临时存储withsql 表别名
     private Set<String> withSqlAliasTableNames = new HashSet<>();
+    protected int features;
 
-    public SelectColumnSpecialLineageService() {
+    public SelectColumnSpecialLineageService(SQLParseStrategy... features) {
         this.tableColumnsMap = new HashMap<>();
         this.tableNameStrategy = TableNameMatchStrategy.DEFAULT_FROM_TABLE;
+        this.features = SQLParseStrategy.of(features);
     }
 
-    public SelectColumnSpecialLineageService(Map<String, List<Column>> tableColumnsMap) {
+    public SelectColumnSpecialLineageService(Map<String, List<Column>> tableColumnsMap, SQLParseStrategy... features) {
         this.tableColumnsMap = tableColumnsMap;
+        this.features = SQLParseStrategy.of(features);
     }
 
     /**
@@ -449,10 +454,20 @@ public class SelectColumnSpecialLineageService {
 
     // 辅助方法，检查列是否存在
     private boolean checkColumns(List<Column> columns, String columnName) {
+        boolean ignoreCase = SQLParseStrategy.isEnabled(
+                this.features,
+                SQLParseStrategy.COLUMN_IGNORE_CASE
+        );
+
         for (Column column : columns) {
-            if (column.getColumnName().equals(columnName)) {
+            boolean isMatch = ignoreCase
+                    ? column.getColumnName().equalsIgnoreCase(columnName)
+                    : column.getColumnName().equals(columnName);
+
+            if (isMatch) {
                 return true;
             }
+
         }
         return false;
     }

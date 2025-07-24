@@ -7,6 +7,7 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.sqlparserx.core.config.Constant;
+import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.parser.IColumnLineageClient;
 import com.changlu.sqlparserx.core.parser.base.lineage.domain.ColumnLineage;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
@@ -38,16 +39,20 @@ public class ColumnLineageClient implements IColumnLineageClient {
     private SelectColumnSpecialLineageService selectColumnSpecialLineageService;
 
     public ColumnLineageClient() {
-        this.tableColumnsMap = new HashMap<>();
-        this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
+        this(new SQLParseStrategy[0]); // Calls the other constructor with empty features
     }
 
-    public ColumnLineageClient(Map<String, List<Column>> tableColumnsMap) {
+    public ColumnLineageClient(SQLParseStrategy... features) {
+        this.tableColumnsMap = new HashMap<>();
+        this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(features);
+    }
+
+    public ColumnLineageClient(Map<String, List<Column>> tableColumnsMap, SQLParseStrategy... features) {
         this.tableColumnsMap = tableColumnsMap;
         if (tableColumnsMap != null && !tableColumnsMap.isEmpty()) {
-            this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(tableColumnsMap);
+            this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(tableColumnsMap, features);
         }else {
-            this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
+            this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(features);
         }
     }
 
@@ -67,8 +72,7 @@ public class ColumnLineageClient implements IColumnLineageClient {
     /**
      * 解析insert sql
      */
-    @Override
-    public void parseInsertSQL(SQLInsertStatement x) {
+    protected void parseInsertSQL(SQLInsertStatement x) {
         targetTable = TableSourceUtil.extractTable(x.getTableSource());
 
         // 1、获取到目标表的columns信息
@@ -169,8 +173,7 @@ public class ColumnLineageClient implements IColumnLineageClient {
     /**
      * 解析create sql
      */
-    @Override
-    public void parseCreateSQL(SQLCreateTableStatement x) {
+    protected void parseCreateSQL(SQLCreateTableStatement x) {
         // 获取到目标表
         // 留口子 可以根据实际业务方法调用传入指定catalog、db情况完成赋值
         targetTable = TableSourceUtil.extractTable(x.getTableSource());
