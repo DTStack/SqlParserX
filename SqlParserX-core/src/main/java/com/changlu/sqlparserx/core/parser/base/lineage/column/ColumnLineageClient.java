@@ -146,8 +146,13 @@ public class ColumnLineageClient implements IColumnLineageClient {
      * @return List<SelectColumnItem>
      */
     private List<SelectColumnItem> queryMetaTableColumns(List<Column> columns, Table targetTable) {
-        // 根据index 进行排序
-        columns.sort(Comparator.comparing(Column::getIndex));
+        // 检查是否有index为null的情况
+        boolean hasNullIndex = columns.stream().anyMatch(column -> column.getIndex() == null);
+
+        // 如果没有null的index，则进行排序
+        if (!hasNullIndex) {
+            columns.sort(Comparator.comparing(Column::getIndex));
+        }
 
         List<SelectColumnItem> insertTableColumns = new ArrayList<>();
         for (Column column : columns) {
