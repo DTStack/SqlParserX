@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * @description  测试WITH AS搭配INSERT的结构
  * @author changlu
@@ -76,25 +78,42 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
                         ));
             }
         };
-        for (int i = 0; i < insertSqlList.size(); i++) {
-            String insertSql = insertSqlList.get(i);
+        // sql1测试
+        String insertSql1 = insertSqlList.get(0);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(insertSql1, tableColumnsMap);
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        assertEquals(12, result.getColumnLineages().size());
+        assertRelation(relations, "digua_ceshi.result_table.id", "digua_ceshi.demo_table_digua.id");
+        assertRelation(relations, "digua_ceshi.result_table.name", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.age", "digua_ceshi.demo_table_digua.age");
+        assertRelation(relations, "digua_ceshi.result_table.t2_name", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table.name");
+        assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table2.name");
+        assertRelation(relations, "digua_ceshi.result_table.t4_age", "digua_ceshi.new_table.age");
+        assertRelation(relations, "digua_ceshi.result_table.t5_level", "digua_ceshi.hierarchy_table.level");
+        assertRelation(relations, "digua_ceshi.result_table.department", "digua_ceshi.departments.department");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.id");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.age");
 
-            ColumnLineageResult result = sqlParser.parseColumnLineages(insertSql, tableColumnsMap);
-            Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        // sql2测试
+        String insertSql2 = insertSqlList.get(1);
+        result = sqlParser.parseColumnLineages(insertSql2, tableColumnsMap);
+        relations = result.getColumnRelations();
+        assertEquals(12, result.getColumnLineages().size());
+        assertRelation(relations, "digua_ceshi.result_table.t1_col1", "digua_ceshi.demo_table_digua.id");
+        assertRelation(relations, "digua_ceshi.result_table.t1_col2", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.t1_col3", "digua_ceshi.demo_table_digua.age");
+        assertRelation(relations, "digua_ceshi.result_table.t2_name", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table.name");
+        assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table2.name");
+        assertRelation(relations, "digua_ceshi.result_table.t4_age", "digua_ceshi.new_table.age");
+        assertRelation(relations, "digua_ceshi.result_table.t5_level", "digua_ceshi.hierarchy_table.level");
+        assertRelation(relations, "digua_ceshi.result_table.department", "digua_ceshi.departments.department");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.id");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.name");
+        assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.age");
 
-            assertRelation(relations, "digua_ceshi.result_table.id", "digua_ceshi.demo_table_digua.id");
-            assertRelation(relations, "digua_ceshi.result_table.name", "digua_ceshi.demo_table_digua.name");
-            assertRelation(relations, "digua_ceshi.result_table.age", "digua_ceshi.demo_table_digua.age");
-            assertRelation(relations, "digua_ceshi.result_table.t2_name", "digua_ceshi.demo_table_digua.name");
-            assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table.name");
-            assertRelation(relations, "digua_ceshi.result_table.t3_name", "digua_ceshi.new_table2.name");
-            assertRelation(relations, "digua_ceshi.result_table.t4_age", "digua_ceshi.new_table.age");
-            assertRelation(relations, "digua_ceshi.result_table.t5_level", "digua_ceshi.hierarchy_table.level");
-            assertRelation(relations, "digua_ceshi.result_table.department", "digua_ceshi.departments.department");
-            assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.id");
-            assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.name");
-            assertRelation(relations, "digua_ceshi.result_table.older_count", "digua_ceshi.demo_table_digua.age");
-        }
     }
 
     @Test

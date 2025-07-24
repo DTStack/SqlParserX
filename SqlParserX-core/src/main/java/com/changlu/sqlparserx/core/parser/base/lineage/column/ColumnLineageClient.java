@@ -88,9 +88,9 @@ public class ColumnLineageClient implements IColumnLineageClient {
 //            }
 //        }else
         // 若是insert sql指定字段写入
-        if (insertTableColumns != null && insertTableColumns.isEmpty()){
+        if (insertTableColumns != null && !insertTableColumns.isEmpty()){
             // 写法2：插入指定列场景 insert into table values(xxx, xxx) select xxx, xxx
-            targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns);
+            targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns, targetTable);
         }
 
         // 2、优先with as场景处理

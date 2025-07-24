@@ -126,7 +126,9 @@ public class TableSourceUtil implements SQLASTVisitor {
             return null;
         }
         // 去除字符串开头和结尾的反引号或单引号
-        return input.replaceAll("`", "").replaceAll("'", "");
+        return input.replaceAll("`", "")
+                .replaceAll("'", "")
+                .replaceAll("\"", "");
     }
 
 

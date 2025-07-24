@@ -22,3 +22,139 @@ FROM wwz_013;
 --------------------4--------------------
 INSERT into t1
 select id, name from t2
+--------------------5--------------------
+INSERT INTO dim.`dim_growth_activity_activity_channel_df`(
+    `activity_channel_id`,
+    `part_date`,
+    `activity_id`,
+    `activity_name`,
+    `activity_status`,
+    `ch_type`,
+    `first_ch_name`,
+    `first_ch_sign`,
+    `second_ch_name`,
+    `second_ch_sign`,
+    `third_ch_name`,
+    `third_ch_sign`,
+    `ch`,
+    `activity_type`,
+    `activity_type_name`,
+    `preview_url`,
+    `activity_url`,
+    `business_id`,
+    `business_name`,
+    `reward_amt`,
+    `activity_begin_time`,
+    `activity_end_time`,
+    `register_begin_time`,
+    `register_end_time`,
+    `create_user_id`,
+    `create_user_name`,
+    `source_system_id`,
+    `source_system_name`,
+    `source_system_create_user_id`,
+    `source_system_create_user_name`,
+    `source_system_business_type`
+)
+WITH first_mapping AS (
+    SELECT
+        first_ch_sign,
+        MAX(first_ch_name) AS first_ch_name,
+        MAX(ch_type) ch_type
+    FROM dim.dim_growth_activity_channel_info_df
+    WHERE part_date = "${utc0yyyy_MM_dd_1d}"
+    GROUP BY first_ch_sign
+),
+second_mapping AS (
+    SELECT
+        second_ch_sign,
+        MAX(second_ch_name) AS second_ch_name
+    FROM dim.dim_growth_activity_channel_info_df
+    WHERE part_date = "${utc0yyyy_MM_dd_1d}"
+    GROUP BY second_ch_sign
+),
+third_mapping AS (
+    SELECT
+        third_ch_sign,
+        MAX(third_ch_name) AS third_ch_name
+    FROM dim.dim_growth_activity_channel_info_df
+    WHERE part_date = "${utc0yyyy_MM_dd_1d}"
+    GROUP BY third_ch_sign
+),
+ch AS (
+    SELECT
+        `id`,
+        `activity_id`,
+        `first_ch`,
+        `second_ch`,
+        `third_ch`,
+        `ch`
+    FROM ods.ods_growth_adjust_activity_channel_hf
+    WHERE DATE(created_at) <= "${utc0yyyy_MM_dd_1d}"
+        AND part_hour = (
+            SELECT MAX(part_hour)
+            FROM ods.`ods_growth_adjust_activity_channel_hf`
+        )
+)
+SELECT
+    ch.id AS `activity_channel_id`,
+    "${utc0yyyy_MM_dd_1d}" AS `part_date`,
+    ch.activity_id AS `activity_id`,
+    t1.activity_name AS `activity_name`,
+    t1.activity_status AS `activity_status`,
+    first_mapping.ch_type AS `ch_type`,
+    first_mapping.first_ch_name AS `first_ch_name`,
+    ch.first_ch AS `first_ch_sign`,
+    second_mapping.second_ch_name AS `second_ch_name`,
+    ch.second_ch AS `second_ch_sign`,
+    third_mapping.third_ch_name AS `third_ch_name`,
+    ch.third_ch AS `third_ch_sign`,
+    ch.ch AS `ch`,
+    t1.activity_type AS `activity_type`,
+    t1.`activity_type_name` AS `activity_type_name`,
+    t1.`preview_url` AS `preview_url`,
+    t1.`activity_url` AS `activity_url`,
+    t1.`business_id` AS `business_id`,
+    t1.`business_name` AS `business_name`,
+    t1.`reward_amt` AS `reward_amount`,
+    t1.`activity_begin_time` AS `activity_start_at`,
+    t1.`activity_end_time` AS `activity_end_at`,
+    t1.`register_begin_time` AS `register_start_at`,
+    t1.`register_end_time` AS `register_end_at`,
+    t1.`create_user_id` AS `create_user_id`,
+    t1.`create_user_name` AS `create_user_name`,
+    t1.`source_system_id` AS `source_system_id`,
+    t1.`source_system_name` AS `source_system_name`,
+    t1.`source_system_create_user_id` AS `source_system_create_user_id`,
+    t1.`source_system_create_user_name` AS `source_system_create_user_name`,
+    t1.`source_system_business_type` AS `source_system_business_type`
+FROM ch
+JOIN (
+    SELECT
+        activity_id,
+        activity_name,
+        activity_status,
+        activity_type,
+        activity_type_name,
+        preview_url,
+        activity_url,
+        business_id,
+        business_name,
+        reward_amt,
+        register_begin_time,
+        register_end_time,
+        activity_begin_time,
+        activity_end_time,
+        create_user_id,
+        create_user_name,
+        source_system_id,
+        source_system_name,
+        source_system_create_user_id,
+        source_system_create_user_name,
+        source_system_business_type
+    FROM dim.`dim_growth_activity_activity_info_df`
+    WHERE part_date = "${utc0yyyy_MM_dd_1d}"
+) t1 ON ch.activity_id = t1.activity_id
+LEFT JOIN first_mapping ON ch.first_ch = first_mapping.first_ch_sign
+LEFT JOIN second_mapping ON ch.second_ch = second_mapping.second_ch_sign
+LEFT JOIN third_mapping ON ch.third_ch = third_mapping.third_ch_sign
