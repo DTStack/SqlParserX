@@ -29,3 +29,10 @@ FROM
     where
       dt = '${bdp.system.bizdate}'
   ) as b
+--------------------3--------------------
+INSERT INTO a1
+select id, name from a2
+union all
+select id, name from a3
+union all
+select id, name from a4

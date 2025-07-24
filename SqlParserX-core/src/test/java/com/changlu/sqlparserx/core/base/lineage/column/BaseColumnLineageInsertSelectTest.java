@@ -80,26 +80,38 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
     }
 
     @Test
-    public void test_03_select_allcolumn_from() {
-        String sql = readSqlByIndex(sqlTxtName, 2);
+    public void test_03_insert_select() {
+        String sql = readSqlByIndex(sqlTxtName, 3);
         Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
             {
-                this.put("dwd_jszt_jyjs0504",
-                        Arrays.asList(new Column("gh", 0)
-                                , new Column("xm", 1)
-                                , new Column("dqszdwmc", 2)
-                                , new Column("zdxsjsjlmc", 3)
+                this.put("a1",
+                        Arrays.asList(new Column("id1", 0)
+                                , new Column("name1", 1)
+                        ));
+                this.put("a2",
+                        Arrays.asList(new Column("id", 0)
+                                , new Column("name", 1)
+                        ));
+                this.put("a3",
+                        Arrays.asList(new Column("id", 0)
+                                , new Column("name", 1)
+                        ));
+                this.put("a4",
+                        Arrays.asList(new Column("id", 0)
+                                , new Column("name", 1)
                         ));
             }
         };
-        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.hive);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
         Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
-        assertEquals(4, relations.size());
-        assertRelation(relations, "dws_jyjs0504.gh", "dwd_jszt_jyjs0504.gh");
-        assertRelation(relations, "dws_jyjs0504.xm", "dwd_jszt_jyjs0504.xm");
-        assertRelation(relations, "dws_jyjs0504.dqszdwmc", "dwd_jszt_jyjs0504.dqszdwmc");
-        assertRelation(relations, "dws_jyjs0504.zdxsjsjlmc", "dwd_jszt_jyjs0504.zdxsjsjlmc");
+        assertEquals(2, relations.size());
+        assertRelation(relations, "a1.id1", "a2.id");
+        assertRelation(relations, "a1.id1", "a3.id");
+        assertRelation(relations, "a1.id1", "a4.id");
+        assertRelation(relations, "a1.name1", "a2.name");
+        assertRelation(relations, "a1.name1", "a3.name");
+        assertRelation(relations, "a1.name1", "a4.name");
     }
 
 

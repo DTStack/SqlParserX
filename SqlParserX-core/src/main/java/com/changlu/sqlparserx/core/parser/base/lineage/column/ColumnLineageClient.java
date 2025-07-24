@@ -116,9 +116,16 @@ public class ColumnLineageClient implements IColumnLineageClient {
         }
 
 
-        // 4、若是没有指定insert的字段，那么此时targetColumns为空，此时需要从主体select中获取字段信息
+        // 4、若是没有指定insert的字段，那么此时targetColumns为空
         if (insertTableColumns.isEmpty() || targetColumns.isEmpty()) {
-            targetColumns = queryTargetTableColumns(selectColumns, targetTable);
+            List<Column> columns = tableColumnsMap.get(targetTable.getName());
+            if (columns != null && !columns.isEmpty()) {
+                // 从元数据表中获取字段信息
+                targetColumns = queryMetaTableColumns(columns, targetTable);
+            }else {
+                // 没有对应元数据源表字段信息 从主体select中获取字段信息
+                targetColumns = queryTargetTableColumns(selectColumns, targetTable);
+            }
         }
 
         if (targetColumns.size() > selectColumns.size()) {
@@ -128,6 +135,23 @@ public class ColumnLineageClient implements IColumnLineageClient {
         // 4、构建字段血缘信息
         addColumnRelations(selectColumns, targetColumns);
     }
+
+    /**
+     * 查询元数据表中获取目标字段集合
+     * @param columns 元数据表字段信息
+     * @return List<SelectColumnItem>
+     */
+    private List<SelectColumnItem> queryMetaTableColumns(List<Column> columns, Table targetTable) {
+        // 根据index 进行排序
+        columns.sort(Comparator.comparing(Column::getIndex));
+
+        List<SelectColumnItem> insertTableColumns = new ArrayList<>();
+        for (Column column : columns) {
+            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), column.getColumnName()));
+        }
+        return insertTableColumns;
+    }
+
 
     /**
      * 查询获取insert目标字段集合 从主体selectColumns中获取目标字段集合
