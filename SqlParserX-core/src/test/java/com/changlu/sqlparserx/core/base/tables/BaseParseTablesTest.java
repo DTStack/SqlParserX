@@ -6,6 +6,7 @@ import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
@@ -105,13 +106,21 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
         SQLStatement stmt = parser.parseStatement();
         ParseTableResult parseTableResult = TableSourceUtil.parseTables(stmt);
         Set<Table> allTables = parseTableResult.getAllTables();
-        System.out.println(allTables);
+        assertEquals(2, allTables.size());
+        assertEquals(true, allTables.contains(new Table(null, null, "table3", null)));
+        assertEquals(true, allTables.contains(new Table(null, null, "table2", null)));
     }
 
 
-//    @Test
-//    public void test_temp_parseTables_01() {
-//        String sql = readSqlByIndex("TableSourceUtilTestTemp.txt", 1);
-//        System.out.println(TableSourceUtil.parseTables(sql, DbType.hive));
-//    }
+    @Test
+    public void test_06_parseTables_select_subquery_union() {
+        String sql = readSqlByIndex(sqlTxtName, 7);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
+        ParseTableResult parseTableResult = sqlParser.parseTables(sql);
+        Set<Table> allTables = parseTableResult.getAllTables();
+        assertEquals(2, allTables.size());
+        assertEquals(true, allTables.contains(new Table(null, "ods", "ods_task_condition_invite_hf", null)));
+        assertEquals(true, allTables.contains(new Table(null, "ods", "ods_task_rule_condition_hf", null)));
+    }
+
 }

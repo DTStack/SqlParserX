@@ -158,3 +158,15 @@ JOIN (
 LEFT JOIN first_mapping ON ch.first_ch = first_mapping.first_ch_sign
 LEFT JOIN second_mapping ON ch.second_ch = second_mapping.second_ch_sign
 LEFT JOIN third_mapping ON ch.third_ch = third_mapping.third_ch_sign
+--------------------6--------------------
+INSERT INTO dwd.dwd_earn_coin_staking_config_df
+SELECT `id`, `part_date`, `mortgage_coin`, `reward_coin`, `min_mortgage_amount` AS min_mortgage_amt
+	, `min_redeem_amount` AS min_redeem_amt, `fee_rate` AS fee_ratio, `day_max_mortgage_amount` AS day_max_mortgage_amt, `day_max_redeem_amount` AS day_max_redeem_amt, `day_max_exchange_count` AS day_max_exchange_cnt
+	, `personal_mortgage_limit`, `mortgage_limit` AS product_mortgage_limit, `logo_icon`, `period`, `agreement`
+	, `status` AS coin_status, `type` AS lock_type, `income_days`, `createStamp` AS create_time, `updateStamp` AS update_time
+	, `max_interest_rate` AS max_year_ratio, `min_interest_rate` AS min_year_ratio, `extra` AS extend_info, `web3_jump_url`, `web_banner`
+	, `app_banner`, `borrow_support` AS borrow_fund_is_support_mortgage, `operator_name`, `operator_uid` AS operator_user_id, `ver_limits` AS version_limit
+	, `equal_coin`, `interest_delay_days`, `reward_delay_days`, `exchange_rate`, `weight`
+	, `slogan`, `is_gray`, `protocol_type` AS agreement_type, `protocol` AS agreement_name
+FROM ods.ods_coin_staking_coin_staking_config_df
+WHERE `part_date` = '20250714'

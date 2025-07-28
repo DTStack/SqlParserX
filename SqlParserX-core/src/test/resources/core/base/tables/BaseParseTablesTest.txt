@@ -41,3 +41,57 @@ select id,name from tz where id in(select id from tz2) and name in (select name 
 --------------------6--------------------
 select * from (select id, name from table2 union all select id2, name2 from table3) as table1
 --------------------7--------------------
+select
+    t1.id,
+    t1.invite_task_id,
+    t2.rule_id,
+    t2.task_id,
+    nvl(t1.condition_id, t2.condition_id) condition_id,
+    t1.created_time,
+    t1.updated_time,
+    t1.from_channel,
+    t1.invite_nums,
+    now()
+    from
+    (
+        select
+            id,
+            invite_task_id,
+            condition_id,
+            created_time,
+            updated_time,
+            from_channel,
+            invite_nums
+        from
+            (
+                select
+                    id,
+                    condition_id,
+                    invite_task_ids,
+                    from_unixtime(created_time) created_time,
+                    from_unixtime(updated_time) updated_time,
+                    if(from_channel = "",null,from_channel) from_channel,
+                    invite_nums
+                from
+                    ods.ods_task_condition_invite_hf
+            )t lateral view explode(split_by_string(invite_task_ids, ",")) tab1 as invite_task_id
+    ) t1 left join (
+        select
+            rule_id,
+            task_id,
+            condition_id
+        from
+            (
+                SELECT
+                    id,
+                    rule_id,
+                    task_id,
+                    condition_ids
+                FROM
+                    ods.ods_task_rule_condition_hf
+                WHERE
+                    status = 1
+            ) t1 lateral view explode(
+                split_by_string(condition_ids, ",")
+            ) tab1 as condition_id
+    ) t2 on t1.condition_id = t2.condition_id
