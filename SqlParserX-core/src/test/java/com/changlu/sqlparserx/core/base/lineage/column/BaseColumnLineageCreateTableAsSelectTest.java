@@ -288,4 +288,22 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "name", null, null, "newTable", "name")));
     }
 
+    @Test
+    public void test_13() {
+        String sql = readSqlByIndex(sqlTxtName, 13);
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>();
+        // 实现字段血缘分析
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
+        List<ColumnLineage> columnLineages = result.getColumnLineages();
+        assertEquals("newTable", result.getTargetTable());
+        assertEquals(7, columnLineages.size());
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "id", null, null, "newTable", "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "invite_task_ids", null, null, "newTable", "invite_task_ids")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "condition_id", null, null, "newTable", "condition_id1")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "created_time", null, null, "newTable", "created_time")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "updated_time", null, null, "newTable", "updated_time")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "from_channel", null, null, "newTable", "from_channel")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "invite_nums", null, null, "newTable", "invite_nums")));
+    }
+
 }

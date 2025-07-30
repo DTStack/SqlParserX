@@ -370,3 +370,26 @@ select id, name from (
     union all
     select id, name from table2
 ) as t1
+--------------------13--------------------
+create table newTable
+select
+    id,
+    invite_task_ids,
+    condition_id1,
+    created_time,
+    updated_time,
+    from_channel,
+    invite_nums
+from
+    (
+        select
+            id,
+            condition_id as condition_id1,
+            invite_task_ids,
+            from_unixtime(created_time) created_time,
+            from_unixtime(updated_time) updated_time,
+            if(from_channel = "",null,from_channel) from_channel,
+            invite_nums
+        from
+            ods.ods_task_condition_invite_hf
+    )t lateral view explode(split_by_string(invite_task_ids, ",")) tab1 as invite_task_id

@@ -30,9 +30,6 @@ public class ColumnLineageClient implements IColumnLineageClient {
     private final Map<String, List<ColumnLineageResult.ColumnRelation>> columnRelations = new LinkedHashMap<>();
     // 记录了每一组血缘的的目标表及关联的来源表及字段 包含有catalog、db、table、column
     private final List<ColumnLineage> columnLineages = new ArrayList<>();
-    // 跟踪当前解析上下文的关键数据结构，用于记录遍历过程中当前语法上下文的栈
-    private final Deque<SQLObject> contextStack = new ArrayDeque<>();
-    private Map<String, String> fromTables = new HashMap<>(); // 存储FROM子句的表别名映射
 
     // 真实表&字段关联关系（外部查询元数据）
     private Map<String, List<Column>> tableColumnsMap;
@@ -182,7 +179,6 @@ public class ColumnLineageClient implements IColumnLineageClient {
         // 获取到目标表
         // 留口子 可以根据实际业务方法调用传入指定catalog、db情况完成赋值
         targetTable = TableSourceUtil.extractTable(x.getTableSource());
-        contextStack.push(x);
 
         // 处理CREATE TABLE AS SELECT 其他场景无血缘情况
         SQLSelect select = x.getSelect();
@@ -268,24 +264,34 @@ public class ColumnLineageClient implements IColumnLineageClient {
                 sourceTable != null ? sourceTable + "." + sourceColumn : sourceColumn,
                 targetTable + "." + targetColumn
         );
-        columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>())
-                .add(relation);
 
-        // 2、构建血缘关系记录集合
-        ColumnLineage columnLineage = new ColumnLineage();
-        Table sourceTableObj = Table.TableTransfer.parse(sourceTable);
-        Table targetTableObj = Table.TableTransfer.parse(targetTable);
+        // 检查是否已存在相同关系
+        List<ColumnLineageResult.ColumnRelation> relations = columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>());
+        boolean relationExists = relations.stream().anyMatch(r ->
+                Objects.equals(r.getSource(), relation.getSource()) &&
+                        Objects.equals(r.getTarget(), relation.getTarget())
+        );
 
-        columnLineage.setFromCatalog(sourceTableObj.getCatalog());
-        columnLineage.setFromDb(sourceTableObj.getDb());
-        columnLineage.setFromTable(sourceTableObj.getName());
-        columnLineage.setFromColumn(sourceColumn);
+        if (!relationExists) {
+            // 添加到来源表中
+            relations.add(relation);
 
-        columnLineage.setToCatalog(targetTableObj.getCatalog());
-        columnLineage.setToDb(targetTableObj.getDb());
-        columnLineage.setToTable(targetTableObj.getName());
-        columnLineage.setToColumn(targetColumn);
-        columnLineages.add(columnLineage);
+            // 2、构建血缘关系记录集合
+            ColumnLineage columnLineage = new ColumnLineage();
+            Table sourceTableObj = Table.TableTransfer.parse(sourceTable);
+            Table targetTableObj = Table.TableTransfer.parse(targetTable);
+
+            columnLineage.setFromCatalog(sourceTableObj.getCatalog());
+            columnLineage.setFromDb(sourceTableObj.getDb());
+            columnLineage.setFromTable(sourceTableObj.getName());
+            columnLineage.setFromColumn(sourceColumn);
+
+            columnLineage.setToCatalog(targetTableObj.getCatalog());
+            columnLineage.setToDb(targetTableObj.getDb());
+            columnLineage.setToTable(targetTableObj.getName());
+            columnLineage.setToColumn(targetColumn);
+            columnLineages.add(columnLineage);
+        }
     }
 
     public ColumnLineageResult getResult() {

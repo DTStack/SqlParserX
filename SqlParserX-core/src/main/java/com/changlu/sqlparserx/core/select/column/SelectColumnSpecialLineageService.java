@@ -344,6 +344,11 @@ public class SelectColumnSpecialLineageService {
 
             // 实现当前一组columns & 子查询columns合并处理
             selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
+        }// 场景6：LATERAL VIEW表源（SQLLateralViewTableSource），内部有一个tableSource，复用方法逻辑即可
+        else if (fromTable instanceof SQLLateralViewTableSource) {
+            SQLLateralViewTableSource sqlLateralViewTableSource = (SQLLateralViewTableSource) fromTable;
+            SQLTableSource tableSource = sqlLateralViewTableSource.getTableSource();
+            selectColumns = this.queryFromTableByColumns(tableSource, selectColumns);
         }
 
         return selectColumns;
