@@ -4,6 +4,7 @@ import Home from '@/components/Home.vue'
 import LineageVisualizer from '@/components/LineageVisualizer.vue'
 import SQLSplitterTester from '@/components/SQLSplitterTester.vue'
 import SyntaxValidator from '@/components/SyntaxValidator.vue'  // Add this import
+import TableParser from '@/components/TableParser.vue'  // 添加导入
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
             path: '/syntax-validator',
             name: 'SyntaxValidator',
             component: SyntaxValidator
+        },
+        {
+            path: '/table-parser',
+            name: 'TableParser',
+            component: TableParser
         }
     ]
 })

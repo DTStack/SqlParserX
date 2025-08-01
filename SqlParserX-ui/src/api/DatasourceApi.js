@@ -12,6 +12,14 @@ export function fetchDataSourceTypes() {
     })
 }
 
+export function parseTables(form) {
+    return request({
+        url: '/api/datasource/parseTables',
+        method: 'post',
+        data: form
+    })
+}
+
 export default {
-    fetchDataSourceTypes
+    fetchDataSourceTypes, parseTables
 }

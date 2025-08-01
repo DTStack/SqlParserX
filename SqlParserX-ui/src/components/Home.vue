@@ -20,6 +20,12 @@
           <p>将多条SQL语句分割成独立的语句</p>
         </div>
       </router-link>
+      <router-link to="/table-parser" class="nav-card">
+        <div class="card-content">
+          <h2>SQL表解析工具</h2>
+          <p>解析SQL语句中的所有表名</p>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>

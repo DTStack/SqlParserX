@@ -4,9 +4,11 @@ import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 import com.changlu.sqlparserx.domain.ResponseResult;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import com.changlu.sqlparserx.enums.DatasourceTypeEnum;
+import com.changlu.sqlparserx.vo.TableParseRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +51,22 @@ public class DataSourceController {
             return ResponseResult.error(msg, stackTrace);
         }
         return ResponseResult.success("成功!");
+    }
+
+    @PostMapping("/parseTables")
+    public ResponseResult parseTables(@RequestBody TableParseRequest request) {
+        DbType dbType = DataSourceType2DbType.getDbType(request.getDatasourceType());
+        try {
+            List<String> tables = TableSourceUtil.parseTables(request.getSql(), dbType);
+            return ResponseResult.success(tables);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String stackTrace = sw.toString();
+            log.info("parseTables error!", e);
+            return ResponseResult.error(msg, stackTrace);
+        }
     }
 
     public static class DataSourceOption {
