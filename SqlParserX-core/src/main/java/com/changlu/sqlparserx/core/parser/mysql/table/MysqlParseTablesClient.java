@@ -2,7 +2,7 @@ package com.changlu.sqlparserx.core.parser.mysql.table;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement;
-import com.changlu.sqlparserx.core.parser.base.table.ParseTableClient;
+import com.changlu.sqlparserx.core.parser.base.table.ParseTablesClient;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @author changlu
  * @date 2025/4/27 12:01
  */
-public class MysqlParseTableClient extends ParseTableClient {
+public class MysqlParseTablesClient extends ParseTablesClient {
 
     @Override
     public ParseTableResult parseTables(SQLStatement stmt) {

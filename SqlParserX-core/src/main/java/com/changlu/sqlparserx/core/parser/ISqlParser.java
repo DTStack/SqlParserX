@@ -14,7 +14,8 @@ import com.changlu.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult
 import com.changlu.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.BaseSqlFilterClient;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
-import com.changlu.sqlparserx.core.parser.base.table.ParseTableClient;
+import com.changlu.sqlparserx.core.parser.base.table.BaseParseTableClient;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
 import java.util.List;
@@ -68,6 +69,13 @@ public interface ISqlParser{
     ParseTableResult parseTables(SQLStatement sqlStatement);
 
     /**
+     * 解析create table语句
+     * @param sql String sql
+     * @return ParseCreateTableResult 解析结果
+     */
+   ParseCreateTableResult parseCreateTable(String sql);
+
+    /**
      * 解析sql中的函数
      * @param sql String sql
      * @return Set<String> 函数集合
@@ -102,7 +110,7 @@ public interface ISqlParser{
     String getRowLevelPermissionSql(String sql, List<RowLevelPermissionFilterParam> permissionParams);
 
     default IParseTableClient getParseTableClient() {
-        return new ParseTableClient();
+        return new BaseParseTableClient();
     }
 
     default IColumnLineageClient getColumnLineageClient(Map<String, List<Column>> tableColumnsMap) {
@@ -125,6 +133,5 @@ public interface ISqlParser{
         // null -> SQLStatementParser
         return null;
     }
-
 
 }

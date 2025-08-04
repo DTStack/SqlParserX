@@ -1,4 +1,4 @@
-package com.changlu.sqlparserx.core.parser.base.table;
+package com.changlu.sqlparserx.core.parser.base.table.component;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;

@@ -3,7 +3,7 @@ package com.changlu.sqlparserx.core.parser.mysql;
 import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
 import com.changlu.sqlparserx.core.parser.base.BaseSqlParser;
-import com.changlu.sqlparserx.core.parser.mysql.table.MysqlParseTableClient;
+import com.changlu.sqlparserx.core.parser.mysql.table.MysqlParseTablesClient;
 
 /**
  * @description  MySqlParser 提供各类处理器
@@ -14,7 +14,7 @@ public class MySqlParser extends BaseSqlParser {
 
     @Override
     public IParseTableClient getParseTableClient() {
-        return new MysqlParseTableClient();
+        return new MysqlParseTablesClient();
     }
 
     @Override

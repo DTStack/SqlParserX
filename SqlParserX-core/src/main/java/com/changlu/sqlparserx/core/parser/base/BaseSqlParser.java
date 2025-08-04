@@ -13,6 +13,7 @@ import com.changlu.sqlparserx.core.parser.base.parameter.domain.ParamInfo;
 import com.changlu.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
 import com.changlu.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
@@ -66,6 +67,12 @@ public class BaseSqlParser implements ISqlParser {
     public ParseTableResult parseTables(SQLStatement sqlStatement) {
         IParseTableClient parseTableClient = this.getParseTableClient();
         return parseTableClient.parseTables(sqlStatement);
+    }
+
+    @Override
+    public ParseCreateTableResult parseCreateTable(String sql) {
+        IParseTableClient parseTableClient = this.getParseTableClient();
+        return parseTableClient.parseCreateTable(this.createStatement(sql));
     }
 
     @Override

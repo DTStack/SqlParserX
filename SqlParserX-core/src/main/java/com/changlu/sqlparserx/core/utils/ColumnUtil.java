@@ -1,5 +1,10 @@
 package com.changlu.sqlparserx.core.utils;
 
+import com.alibaba.druid.sql.ast.SQLExpr;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @description  字段相关utils
  * @author changlu

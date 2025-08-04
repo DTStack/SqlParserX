@@ -2,6 +2,7 @@ package com.changlu.sqlparserx.core.parser.base.table;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.sqlparserx.core.parser.base.table.component.ParseSelectTableService;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.select.column.SelectColumnItem;
 import com.changlu.sqlparserx.core.select.column.SelectColumnSpecialLineageService;
@@ -13,13 +14,18 @@ import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ParseTableClient implements IParseTableClient {
+/**
+ * @description  解析真实表Client
+ * @author changlu
+ * @date 2025/8/4 14:35
+ */
+public class ParseTablesClient implements IParseTableClient {
 
     protected Set<Table> allTables = new HashSet<>();
     protected Table mainTable;
     private final ParseSelectTableService parseSelectTableService = new ParseSelectTableService();
 
-    public ParseTableClient() {
+    public ParseTablesClient() {
     }
 
     /**

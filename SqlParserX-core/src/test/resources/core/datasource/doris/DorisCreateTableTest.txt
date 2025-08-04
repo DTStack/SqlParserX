@@ -1,0 +1,119 @@
+--------------------1--------------------
+CREATE TABLE `ods_gate_common_rebate_ref_code_df` (
+  `part_date` date NULL COMMENT '分区字段 按日分区',
+  `id` bigint NULL COMMENT '业务主键ID',
+  `ref_code` varchar(255) NULL COMMENT '邀请码',
+  `uid` int NULL COMMENT '用户uid',
+  `type` tinyint NULL COMMENT '类型',
+  `updated_at` datetime(6) NULL COMMENT '更新时间',
+  `created_at` datetime(6) NULL COMMENT '创建时间',
+  `status` tinyint NULL COMMENT '状态'
+) ENGINE=OLAP
+UNIQUE KEY(`part_date`, `id`)
+COMMENT '用户邀请码表'
+PARTITION BY RANGE(`part_date`)
+(PARTITION p20250624 VALUES [('2025-06-24'), ('2025-06-25')),
+PARTITION p20250625 VALUES [('2025-06-25'), ('2025-06-26')),
+PARTITION p20250626 VALUES [('2025-06-26'), ('2025-06-27')),
+PARTITION p20250627 VALUES [('2025-06-27'), ('2025-06-28')),
+PARTITION p20250628 VALUES [('2025-06-28'), ('2025-06-29')),
+PARTITION p20250629 VALUES [('2025-06-29'), ('2025-06-30')),
+PARTITION p20250630 VALUES [('2025-06-30'), ('2025-07-01')),
+PARTITION p20250701 VALUES [('2025-07-01'), ('2025-07-02')),
+PARTITION p20250702 VALUES [('2025-07-02'), ('2025-07-03')))
+DISTRIBUTED BY HASH(`id`) BUCKETS 3
+PROPERTIES (
+"replication_allocation" = "tag.location.default: 3",
+"min_load_replica_num" = "-1",
+"is_being_synced" = "false",
+"dynamic_partition.enable" = "true",
+"dynamic_partition.time_unit" = "DAY",
+"dynamic_partition.time_zone" = "Etc/UTC",
+"dynamic_partition.start" = "-7",
+"dynamic_partition.end" = "1",
+"dynamic_partition.prefix" = "p",
+"dynamic_partition.replication_allocation" = "tag.location.default: 3",
+"dynamic_partition.buckets" = "3",
+"dynamic_partition.create_history_partition" = "false",
+"dynamic_partition.history_partition_num" = "-1",
+"dynamic_partition.hot_partition_num" = "0",
+"dynamic_partition.reserved_history_periods" = "NULL",
+"dynamic_partition.storage_policy" = "",
+"storage_medium" = "hdd",
+"storage_format" = "V2",
+"inverted_index_storage_format" = "V1",
+"enable_unique_key_merge_on_write" = "true",
+"light_schema_change" = "true",
+"disable_auto_compaction" = "false",
+"enable_single_replica_compaction" = "false",
+"group_commit_interval_ms" = "10000",
+"group_commit_data_bytes" = "134217728",
+"enable_mow_light_delete" = "false"
+);
+--------------------2--------------------
+CREATE TABLE IF NOT EXISTS example_tbl_duplicate
+(
+    log_time        DATETIME       NOT NULL,
+    log_type        INT            NOT NULL,
+    error_code      INT,
+    error_msg       VARCHAR(1024),
+    op_id           BIGINT,
+    op_time         DATETIME
+)
+DUPLICATE KEY(log_time, log_type, error_code)
+DISTRIBUTED BY HASH(log_type) BUCKETS 10;
+--------------------3--------------------
+CREATE TABLE IF NOT EXISTS example_tbl_agg
+(
+    user_id             LARGEINT    NOT NULL,
+    load_dt             DATE        NOT NULL,
+    city                VARCHAR(20),
+    last_visit_dt       DATETIME    REPLACE DEFAULT "1970-01-01 00:00:00",
+    cost                BIGINT      SUM DEFAULT "0",
+    max_dwell           INT         MAX DEFAULT "0",
+)
+AGGREGATE KEY(user_id, load_dt, city)
+DISTRIBUTED BY HASH(user_id) BUCKETS 10;
+--------------------4--------------------
+CREATE TABLE IF NOT EXISTS example_tbl_agg
+(
+    user_id             LARGEINT    NOT NULL,
+    load_dt             DATE        NOT NULL,
+    city                VARCHAR(20),
+    last_visit_dt       DATETIME    REPLACE DEFAULT "1970-01-01 00:00:00",
+    cost                BIGINT      SUM DEFAULT "0",
+    max_dwell           INT         MAX DEFAULT "0"
+)
+AGGREGATE KEY(user_id, load_dt, city)
+PARTITION BY LIST(user_id, city)
+(
+    PARTITION p1_city VALUES IN (("1", "Beijing"), ("1", "Shanghai")),
+    PARTITION p2_city VALUES IN (("2", "Beijing"), ("2", "Shanghai")),
+    PARTITION p3_city VALUES IN (("3", "Beijing"), ("3", "Shanghai"))
+)
+DISTRIBUTED BY HASH(user_id) BUCKETS 10;
+--------------------5--------------------
+CREATE TABLE IF NOT EXISTS example_db.composite_partitioned_table
+(
+    id BIGINT,
+    name VARCHAR(50),
+    age INT,
+    salary DOUBLE,
+    hire_date DATE,
+    department_id INT
+)
+PARTITION BY RANGE(hire_date)
+SUBPARTITION BY LIST(department_id)
+(
+    PARTITION p2023 VALUES LESS THAN ('2024-01-01')
+    (
+        SUBPARTITION dept_1_2023 VALUES IN (1, 2),
+        SUBPARTITION dept_3_2023 VALUES IN (3, 4)
+    ),
+    PARTITION p2024 VALUES LESS THAN ('2025-01-01')
+    (
+        SUBPARTITION dept_1_2024 VALUES IN (1, 2),
+        SUBPARTITION dept_3_2024 VALUES IN (3, 4)
+    )
+)
+DISTRIBUTED BY HASH(id) BUCKETS 10;
