@@ -1,13 +1,13 @@
 <template>
   <div class="lineage-visualizer">
     <div class="header">
-      <h1>血缘解析可视化工具</h1>
+<!--      <h2>血缘解析可视化工具</h2>-->
     </div>
 
     <div class="main-container">
       <div class="sql-panel">
         <div class="panel-header">
-          <div class="panel-title">SQL输入</div>
+          <div class="panel-title">血缘解析可视化工具</div>
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
             <select id="data-source" v-model="selectedDataSource">
@@ -836,13 +836,10 @@ export default {
 }
 
 .lineage-visualizer {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0 20px;
-  background-color: #f5f7fa;
+  height: calc(100vh - 40px); /* 减去padding */
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 .header {
@@ -851,41 +848,53 @@ export default {
 }
 
 .main-container {
-  display: flex;
   flex: 1;
+  min-height: 0;
+  display: flex;
   gap: 20px;
+  overflow: hidden; /* 新增：禁止内部滚动 */
+}
+
+.sql-panel, .visualization-panel {
+  min-height: 0; /* 允许flex子元素缩小 */
+  display: flex;
+  flex-direction: column;
 }
 
 .sql-panel {
   flex: 0 0 400px;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  overflow: hidden; /* 新增 */
 }
 
 .visualization-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   position: relative;
+  overflow: hidden; /* 新增：禁止面板滚动 */
 }
 
 /* 图表容器样式 */
 #container {
-  width: 100%;
-  height: 100%;
-  min-height: 600px;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   transform-origin: 0 0;
-  transition: transform 0.15s ease-out; /* 更快的过渡动画更适合拖拽 */
-  user-select: none; /* 防止拖动时选中文本 */
+  transition: transform 0.15s ease-out;
+  user-select: none;
+  position: relative; /* 新增 */
 }
 
 /* 拖拽时的临时样式（通过JS动态添加） */
@@ -1017,7 +1026,12 @@ input:checked + .slider:before {
   }
 
   .sql-panel {
-    flex: 0 0 auto;
+    flex: 0 0 300px;
+    overflow: auto; /* 只在移动端允许SQL面板滚动 */
+  }
+
+  #container {
+    min-height: 400px; /* 确保移动端有足够高度 */
   }
 }
 /* 图表控制按钮样式 */

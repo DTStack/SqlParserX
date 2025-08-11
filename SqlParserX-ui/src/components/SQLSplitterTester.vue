@@ -1,7 +1,7 @@
 <template>
   <div class="sql-splitter-tester">
     <div class="header">
-      <h1>SQL切分测试工具</h1>
+      <h2>SQL切分测试工具</h2>
     </div>
 
     <div class="main-container">

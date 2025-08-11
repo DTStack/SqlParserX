@@ -17,7 +17,7 @@ public class LineageService {
         // 无匹配的数据源则走
         DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
-        ColumnLineageResult columnLineageResult = sqlParser.parseColumnLineages(sql, null);
+        ColumnLineageResult columnLineageResult = sqlParser.parseColumnLineages(sql, new HashMap<>());
 
         Set<String> allTables = new HashSet<>();
         Map<String, Set<String>> tableFields = new HashMap<>();

@@ -45,7 +45,7 @@ export default {
 .home {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 40px 20px; /* 保持原有内边距 */
   text-align: center;
 }
 

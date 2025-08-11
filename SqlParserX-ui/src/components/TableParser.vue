@@ -1,7 +1,7 @@
 <template>
   <div class="table-parser">
     <div class="header">
-      <h1>SQL 表解析工具</h1>
+      <h2>SQL 表解析工具</h2>
     </div>
 
     <div class="main-container">

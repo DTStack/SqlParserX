@@ -1,7 +1,7 @@
 <template>
   <div class="syntax-validator">
     <div class="header">
-      <h1>在线语法解析验证工具</h1>
+      <h2>在线语法解析验证工具</h2>
     </div>
 
     <div class="main-container">
