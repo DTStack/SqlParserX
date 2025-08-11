@@ -30,7 +30,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
-                <version>7.0.1-SNAPSHOT-druid1.2.24</version>
+                <version>7.0.2-SNAPSHOT-druid1.2.25</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
