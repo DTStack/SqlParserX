@@ -36,6 +36,8 @@ export default {
 .main-layout {
   position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 顶部导航栏样式 */
@@ -47,7 +49,7 @@ export default {
   z-index: 1000;
   background: linear-gradient(135deg, #409EFF 0%, #66b1ff 88%);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  height: 6%;
+  height: 60px; /* 使用固定高度更可靠 */
   display: flex;
   align-items: center;
 }
@@ -83,12 +85,17 @@ export default {
 
 /* 内容容器样式 */
 .content-container {
-  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px; /* 与header高度一致 */
+  overflow: hidden; /* 防止内部内容溢出 */
 }
 
 /* 当有导航时的内容容器样式 */
 .content-container.has-nav {
-  padding: 4% 10px 10px 10px;
+  margin-top: 60px;
+  padding: 0; /* 移除padding，由内部组件控制 */
 }
 
 /* 调整下拉菜单样式 */

@@ -1,7 +1,7 @@
 <template>
   <div class="lineage-visualizer">
     <div class="header">
-<!--      <h2>血缘解析可视化工具</h2>-->
+      <!-- 标题区域 -->
     </div>
 
     <div class="main-container">
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="visualization-panel" scrollable>
+      <div class="visualization-panel">
         <div class="panel-title">血缘关系图</div>
         <!-- 开关按钮及文字说明 -->
         <div class="switch-container">
@@ -41,7 +41,7 @@
           <span>表级别血缘关系</span>
         </div>
 
-        <!-- 图表控制按钮（使用Element UI图标） -->
+        <!-- 图表控制按钮 -->
         <div class="chart-controls">
           <el-tooltip content="放大" placement="bottom">
             <el-button circle @click="zoomIn" size="small">
@@ -65,7 +65,7 @@
           </el-tooltip>
         </div>
 
-        <!-- 添加滚轮事件监听 -->
+        <!-- 图表容器 -->
         <div
             id="container"
             ref="chartContainer"
@@ -82,7 +82,7 @@
 
 <script>
 import * as echarts from 'echarts';
-import { fullscreen, exitFullscreen } from '@/utils/fullscreen'; // 假设有这个工具函数
+import { fullscreen, exitFullscreen } from '@/utils/fullscreen';
 import { analyzeSQL } from '@/api/LineageApi'
 import { fetchDataSourceTypes } from '@/api/DatasourceApi'
 
@@ -108,14 +108,12 @@ export default {
       activeLineColor: '#66b1ff',
       API_BASE_URL: import.meta.env.VITE_API_URL,
       selectedDataSource: 1, // 默认选中MySQL
-      dataSources: [], // 初始化为空数组
-      fieldRelationsMap: {}, // 存储字段间的映射关系
-      highlightedFields: new Set(), // 存储当前高亮的字段集合
-      // 绘制矩形宽度
+      dataSources: [],
+      fieldRelationsMap: {},
+      highlightedFields: new Set(),
       tableWidth: 160,
-      // 原有数据保持不变
-      zoomLevel: 1, // 新增缩放级别
-      isFullscreen: false, // 是否全屏状态
+      zoomLevel: 1,
+      isFullscreen: false,
       isDragging: false,
       dragStartX: 0,
       dragStartY: 0,
@@ -124,13 +122,17 @@ export default {
     };
   },
   mounted() {
-    // 初始化时设置光标样式
     this.$refs.chartContainer.style.cursor = 'grab';
-    this.fetchDataSourceTypes(); // 在组件挂载时获取数据源类型
+    this.fetchDataSourceTypes();
     this.initChart();
     this.loadExampleData();
     this.parseSQL();
     window.addEventListener('resize', this.handleResize);
+
+    // 确保初始化时计算正确高度
+    this.$nextTick(() => {
+      this.handleResize();
+    });
   },
   beforeDestroy() {
     if (this.myChart) {
@@ -139,7 +141,6 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
-    // 新增：开始拖拽
     startDrag(event) {
       this.isDragging = true;
       this.dragStartX = event.clientX - this.translateX;
@@ -147,7 +148,6 @@ export default {
       this.$refs.chartContainer.style.cursor = 'grabbing';
     },
 
-    // 新增：处理拖拽移动
     handleDrag(event) {
       if (!this.isDragging) return;
 
@@ -157,13 +157,11 @@ export default {
       this.applyTransform();
     },
 
-    // 新增：结束拖拽
     endDrag() {
       this.isDragging = false;
       this.$refs.chartContainer.style.cursor = 'grab';
     },
 
-    // 修改：应用变换（合并缩放和位移）
     applyTransform() {
       const container = this.$refs.chartContainer;
       container.style.transform = `
@@ -172,31 +170,23 @@ export default {
       `;
     },
 
-    // 滚轮缩放处理
     handleWheel(event) {
-      // 阻止默认滚动行为
       event.preventDefault();
-
-      // 计算缩放方向（deltaY > 0 向下滚=缩小，< 0 向上滚=放大）
       const delta = event.deltaY > 0 ? -0.1 : 0.1;
-      this.zoomLevel = Math.min(Math.max(this.zoomLevel + delta, 0.5), 3); // 限制0.5-3倍
-
+      this.zoomLevel = Math.min(Math.max(this.zoomLevel + delta, 0.5), 3);
       this.applyZoom();
     },
-    // 新增方法：放大图表
+
     zoomIn() {
-      this.zoomLevel = Math.min(this.zoomLevel + 0.1, 2); // 限制最大放大2倍
+      this.zoomLevel = Math.min(this.zoomLevel + 0.1, 2);
       this.applyZoom();
     },
 
-    // 新增方法：缩小图表
     zoomOut() {
-      this.zoomLevel = Math.max(this.zoomLevel - 0.1, 0.5); // 限制最小缩小0.5倍
+      this.zoomLevel = Math.max(this.zoomLevel - 0.1, 0.5);
       this.applyZoom();
     },
 
-
-    // 修改：重置时也重置位置
     resetZoom() {
       this.zoomLevel = 1;
       this.translateX = 0;
@@ -208,7 +198,6 @@ export default {
       });
     },
 
-    // 修改：缩放时保持当前位置
     applyZoom() {
       this.applyTransform();
       this.$nextTick(() => {
@@ -216,7 +205,6 @@ export default {
       });
     },
 
-    // 新增方法：切换全屏
     async toggleFullscreen() {
       const container = this.$refs.chartContainer.parentElement;
 
@@ -228,22 +216,29 @@ export default {
         this.isFullscreen = true;
       }
 
-      // 全屏状态变化后需要重新调整图表大小
       this.$nextTick(() => {
         this.myChart.resize();
       });
     },
 
-    // 修改原有的handleResize方法
     handleResize() {
       if (this.myChart) {
+        // 强制计算容器高度
+        const container = this.$refs.chartContainer;
+        if (container) {
+          const parent = container.parentElement;
+          if (parent) {
+            // 设置图表容器高度为父容器可用高度
+            container.style.height = `${parent.clientHeight - 60}px`;
+          }
+        }
         this.myChart.resize();
-        // 只有在非全屏状态下才重新渲染图表
         if (!this.isFullscreen) {
           this.renderChart();
         }
       }
     },
+
     initChart() {
       this.myChart = echarts.init(this.$refs.chartContainer);
       this.myChart.on('click', this.handleChartClick);
@@ -260,7 +255,7 @@ export default {
         this.myChart.showLoading();
         const { tableData, relationData } = await this.analyzeSQL(sql);
         this.updateTableData(tableData, relationData);
-        this.buildFieldRelationsMap(relationData); // 新增：构建字段映射关系
+        this.buildFieldRelationsMap(relationData);
       } catch (error) {
         console.error('解析失败:', error);
         alert('解析失败: ' + error.message);
@@ -269,23 +264,17 @@ export default {
       }
     },
 
-
-    // 新增方法：构建字段关系映射
     buildFieldRelationsMap(relationData) {
       const map = {};
       relationData.forEach(rel => {
-        // 正向关系：来源 -> 目标
         if (!map[rel.from]) map[rel.from] = new Set();
         map[rel.from].add(rel.to);
 
-        // 反向关系：目标 -> 来源
         if (!map[rel.to]) map[rel.to] = new Set();
         map[rel.to].add(rel.from);
       });
       this.fieldRelationsMap = map;
-      // console.log('build初始化：', this.fieldRelationsMap);
     },
-
 
     async loadExampleData() {
       try {
@@ -315,7 +304,6 @@ export default {
         this.dataSources = response.data
       } catch (error) {
         console.error('Error fetching data source types:', error)
-        // 设置默认值作为回退
         this.dataSources = [
           { value: 3, label: 'MYSQL' },
           { value: 1, label: 'ORACLE' },
@@ -349,10 +337,10 @@ export default {
       const positions = {};
       const tableHeightBase = 30;
       const fieldHeight = 24;
+      // 使用实际计算的容器高度
       const containerHeight = this.$refs.chartContainer.clientHeight;
       const containerWidth = this.$refs.chartContainer.clientWidth;
 
-      // 表格之间间隔
       const verticalSpacing = this.isFieldLevel ? 60 : 30;
 
       const tableHeights = {};
@@ -373,8 +361,6 @@ export default {
         } else if (!isSource && isTarget) {
           targetTables.push(table);
         } else {
-          // 如果既是源表又是目标表，根据实际情况决定放入哪个数组
-          // 这里简单地放入目标表数组
           targetTables.push(table);
         }
       });
@@ -403,7 +389,7 @@ export default {
       // 计算目标表位置
       targetTables.forEach(table => {
         positions[table.tableName] = {
-          x: containerWidth * 0.5,
+          x: containerWidth * 0.7,  // 调整为更靠右的位置，避免拥挤
           y: currentY
         };
         currentY += tableHeights[table.tableName] + verticalSpacing;
@@ -413,9 +399,9 @@ export default {
         this.adjustOverlaps(positions, tableHeights, verticalSpacing);
       }
 
-      // console.log('Calculated positions:', positions); // 打印计算出的位置，方便调试
       return positions;
     },
+
     adjustOverlaps(positions, tableHeights, minSpacing) {
       const tableNames = Object.keys(positions);
 
@@ -505,9 +491,7 @@ export default {
       ];
     },
 
-    // 新增方法：正确拆分带schema的表名和字段名
     getTableAndField(fullName) {
-      // 处理特殊字段名（如t1.0）
       if (/\.\d+$/.test(fullName)) {
         const lastDotIndex = fullName.lastIndexOf('.');
         return {
@@ -516,7 +500,6 @@ export default {
         };
       }
 
-      // 处理普通情况（如digua_ceshi.demo_table_digua.id）
       const parts = fullName.split('.');
       if (parts.length < 2) return { tableName: fullName, fieldName: '' };
 
@@ -546,7 +529,6 @@ export default {
           children: [
             {
               type: 'rect',
-              // 指定矩形的长宽
               shape: {width: tableWidth, height: 30},
               style: {fill: '#409EFF'},
               name: table.tableName,
@@ -648,15 +630,12 @@ export default {
 
             y1 = fromPos.y + 30 + fromFieldIndex * 24 + 12;
             y2 = toPos.y + 30 + toFieldIndex * 24 + 12;
-
-            // console.log(`Field positions: fromField=${fromField}, fromFieldIndex=${fromFieldIndex}, y1=${y1}, toField=${toField}, toFieldIndex=${toFieldIndex}, y2=${y2}`);
           } else {
             y1 = fromPos.y + 15;
             y2 = toPos.y + 15;
           }
 
           const arrowLine = this.drawArrowLine(x1, y1, x2, y2, this.defaultLineColor, 2);
-          // console.log(`Drawing line from (${x1},${y1}) to (${x2},${y2})`);
           arrowLine.forEach(line => {
             line.name = `line_${rel.from}_${rel.to}`;
             line.data = {
@@ -702,18 +681,13 @@ export default {
 
       this.myChart.setOption(option);
     },
+
     handleChartClick(params) {
-      // console.log("handleChartClick=>", params);
       if (params.componentType === 'graphic' && params.name) {
-        // 如果是字段点击
         if (params.data?.isField) {
           this.highlightedFields = new Set();
 
-          // 获取所有相关字段
-          // console.log(this.fieldRelationsMap)
-          // console.log("缓存映射=>", this.fieldRelationsMap, ", filedName:", params.name)
           const collectRelatedFields = (fieldName) => {
-            // console.log("获取相关字段=>", this.highlightedFields)
             if (this.highlightedFields.has(fieldName)) return;
             this.highlightedFields.add(fieldName);
 
@@ -724,21 +698,14 @@ export default {
           collectRelatedFields(params.name);
         }
 
-        // console.log('当前高亮属性：', this.highlightedFields);
-        // console.log('当前高亮属性判断：', this.highlightedFields.has("user_order_summary.order_count"));
-        // console.log('当前高亮属性判断：', this.highlightedFields.has("orders.id"));
-
-        // 更新图表高亮
         this.updateChartHighlight();
       }
     },
 
-    // 新增方法：更新图表高亮状态
     updateChartHighlight() {
       const processItem = (item) => {
         const itemData = item.data || {};
 
-        // 处理group类型，递归处理其children
         if (item.type === 'group' && item.children) {
           return {
             ...item,
@@ -746,7 +713,6 @@ export default {
           };
         }
 
-        // 处理字段高亮
         if (itemData.isField) {
           const isHighlighted = this.highlightedFields.has(item.name);
           return {
@@ -758,7 +724,6 @@ export default {
           };
         }
 
-        // 处理连线高亮
         if (itemData.isLine) {
           const isRelated = [...this.highlightedFields].some(field =>
               itemData.from === field || itemData.to === field
@@ -801,7 +766,13 @@ export default {
 </script>
 
 <style scoped>
-/* 新增样式 */
+/* 关键修改：确保所有父容器高度正确传递 */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -835,11 +806,13 @@ export default {
   border-color: #409EFF;
 }
 
+/* 关键修改：确保组件占满父容器高度 */
 .lineage-visualizer {
-  height: calc(100vh - 40px); /* 减去padding */
-  padding: 20px;
+  height: 100%;
+  min-height: 100vh; /* 确保至少占满屏幕高度 */
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .header {
@@ -847,59 +820,55 @@ export default {
   color: #333;
 }
 
+/* 关键修改：主容器使用flex占满空间 */
 .main-container {
   flex: 1;
-  min-height: 0;
   display: flex;
   gap: 20px;
-  overflow: hidden; /* 新增：禁止内部滚动 */
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box; /* 确保padding不影响总宽度 */
 }
 
 .sql-panel, .visualization-panel {
-  min-height: 0; /* 允许flex子元素缩小 */
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .sql-panel {
   flex: 0 0 400px;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  overflow: hidden; /* 新增 */
+  overflow: hidden;
 }
 
+/* 关键修改：可视化面板占满剩余空间 */
 .visualization-panel {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   position: relative;
-  overflow: hidden; /* 新增：禁止面板滚动 */
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 图表容器样式 */
+/* 关键修改：图表容器强制占满可用高度 */
 #container {
   flex: 1;
-  min-height: 0;
+  width: 100%;
   overflow: hidden;
   transform-origin: 0 0;
   transition: transform 0.15s ease-out;
   user-select: none;
-  position: relative; /* 新增 */
-}
-
-/* 拖拽时的临时样式（通过JS动态添加） */
-.grabbing {
-  cursor: grabbing !important;
+  position: relative;
+  min-height: 0;
 }
 
 .sql-input-container {
@@ -1023,18 +992,19 @@ input:checked + .slider:before {
 @media (max-width: 992px) {
   .main-container {
     flex-direction: column;
+    padding: 10px;
   }
 
   .sql-panel {
     flex: 0 0 300px;
-    overflow: auto; /* 只在移动端允许SQL面板滚动 */
+    overflow: auto;
   }
 
   #container {
-    min-height: 400px; /* 确保移动端有足够高度 */
+    min-height: 400px;
   }
 }
-/* 图表控制按钮样式 */
+
 .chart-controls {
   position: absolute;
   top: 20px;
@@ -1066,7 +1036,6 @@ input:checked + .slider:before {
   color: white;
 }
 
-/* 按钮图标样式 */
 .chart-controls i {
   font-size: 16px;
   color: #606266;
@@ -1075,6 +1044,4 @@ input:checked + .slider:before {
 .chart-controls .el-button:hover i {
   color: #409EFF;
 }
-
-
 </style>
