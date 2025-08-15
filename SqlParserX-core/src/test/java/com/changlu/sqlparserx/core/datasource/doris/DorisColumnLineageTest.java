@@ -150,4 +150,26 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_business_type", "dim.dim_growth_activity_activity_info_df.source_system_business_type");
     }
 
+    @Test
+    public void test_06_insert() {
+        String sql = readSqlByIndex(sqlTxtName, 6);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        assertEquals(2, relations.size());
+        assertRelation(relations, "new_table.id", "table1.id");
+        assertRelation(relations, "new_table.name", "table1.name");
+    }
+
+    @Test
+    public void test_07_insert() {
+        String sql = readSqlByIndex(sqlTxtName, 7);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        assertEquals(4, relations.size());
+        assertRelation(relations, "table1.id", "new_table.id");
+        assertRelation(relations, "table1.name", "new_table.name");
+        assertRelation(relations, "table2.name", "new_table.name");
+        assertRelation(relations, "table2.name", "new_table.name");
+    }
+
 }

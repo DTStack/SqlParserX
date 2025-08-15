@@ -321,7 +321,7 @@ public class SelectColumnSpecialLineageService {
             List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelect(select);
 
             // 获取到子查询的别名
-            String subQueryTableAliasName = sqlSubqueryTableSource.getAlias();
+            String subQueryTableAliasName = TableSourceUtil.removeQuotes(sqlSubqueryTableSource.getAlias());
             // 实现当前一组columns & 子查询columns合并处理
             selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
@@ -340,7 +340,7 @@ public class SelectColumnSpecialLineageService {
             List<SelectColumn> subquerySelectColumns = this.queryColumnsBySqlSelectQuery(sqlUnionQuery);
 
             // 子查询别名
-            String subQueryTableAliasName = sqlUnionQueryTableSource.getAlias();
+            String subQueryTableAliasName = TableSourceUtil.removeQuotes(sqlUnionQueryTableSource.getAlias());
 
             // 实现当前一组columns & 子查询columns合并处理
             selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
