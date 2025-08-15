@@ -165,11 +165,11 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 7);
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
         Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
-        assertEquals(4, relations.size());
-        assertRelation(relations, "table1.id", "new_table.id");
-        assertRelation(relations, "table1.name", "new_table.name");
-        assertRelation(relations, "table2.name", "new_table.name");
-        assertRelation(relations, "table2.name", "new_table.name");
+        assertEquals(2, relations.size());
+        assertRelation(relations, "new_table.id", "table1.id");
+        assertRelation(relations, "new_table.name", "table1.name");
+        assertRelation(relations, "new_table.id", "table2.id");
+        assertRelation(relations, "new_table.name", "table2.name");
     }
 
 }
