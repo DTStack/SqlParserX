@@ -5,7 +5,7 @@
     </div>
 
     <div class="main-container">
-      <div class="input-panel">
+      <div class="sql-panel">
         <div class="panel-header">
           <div class="panel-title">SQL输入</div>
           <div class="data-source-selector">
@@ -19,12 +19,16 @@
             </select>
           </div>
         </div>
-        <div class="sql-input-container">
+
+        <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
               v-model="sqlInput"
               placeholder="请输入多条SQL语句..."
           ></textarea>
+        </div>
+
+        <div class="sql-actions">
           <button id="split-btn" @click="splitSQL">切分SQL</button>
         </div>
       </div>
@@ -116,34 +120,52 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 <style scoped>
 .sql-splitter-tester {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0 20px;
-  background-color: #f5f7fa;
+  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  overflow: hidden;
+}
+
+.sql-panel {
+  flex: 0 0 400px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow: hidden;
+  max-height: 77vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
   margin-bottom: -10px;
   color: #333;
+  padding: 0 20px;
 }
 
 .main-container {
-  display: flex;
   flex: 1;
+  display: flex;
   gap: 20px;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.input-panel, .result-panel {
+.result-panel {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 77vh;
 }
 
 .panel-header {
@@ -189,13 +211,13 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 #sql-input {
   width: 100%;
   flex: 1;
-  padding: 12px 1px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  padding: 12px;
+  border: none;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: none;
-  transition: border-color 0.3s;
+  box-sizing: border-box;
+  min-height: 150px;
 }
 
 #sql-input:focus {
@@ -215,6 +237,16 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   font-size: 14px;
 }
 
+.sql-input-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
 #split-btn:hover {
   background-color: #66b1ff;
 }
@@ -227,25 +259,29 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .sql-item {
   margin-bottom: 15px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
 }
 
 .sql-index {
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   color: #409EFF;
 }
 
 .result-sql {
   width: 100%;
-  height: 100px;
+  min-height: 100px;
   padding: 10px;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
-  resize: none;
-  background-color: #f9f9f9;
+  resize: vertical;
+  background-color: #fff;
 }
+
 
 .panel-title {
   font-size: 16px;
@@ -255,9 +291,15 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   margin-top: 7px;
 }
 
+/* 响应式设计 */
 @media (max-width: 992px) {
   .main-container {
     flex-direction: column;
+  }
+
+  .sql-panel {
+    flex: 0 0 auto;
+    max-height: 50vh;
   }
 }
 </style>

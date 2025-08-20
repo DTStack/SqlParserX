@@ -19,12 +19,15 @@
             </select>
           </div>
         </div>
-        <div class="sql-input-container">
+        <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
               v-model="sqlInput"
               placeholder="请输入SQL语句进行语法验证..."
           ></textarea>
+        </div>
+
+        <div class="sql-actions">
           <button id="validate-btn" @click="validateSQL">验证语法</button>
         </div>
       </div>
@@ -121,34 +124,39 @@ export default {
 
 <style scoped>
 .syntax-validator {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0 20px;
-  background-color: #f5f7fa;
+  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
 .header {
   margin-bottom: -10px;
   color: #333;
+  padding: 0 20px;
 }
 
 .main-container {
-  display: flex;
   flex: 1;
+  display: flex;
   gap: 20px;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.sql-panel, .result-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+/* 保持与LineageVisualizer相同的面板样式 */
+.sql-panel {
+  flex: 0 0 400px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  overflow: hidden;
+  max-height: 77vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-header {
@@ -184,23 +192,34 @@ export default {
   border-color: #409EFF;
 }
 
-.sql-input-container {
+.sql-input-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  flex: 1;
 }
 
 #sql-input {
   width: 100%;
   flex: 1;
-  padding: 12px 1px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  padding: 12px;
+  border: none;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: none;
-  transition: border-color 0.3s;
+  box-sizing: border-box;
+  min-height: 150px;
+}
+
+
+.sql-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
 }
 
 #sql-input:focus {
@@ -209,7 +228,6 @@ export default {
 }
 
 #validate-btn {
-  align-self: flex-end;
   padding: 8px 20px;
   background-color: #409EFF;
   color: white;
@@ -224,11 +242,24 @@ export default {
   background-color: #66b1ff;
 }
 
-.result-container {
+.result-panel {
   flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  max-height: 77vh;
+}
+
+.result-container {
+  flex: 1;
+  width: 100%;
+  overflow: auto;
 }
 
 .result-content {
@@ -301,6 +332,11 @@ export default {
 @media (max-width: 992px) {
   .main-container {
     flex-direction: column;
+  }
+
+  .sql-panel {
+    flex: 0 0 auto;
+    max-height: 50vh;
   }
 }
 </style>

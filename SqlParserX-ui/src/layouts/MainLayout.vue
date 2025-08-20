@@ -94,7 +94,7 @@ export default {
 
 /* 当有导航时的内容容器样式 */
 .content-container.has-nav {
-  margin-top: 60px;
+  margin-top: 72px;
   padding: 0; /* 移除padding，由内部组件控制 */
 }
 

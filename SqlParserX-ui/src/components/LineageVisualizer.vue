@@ -1,13 +1,13 @@
 <template>
   <div class="lineage-visualizer">
     <div class="header">
-      <!-- 标题区域 -->
+      <h2>血缘解析可视化工具</h2>
     </div>
 
     <div class="main-container">
       <div class="sql-panel">
         <div class="panel-header">
-          <div class="panel-title">血缘解析可视化工具</div>
+          <div class="panel-title">SQL输入</div>
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
             <select id="data-source" v-model="selectedDataSource">
@@ -19,12 +19,17 @@
             </select>
           </div>
         </div>
-        <div class="sql-input-container">
+
+        <!-- 将文本区域和按钮分离，按钮固定在底部 -->
+        <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
               v-model="sqlInput"
               placeholder="请输入SQL语句..."
           ></textarea>
+        </div>
+
+        <div class="sql-actions">
           <button id="parse-btn" @click="parseSQL">解析SQL</button>
         </div>
       </div>
@@ -91,13 +96,13 @@ export default {
   data() {
     return {
       sqlInput: `CREATE TABLE user_order_summary AS
-    SELECT
+      SELECT
         u.id as user_id,
         u.name,
         SUM(o.amount) as total_amount,
         COUNT(o.id) as order_count
-    FROM users u JOIN orders o ON u.id = o.user_id
-    GROUP BY u.id, u.name`,
+      FROM users u JOIN orders o ON u.id = o.user_id
+      GROUP BY u.id, u.name`,
       isFieldLevel: true,
       myChart: null,
       tableData: [],
@@ -766,11 +771,17 @@ export default {
 </script>
 
 <style scoped>
-/* 关键修改：确保所有父容器高度正确传递 */
+/* 确保所有父容器高度正确传递 */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+.header {
+  margin-bottom: -10px;
+  color: #333;
+  padding: 0 20px;
 }
 
 .panel-header {
@@ -806,10 +817,10 @@ html, body {
   border-color: #409EFF;
 }
 
-/* 关键修改：确保组件占满父容器高度 */
+/* 确保组件占满父容器高度 */
 .lineage-visualizer {
   height: 100%;
-  min-height: 100vh; /* 确保至少占满屏幕高度 */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -820,14 +831,14 @@ html, body {
   color: #333;
 }
 
-/* 关键修改：主容器使用flex占满空间 */
+/* 主容器使用flex占满空间 */
 .main-container {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
   padding: 20px;
-  box-sizing: border-box; /* 确保padding不影响总宽度 */
+  box-sizing: border-box;
 }
 
 .sql-panel, .visualization-panel {
@@ -843,60 +854,48 @@ html, body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   overflow: hidden;
-}
-
-/* 关键修改：可视化面板占满剩余空间 */
-.visualization-panel {
-  flex: 1;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  min-height: 0;
+  /* 关键修改：限制SQL面板最大高度为视口高度的90% */
+  max-height: 77vh;
   display: flex;
   flex-direction: column;
 }
 
-/* 关键修改：图表容器强制占满可用高度 */
-#container {
+/* 关键修改：SQL输入区域包装器，用于控制滚动 */
+.sql-input-wrapper {
   flex: 1;
-  width: 100%;
-  overflow: hidden;
-  transform-origin: 0 0;
-  transition: transform 0.15s ease-out;
-  user-select: none;
-  position: relative;
   min-height: 0;
-}
-
-.sql-input-container {
+  overflow: auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  flex: 1;
 }
 
 #sql-input {
   width: 100%;
   flex: 1;
-  padding: 12px 1px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  padding: 12px;
+  border: none;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: none;
-  transition: border-color 0.3s;
+  box-sizing: border-box;
+  min-height: 150px; /* 设置最小高度 */
 }
 
 #sql-input:focus {
   outline: none;
-  border-color: #409EFF;
+}
+
+/* 关键修改：按钮区域固定在底部 */
+.sql-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
 }
 
 #parse-btn {
-  align-self: flex-end;
   padding: 8px 20px;
   background-color: #409EFF;
   color: white;
@@ -909,6 +908,33 @@ html, body {
 
 #parse-btn:hover {
   background-color: #66b1ff;
+}
+
+/* 可视化面板占满剩余空间 */
+.visualization-panel {
+  flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 77vh;
+}
+
+/* 图表容器强制占满可用高度 */
+#container {
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  transform-origin: 0 0;
+  transition: transform 0.15s ease-out;
+  user-select: none;
+  position: relative;
+  min-height: 0;
 }
 
 .switch-container {
@@ -996,8 +1022,8 @@ input:checked + .slider:before {
   }
 
   .sql-panel {
-    flex: 0 0 300px;
-    overflow: auto;
+    flex: 0 0 auto;
+    max-height: 50vh;
   }
 
   #container {
