@@ -190,7 +190,7 @@ public class SelectColumnSpecialLineageService {
             SQLExprTableSource sqlExprTableSource = (SQLExprTableSource) fromTable;
             // 真实表名 表别名
             String sourceTableName = TableSourceUtil.extractTableName((SQLExprTableSource)fromTable);
-            String aliasSourceTableName = sqlExprTableSource.getAlias() == null ? sourceTableName : sqlExprTableSource.getAlias();
+            String aliasSourceTableName = sqlExprTableSource.getAlias() == null ? sourceTableName : TableSourceUtil.removeQuotes(sqlExprTableSource.getAlias());
             // 完成真实表名的替换
             for (SelectColumn selectColumn : selectColumns) {
                 // #feat3：基于#feat2的特殊情况（单列多字段场景）

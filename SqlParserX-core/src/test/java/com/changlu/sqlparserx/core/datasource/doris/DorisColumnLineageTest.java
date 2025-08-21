@@ -180,8 +180,6 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertEquals(2, relations.size());
         assertRelation(relations, "new_table.id", "table1.id");
         assertRelation(relations, "new_table.name", "table1.name");
-        assertRelation(relations, "new_table.id", "table2.id");
-        assertRelation(relations, "new_table.name", "table2.name");
     }
 
 }
