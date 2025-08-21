@@ -26,6 +26,12 @@
           <p>解析SQL语句中的所有表名</p>
         </div>
       </router-link>
+      <router-link to="/create-table-parser" class="nav-card">
+        <div class="card-content">
+          <h2>建表SQL解析工具</h2>
+          <p>解析建表SQL语句的结构和属性</p>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>

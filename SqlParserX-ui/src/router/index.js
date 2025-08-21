@@ -5,6 +5,7 @@ import LineageVisualizer from '@/components/LineageVisualizer.vue'
 import SQLSplitterTester from '@/components/SQLSplitterTester.vue'
 import SyntaxValidator from '@/components/SyntaxValidator.vue'  // Add this import
 import TableParser from '@/components/TableParser.vue'  // 添加导入
+import CreateTableParser from '@/components/CreateTableParser.vue'  // 新增导入
 import MainLayout from '@/layouts/MainLayout.vue';
 
 Vue.use(Router)
@@ -41,6 +42,11 @@ export default new Router({
                     path: '/table-parser',
                     name: 'TableParser',
                     component: TableParser
+                },                // 新增建表SQL解析路由
+                {
+                    path: '/create-table-parser',
+                    name: 'CreateTableParser',
+                    component: CreateTableParser
                 }
             ]
         },

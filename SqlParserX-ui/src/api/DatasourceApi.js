@@ -19,7 +19,15 @@ export function parseTables(form) {
         data: form
     })
 }
+// 新增：解析建表SQL
+export function parseCreateTable(data) {
+    return request({
+        url: '/api/datasource/parseCreateTable',
+        method: 'post',
+        data
+    })
+}
 
 export default {
-    fetchDataSourceTypes, parseTables
+    fetchDataSourceTypes, parseTables, parseCreateTable
 }

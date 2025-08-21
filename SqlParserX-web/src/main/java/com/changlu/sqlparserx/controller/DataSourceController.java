@@ -4,6 +4,9 @@ import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 import com.changlu.sqlparserx.domain.ResponseResult;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
@@ -51,6 +54,23 @@ public class DataSourceController {
             return ResponseResult.error(msg, stackTrace);
         }
         return ResponseResult.success("成功!");
+    }
+
+    @PostMapping("/parseCreateTable")
+    public ResponseResult parseCreateTable(@RequestBody TableParseRequest request) {
+        DbType dbType = DataSourceType2DbType.getDbType(request.getDatasourceType());
+        try {
+            ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+            ParseCreateTableResult result = sqlParser.parseCreateTable(request.getSql());
+            return ResponseResult.success(result);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            String stackTrace = sw.toString();
+            log.error("parseCreateTable error!", e);
+            return ResponseResult.error(msg, stackTrace);
+        }
     }
 
     @PostMapping("/parseTables")

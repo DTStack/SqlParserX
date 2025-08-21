@@ -19,12 +19,14 @@
             </select>
           </div>
         </div>
-        <div class="sql-input-container">
+        <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
               v-model="sqlInput"
               placeholder="请输入SQL语句..."
           ></textarea>
+        </div>
+        <div class="sql-actions">
           <button id="parse-btn" @click="parseTables">解析表</button>
         </div>
       </div>
@@ -35,11 +37,13 @@
           <div v-if="parsedTables.length === 0" class="empty-result">
             暂无解析结果
           </div>
-          <div v-else>
+          <div v-else class="result-content">
             <div class="result-count">共找到 {{ parsedTables.length }} 个表:</div>
-            <div v-for="(table, index) in parsedTables" :key="index" class="table-item">
-              <div class="table-index">表 {{ index + 1 }}:</div>
-              <div class="table-name">{{ table }}</div>
+            <div class="table-list">
+              <div v-for="(table, index) in parsedTables" :key="index" class="table-item">
+                <div class="table-index">表 {{ index + 1 }}:</div>
+                <div class="table-name">{{ table }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -220,34 +224,38 @@ WHERE t1.age <= 20;`,
 
 <style scoped>
 .table-parser {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0 20px;
-  background-color: #f5f7fa;
+  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
 .header {
   margin-bottom: -10px;
   color: #333;
+  padding: 0 20px;
 }
 
 .main-container {
-  display: flex;
   flex: 1;
+  display: flex;
   gap: 20px;
+  overflow: hidden;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.input-panel, .result-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.input-panel {
+  flex: 0 0 400px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  overflow: hidden;
+  max-height: 77vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-header {
@@ -283,32 +291,40 @@ WHERE t1.age <= 20;`,
   border-color: #409EFF;
 }
 
-.sql-input-container {
+.sql-input-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  flex: 1;
 }
 
 #sql-input {
   width: 100%;
   flex: 1;
-  padding: 12px 1px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  padding: 12px;
+  border: none;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: none;
-  transition: border-color 0.3s;
+  box-sizing: border-box;
+  min-height: 150px;
 }
 
 #sql-input:focus {
   outline: none;
-  border-color: #409EFF;
+}
+
+.sql-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
 }
 
 #parse-btn {
-  align-self: flex-end;
   padding: 8px 20px;
   background-color: #409EFF;
   color: white;
@@ -323,18 +339,38 @@ WHERE t1.age <= 20;`,
   background-color: #66b1ff;
 }
 
+.result-panel {
+  flex: 1;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 77vh;
+}
+
 .result-container {
   flex: 1;
-  overflow-y: auto;
-  padding: 10px 0;
+  width: 100%;
+  overflow: auto;
+}
+
+.result-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .empty-result {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  color: #999;
+  color: #909399;
   font-size: 16px;
 }
 
@@ -342,6 +378,11 @@ WHERE t1.age <= 20;`,
   font-weight: bold;
   margin-bottom: 15px;
   color: #67C23A;
+}
+
+.table-list {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .table-item {
@@ -375,6 +416,11 @@ WHERE t1.age <= 20;`,
 @media (max-width: 992px) {
   .main-container {
     flex-direction: column;
+  }
+
+  .input-panel {
+    flex: 0 0 auto;
+    max-height: 50vh;
   }
 }
 </style>

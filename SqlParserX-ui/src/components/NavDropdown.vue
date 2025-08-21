@@ -9,6 +9,7 @@
         <el-dropdown-item command="/lineage">血缘解析可视化工具</el-dropdown-item>
         <el-dropdown-item command="/sql-splitter">SQL切分测试工具</el-dropdown-item>
         <el-dropdown-item command="/table-parser">SQL表解析工具</el-dropdown-item>
+        <el-dropdown-item command="/create-table-parser">建表SQL解析工具</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
