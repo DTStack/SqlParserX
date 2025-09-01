@@ -179,3 +179,9 @@ select `t1`.id, `t1`.name from (
     select `t2`.id, `t2`.name
     from table1 `t2`
 ) `t1`
+--------------------9--------------------
+insert into new_table
+select id, name from (
+    select ID, NAME
+    from table1
+) t1

@@ -503,9 +503,17 @@ public class SelectColumnSpecialLineageService {
 
         List<SelectColumn> res = new ArrayList<>();
 
+        // 是否开启子查询字段匹配忽略大小写
+        boolean isEnableSubqueryColumnIgnore = SQLParseStrategy.isEnabled(
+                this.features,
+                SQLParseStrategy.SUBQUERY_COLUMN_IGNORE_CASE
+        );
+
         Map<String, SelectColumn> subQuerySelectMap = subquerySelectColumns.stream()
                 .collect(Collectors.toMap(
-                        SelectColumn::getAliasName,  // Key mapper
+                        column -> isEnableSubqueryColumnIgnore ?
+                                column.getAliasName().toLowerCase() :  // 开启忽略大小写时使用小写
+                                column.getAliasName(),                 // 不开启时使用原值
                         column -> column,           // Value mapper
                         (existing, replacement) -> {  // 处理重复key的情况
                             // 这里可以根据业务需求决定保留哪个
@@ -538,8 +546,14 @@ public class SelectColumnSpecialLineageService {
                 boolean flag = true;
                 // check 字段名是否匹配子查询表别名
                 if (checkColumnTableMatchSubQueryTable(curColumnTableName, subQueryTableAliasName)) {
+
+                    // 根据配置决定匹配时是否忽略大小写
+                    String lookupKey = isEnableSubqueryColumnIgnore ?
+                            curColumnName.toLowerCase() :
+                            curColumnName;
+
                     // core match alias name
-                    if (subQuerySelectMap.containsKey(curColumnName)) {
+                    if (subQuerySelectMap.containsKey(lookupKey)) {
                         SelectColumn subQuerySelectColumn = subQuerySelectMap.get(curColumnName);
                         filterColumnNames.add(subQuerySelectColumn.getColumnName());
                         filterColumnTableNames.add(subQuerySelectColumn.getTableInfo());

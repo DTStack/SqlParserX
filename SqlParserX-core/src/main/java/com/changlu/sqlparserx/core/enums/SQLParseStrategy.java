@@ -8,7 +8,18 @@ public enum SQLParseStrategy {
     /**
      * 列名忽略大小写匹配
      */
-    COLUMN_IGNORE_CASE;
+    COLUMN_IGNORE_CASE,
+    /**
+     * 特性：子查询字段忽略大小写匹配
+     *  示范：select的字段匹配子查询的字段时忽略大小写【doris支持这种写法】
+     *      insert into new_table
+     *      select id, name from (
+     *         select ID, NAME
+     *         from table1
+     *      ) t1
+     */
+    SUBQUERY_COLUMN_IGNORE_CASE,
+    ;
 
     SQLParseStrategy() {
         mask = (1 << ordinal());
