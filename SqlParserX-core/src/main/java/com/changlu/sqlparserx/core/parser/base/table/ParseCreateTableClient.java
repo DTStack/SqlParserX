@@ -1,6 +1,7 @@
 package com.changlu.sqlparserx.core.parser.base.table;
 
 import com.alibaba.druid.sql.ast.*;
+import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.sqlparserx.core.domain.Pair;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
@@ -226,6 +227,7 @@ public class ParseCreateTableClient implements IParseTableClient {
             String name = columnDefinition.getName().getSimpleName();
             String typeName = columnDefinition.getDataType().getName();
             SQLExpr comment = columnDefinition.getComment();
+            SQLCharExpr aggType = columnDefinition.getAggType();
 
             element.setName(CommonUtil.removeQuotes(name));
             element.setType(CommonUtil.removeQuotes(typeName));
@@ -233,6 +235,7 @@ public class ParseCreateTableClient implements IParseTableClient {
                 element.setComment(CommonUtil.removeQuotes(comment.toString()));
             }
             element.setArguments(columnDefinition.getDataType().getArguments().stream().map(x -> x.toString()).collect(Collectors.toList()));
+            element.setAggType(CommonUtil.sqlExpr2Value(aggType));
             resultList.add(element);
         }
         return resultList;

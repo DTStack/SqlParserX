@@ -77,6 +77,7 @@ public class DorisCreateTableTest  extends BaseColumnLineageAnalyzerTest {
         String sql = readSqlByIndex(sqlTxtName, 4);
         ParseCreateTableResult parseCreateTableResult = sqlParser.parseCreateTable(sql);
         assertEquals(TablePartitionEnum.LIST, parseCreateTableResult.getTablePartition().getTablePartitionEnum());
+        assertEquals("REPLACE", parseCreateTableResult.getTableElementList().get(3).getAggType());
     }
 
 }

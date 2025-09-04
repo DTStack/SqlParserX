@@ -1,8 +1,13 @@
 package com.changlu.sqlparserx.core.parser.base.table.createtable.domain;
 
+import lombok.Data;
+import lombok.ToString;
+
 import java.util.List;
 import java.util.Objects;
 
+@Data
+@ToString
 public class TableElement {
     private String name;
     private String type;
@@ -24,6 +29,11 @@ public class TableElement {
      */
     private Integer precision;
 
+    /**
+     * 聚合类型
+     */
+    private String aggType;
+
     public TableElement() {
     }
 
@@ -36,96 +46,5 @@ public class TableElement {
         this.columnStrategy = columnStrategy;
         this.scale = scale;
         this.precision = precision;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<String> getArguments() {
-        return arguments;
-    }
-
-    public void setArguments(List<String> arguments) {
-        this.arguments = arguments;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Integer getScale() {
-        return scale;
-    }
-
-    public void setScale(Integer scale) {
-        this.scale = scale;
-    }
-
-    public Integer getPrecision() {
-        return precision;
-    }
-
-    public void setPrecision(Integer precision) {
-        this.precision = precision;
-    }
-
-    public String getPolymerizeType() {
-        return polymerizeType;
-    }
-
-    public void setPolymerizeType(String polymerizeType) {
-        this.polymerizeType = polymerizeType;
-    }
-
-    public Integer getColumnStrategy() {
-        return columnStrategy;
-    }
-
-    public void setColumnStrategy(Integer columnStrategy) {
-        this.columnStrategy = columnStrategy;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TableElement that = (TableElement) o;
-        return Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(arguments, that.arguments) && Objects.equals(polymerizeType, that.polymerizeType) && Objects.equals(comment, that.comment) && Objects.equals(columnStrategy, that.columnStrategy) && Objects.equals(scale, that.scale) && Objects.equals(precision, that.precision);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, type, arguments, polymerizeType, comment, columnStrategy, scale, precision);
-    }
-
-    @Override
-    public String toString() {
-        return "TableElement{" +
-                "name='" + name + '\'' +
-                ", type='" + type + '\'' +
-                ", arguments=" + arguments +
-                ", polymerizeType='" + polymerizeType + '\'' +
-                ", comment='" + comment + '\'' +
-                ", columnStrategy=" + columnStrategy +
-                ", scale=" + scale +
-                ", precision=" + precision +
-                '}';
     }
 }

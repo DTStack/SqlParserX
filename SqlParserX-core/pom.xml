@@ -33,6 +33,11 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.26</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+        </dependency>
     </dependencies>
 
     <!--   自动格式化代码强制工具  -->
