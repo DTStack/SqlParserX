@@ -123,4 +123,13 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
         assertEquals(true, allTables.contains(new Table(null, "ods", "ods_task_rule_condition_hf", null)));
     }
 
+    @Test
+    public void test_07_parseTables_noTable() {
+        String sql = readSqlByIndex(sqlTxtName, 8);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
+        ParseTableResult parseTableResult = sqlParser.parseTables(sql);
+        Set<Table> allTables = parseTableResult.getAllTables();
+        assertEquals(0, allTables.size());
+    }
+
 }

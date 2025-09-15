@@ -3,6 +3,8 @@ package com.changlu.sqlparserx.core.select.table;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLQueryExpr;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.util.StringUtils;
+import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class SelectTableSpecialLineageService {
     public List<SelectTable> queryTablesBySqlSelectQuery(SQLSelectQuery sqlSelectQuery) {
         List<SelectTable> selectTables = new ArrayList<>();
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
-            return this.queryTableBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
+            selectTables = this.queryTableBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
         }else if (sqlSelectQuery instanceof SQLUnionQuery) {
             SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
             List<SQLSelectQuery> relations = sqlUnionQuery.getRelations();
@@ -30,6 +32,13 @@ public class SelectTableSpecialLineageService {
                 List<SelectTable> curSelectTables = queryTablesBySqlSelectQuery(relations.get(i));
                 selectTables.addAll(curSelectTables);
             }
+        }
+
+        // 去除无真实表的记录
+        if (CollectionUtil.isNotEmpty(selectTables)) {
+            selectTables = selectTables.stream()
+                    .filter(table -> table != null && !StringUtils.isEmpty(table.getTableInfo()))
+                    .collect(Collectors.toList());
         }
         return selectTables;
     }

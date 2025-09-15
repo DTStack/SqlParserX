@@ -95,3 +95,34 @@ select
                 split_by_string(condition_ids, ",")
             ) tab1 as condition_id
     ) t2 on t1.condition_id = t2.condition_id
+--------------------8--------------------
+SELECT earn_order_type
+FROM (
+	SELECT 'uni_loan' AS earn_order_type
+	UNION ALL
+	SELECT 'fixed_earn'
+	UNION ALL
+	SELECT 'dual_savings'
+	UNION ALL
+	SELECT 'dual_sniper'
+	UNION ALL
+	SELECT 'structured_financing'
+	UNION ALL
+	SELECT 'finances_lock'
+	UNION ALL
+	SELECT 'launchpool'
+	UNION ALL
+	SELECT 'coin_staking'
+	UNION ALL
+	SELECT 'wealth_finance'
+	UNION ALL
+	SELECT 'stable_income'
+	UNION ALL
+	SELECT 'structured_products'
+	UNION ALL
+	SELECT 'hybrid_interest'
+	UNION ALL
+	SELECT 'quant_fund'
+	UNION ALL
+	SELECT 'dual_savings_auto_renewal'
+) t1
