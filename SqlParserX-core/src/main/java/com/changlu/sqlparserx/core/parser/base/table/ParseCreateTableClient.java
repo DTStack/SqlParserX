@@ -65,7 +65,35 @@ public class ParseCreateTableClient implements IParseTableClient {
         result.setTablePartition(parseTablePartition(stmt.getPartitioning()));
         // 获取表的properties参数
         result.setProperties(parseTableProperties(stmt.getTableOptions()));
+
+        // 是否开启识别动态分区
+        if (isDynamicPartitionEnabled()) {
+            TablePartition tablePartition = result.getTablePartition();
+            Map<String, String> properties = result.getProperties();
+            if (analyzeHasDynamicPartitionTypeProperties(properties)) {
+                tablePartition.setTablePartitionEnum(TablePartitionEnum.DYNAMIC);
+            }
+        }
         return result;
+    }
+
+    /**
+     * 分析配置参数中是否有动态分区
+     * @param properties Map<String>
+     * @return boolean
+     * @author changlu
+     */
+    protected boolean analyzeHasDynamicPartitionTypeProperties(Map<String, String> properties) {
+        return false;
+    }
+
+    /**
+     * 是否开启识别动态分区
+     * @param
+     * @return boolean
+     */
+    protected boolean isDynamicPartitionEnabled() {
+        return false;
     }
 
     /**

@@ -2,7 +2,7 @@ package com.changlu.sqlparserx.core.parser.base.table.createtable.enums;
 
 public enum TablePartitionEnum {
 
-    RANGER(1), DATE_TRUNC(2), LIST(3), NORMAL(4),;
+    RANGER(1), DATE_TRUNC(2), LIST(3), NORMAL(4), DYNAMIC(5);
 
     final int type;
 

@@ -44,7 +44,7 @@ public class DorisCreateTableTest  extends BaseColumnLineageAnalyzerTest {
         assertEquals(3, parseCreateTableResult.getTableDistributedBuckets().getBucketNum().intValue());
         assertEquals(Arrays.asList("id"), parseCreateTableResult.getTableDistributedBuckets().getColumnNames());
         // 校验分区类型
-        assertEquals(TablePartitionEnum.RANGER, parseCreateTableResult.getTablePartition().getTablePartitionEnum());
+        assertEquals(TablePartitionEnum.DYNAMIC, parseCreateTableResult.getTablePartition().getTablePartitionEnum());
         assertEquals(1, parseCreateTableResult.getTablePartition().getColumnName().size());
         assertEquals(9, parseCreateTableResult.getTablePartition().getTablePartitionElement().size());
         assertEquals("p20250624", parseCreateTableResult.getTablePartition().getTablePartitionElement().get(0).getName());
@@ -78,6 +78,15 @@ public class DorisCreateTableTest  extends BaseColumnLineageAnalyzerTest {
         ParseCreateTableResult parseCreateTableResult = sqlParser.parseCreateTable(sql);
         assertEquals(TablePartitionEnum.LIST, parseCreateTableResult.getTablePartition().getTablePartitionEnum());
         assertEquals("REPLACE", parseCreateTableResult.getTableElementList().get(3).getAggType());
+    }
+
+
+    // 分区类型 为DYNAMIC
+    @Test
+    public void test_05_creatable_DYNAMIC() {
+        String sql = readSqlByIndex(sqlTxtName, 5);
+        ParseCreateTableResult parseCreateTableResult = sqlParser.parseCreateTable(sql);
+        assertEquals(TablePartitionEnum.DYNAMIC, parseCreateTableResult.getTablePartition().getTablePartitionEnum());
     }
 
 }
