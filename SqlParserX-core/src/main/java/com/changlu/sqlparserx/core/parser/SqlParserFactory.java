@@ -12,6 +12,7 @@ import com.changlu.sqlparserx.core.parser.oceanbase.OceanBaseSqlParser;
 import com.changlu.sqlparserx.core.parser.oceanbase_oracle.OceanBaseOracleSqlParser;
 import com.changlu.sqlparserx.core.parser.oracle.OracleSqlParser;
 import com.changlu.sqlparserx.core.parser.postgresql.PostgresqlSqlParser;
+import com.changlu.sqlparserx.core.parser.spark.SparkSqlParser;
 import com.changlu.sqlparserx.core.parser.sqlserver.SqlServerSqlParser;
 import com.changlu.sqlparserx.core.parser.starrocks.StarrocksSqlParser;
 import com.changlu.sqlparserx.core.parser.tidb.TidbSqlParser;
@@ -56,6 +57,8 @@ public class SqlParserFactory {
             return new DmSqlParser();
         } else if (dbType == DbType.clickhouse) {
             return new ClickHouseSqlParser();
+        } else if (dbType == DbType.spark) {
+            return new SparkSqlParser();
         }
         return new BaseSqlParser();
     }
