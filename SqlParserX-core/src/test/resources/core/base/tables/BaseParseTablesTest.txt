@@ -126,3 +126,8 @@ FROM (
 	UNION ALL
 	SELECT 'dual_savings_auto_renewal'
 ) t1
+--------------------9--------------------
+with t2 as (select 1 as id, 'name1' as name)
+insert into new_t
+select id, name from t1
+left join t2 on t1.id = t2.id

@@ -132,4 +132,15 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
         assertEquals(0, allTables.size());
     }
 
+    @Test
+    public void test_08_parseTables_withas() {
+        String sql = readSqlByIndex(sqlTxtName, 9);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
+        ParseTableResult parseTableResult = sqlParser.parseTables(sql);
+        Set<Table> allTables = parseTableResult.getAllTables();
+        assertEquals(2, allTables.size());
+        assertEquals(true, allTables.contains(new Table(null, null, "new_t", "new_t")));
+        assertEquals(true, allTables.contains(new Table(null, null, "t1", null)));
+    }
+
 }

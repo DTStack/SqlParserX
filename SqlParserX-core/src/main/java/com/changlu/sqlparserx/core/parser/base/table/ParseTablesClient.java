@@ -2,6 +2,7 @@ package com.changlu.sqlparserx.core.parser.base.table;
 
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.util.StringUtils;
 import com.changlu.sqlparserx.core.parser.base.table.component.ParseSelectTableService;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.select.column.SelectColumnItem;
@@ -9,6 +10,7 @@ import com.changlu.sqlparserx.core.select.column.SelectColumnSpecialLineageServi
 import com.changlu.sqlparserx.core.select.table.SelectTable;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
+import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
 import java.util.*;
@@ -182,14 +184,20 @@ public class ParseTablesClient implements IParseTableClient {
             String[] selectTableArr = selectTable.getTableInfo().split(",");
             for (String tableName : selectTableArr) {
                 if (aliasNameBySourceTables.containsKey(tableName)) {
-                    tableGroup.add(aliasNameBySourceTables.get(tableName));
-                    usedAliases.add(tableName);
+                    String tableInfo = aliasNameBySourceTables.get(tableName);
+                    // 如果with as中的某个别名表中实际无真实引用表，如 with t1 as (select 1 as id, "name1" as name)，无真实表则无需添加
+                    if (!StringUtils.isEmpty(tableInfo)) {
+                        tableGroup.add(tableInfo);
+                        usedAliases.add(tableName);
+                    }
                 }else {
                     tableGroup.add(tableName);
                 }
 
             }
-            newSelectTables.add(new SelectTable(String.join(",", tableGroup), selectTable.getAliasName()));
+            if (CollectionUtil.isNotEmpty(tableGroup)) {
+                newSelectTables.add(new SelectTable(String.join(",", tableGroup), selectTable.getAliasName()));
+            }
         }
 
         // 筛选出来未进行替换的所有key、value
