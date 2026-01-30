@@ -192,5 +192,23 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertRelation(relations, "new_table.name", "table1.NAME");
     }
 
+    /**
+     * 支持 SQLOver形式，如 select 字段中 字段为
+     *  ROW_NUMBER() OVER (PARTITION BY b.customer_key ORDER BY a.is_basic_household DESC, a.updation_ts DESC) real_param2
+     * @param
+     * @return void
+     */
+    @Test
+    public void test_10_insert() {
+        String sql = readSqlByIndex(sqlTxtName, 10);
+        ColumnLineageResult result = sqlParser.parseColumnLineages(sql, new HashMap<>());
+        Map<String, List<ColumnLineageResult.ColumnRelation>> relations = result.getColumnRelations();
+        assertEquals(2, relations.size());
+        assertRelation(relations, "dw_dim.dim_lease_account_df.param1", "real_table.real_param1");
+        assertRelation(relations, "dw_dim.dim_lease_account_df.param2", "real_table2.customer_key");
+        assertRelation(relations, "dw_dim.dim_lease_account_df.param2", "real_table.is_basic_household");
+        assertRelation(relations, "dw_dim.dim_lease_account_df.param2", "real_table.updation_ts");
+    }
+
 
 }

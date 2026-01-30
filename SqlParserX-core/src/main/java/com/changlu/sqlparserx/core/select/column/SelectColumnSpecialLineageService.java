@@ -1,6 +1,8 @@
 package com.changlu.sqlparserx.core.select.column;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLOrderBy;
+import com.alibaba.druid.sql.ast.SQLOver;
 import com.alibaba.druid.sql.ast.expr.*;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.parser.SQLParserFeature;
@@ -12,6 +14,7 @@ import com.changlu.sqlparserx.core.enums.TableNameMatchStrategy;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.config.Constant;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
+import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.ColumnUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 import org.slf4j.Logger;
@@ -678,6 +681,13 @@ public class SelectColumnSpecialLineageService {
             SQLMethodInvokeExpr aggregateExpr = (SQLMethodInvokeExpr) expr;
             // 函数中的参数
             List<SQLExpr> arguments = aggregateExpr.getArguments();
+
+            // 处理SQLAggregateExpr中的特定参数存放到arguments中
+            List<SQLExpr> sqlAggregateSqlExprs = getSQLAggregateExprArguments(expr);
+            if (CollectionUtil.isNotEmpty(sqlAggregateSqlExprs)) {
+                arguments.addAll(sqlAggregateSqlExprs);
+            }
+
             // 如concat函数可能带有多个字段场景 如concat(o.id, '_', t.id)
             if (!arguments.isEmpty()) {
                 // 原始写法
@@ -694,7 +704,7 @@ public class SelectColumnSpecialLineageService {
                 Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(arguments);
                 columnName = columnNameAndTableInfo.getFirst();
                 tableInfo = columnNameAndTableInfo.getSecond();
-            }else {
+            } else {
                 // 函数中无参数场景，如now()
                 columnName = expr.toString();
                 tableInfo = Constant.NO_RELATION_TABLE;
@@ -786,6 +796,43 @@ public class SelectColumnSpecialLineageService {
         }
 
         return new SelectColumnItem(tableInfo, columnName, columnTypeEnum);
+    }
+
+    /**
+     * 获取SQLAggregateExpr中的SQLOver参数表达式列表
+     * @param expr SQLExpr
+     * @return List<SQLExpr>
+     */
+    private List<SQLExpr> getSQLAggregateExprArguments(SQLExpr expr) {
+        List<SQLExpr> arguments = new ArrayList<>();
+        if (expr instanceof SQLAggregateExpr) {
+            SQLAggregateExpr sqlAggregateExpr = (SQLAggregateExpr) expr;
+            SQLOver over = sqlAggregateExpr.getOver();
+            arguments.addAll(getSqlExprBySqlOver(over));
+        }
+        return arguments;
+    }
+
+    private List<SQLExpr> getSqlExprBySqlOver(SQLOver over) {
+        List<SQLExpr> sqlExprs = new ArrayList<>();
+        if (over == null) return sqlExprs;
+
+        // 添加partitionBy中的表达式参数
+        List<SQLExpr> partitionBy = over.getPartitionBy();
+        if (CollectionUtil.isNotEmpty(partitionBy)) {
+            sqlExprs.addAll(partitionBy);
+        }
+        // 添加orderBy中的表达式参数
+        SQLOrderBy orderBy = over.getOrderBy();
+        if (orderBy != null) {
+            List<SQLSelectOrderByItem> items = orderBy.getItems();
+            if (CollectionUtil.isNotEmpty(items)) {
+                for (SQLSelectOrderByItem item : items) {
+                    sqlExprs.add(item.getExpr());
+                }
+            }
+        }
+        return sqlExprs;
     }
 
     // 优化多个SQLExpr场景需要递归处理场景（通常是聚合函数、表达式情况）

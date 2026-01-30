@@ -185,3 +185,13 @@ select id, name from (
     select ID, NAME
     from table1
 ) t1
+--------------------10--------------------
+INSERT OVERWRITE TABLE dw_dim.dim_lease_account_df PARTITION (p20220718) (
+    param1,
+    param2
+)
+SELECT
+    real_param1,
+    ROW_NUMBER() OVER (PARTITION BY b.customer_key ORDER BY a.is_basic_household DESC, a.updation_ts DESC) real_param2
+from real_table a
+left join real_table2 b;
