@@ -4,6 +4,7 @@ import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLQueryExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.util.StringUtils;
+import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
@@ -11,6 +12,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectTableSpecialLineageService {
+
+    private int features;
+
+    public SelectTableSpecialLineageService() {}
+
+    public SelectTableSpecialLineageService( SQLParseStrategy... features){
+        this.features = SQLParseStrategy.of(features);
+    }
 
     public List<SelectTable> queryTablesBySqlSelect(SQLSelect sqlSelect) {
         if (sqlSelect == null) {
@@ -157,7 +166,8 @@ public class SelectTableSpecialLineageService {
      * @return Map<String,List<SelectTable>>
      */
     public Map<String, List<SelectTable>> buildTableInfoByTableMap(SQLWithSubqueryClause with) {
-        Map<String, List<SelectTable>> tableInfoByTableMap = new HashMap<>();
+        // 为了支持后续的cte向前推断，这里的map就应该是有序的
+        Map<String, List<SelectTable>> tableInfoByTableMap = new LinkedHashMap<>();
         if (with != null) {
             List<SQLWithSubqueryClause.Entry> entries = with.getEntries();
             if (!entries.isEmpty()) {
@@ -171,7 +181,86 @@ public class SelectTableSpecialLineageService {
                 }
             }
         }
+        // 单独处理cte向前引用场景
+        boolean enableCteForwardReference = SQLParseStrategy.isEnabled(
+                this.features,
+                SQLParseStrategy.CTE_FORWARD_REFERENCE
+        );
+
+        // 开启cte向前引用场景
+        if (enableCteForwardReference) {
+            // 按照with as cte机制 从前往后去顺序依次替换with as的别名表
+            tableInfoByTableMap = findRealCteForwardReferenceTableMap(tableInfoByTableMap);
+        }
         return tableInfoByTableMap;
+    }
+
+    /**
+     * 按照with as cte机制 从前往后去顺序依次替换with as的表
+     * @param tableInfoByTableMap Map<List<SelectTable>>
+     * @return Map<String,List<SelectTable>>
+     */
+    private Map<String, List<SelectTable>> findRealCteForwardReferenceTableMap(Map<String, List<SelectTable>> tableInfoByTableMap) {
+        Map<String, List<SelectTable>> tempRealWithasMap = new LinkedHashMap<>();
+        if (tableInfoByTableMap != null && !tableInfoByTableMap.isEmpty()) {
+            // 遍历每一个现有可能存在临时with as 别名表的map
+            for (Map.Entry<String, List<SelectTable>> entry : tableInfoByTableMap.entrySet()) {
+                String withAsKey = entry.getKey();
+                List<SelectTable> curTables = entry.getValue();
+
+                // 需要去拿到当前pos前的一组map 去比对其中的key是否为当前的curTables的，若是则需要替换进来
+                if (CollectionUtil.isNotEmpty(curTables)) {
+                    // 查询到真实的一组with as tables表
+                    curTables = findRealWithasTables(curTables, tempRealWithasMap);
+                }
+
+                //  每次暂存最新的with as map
+                tempRealWithasMap.put(withAsKey, curTables);
+            }
+        }
+        return tempRealWithasMap;
+    }
+
+    /**
+     * 对当前的withas 真实表去寻找真实的一组集合
+     * @param curTables List<SelectTable>
+     * @param tempRealWithasMap Map<List<SelectTable>>
+     * @return List<SelectTable>
+     */
+    private List<SelectTable> findRealWithasTables(List<SelectTable> curTables, Map<String, List<SelectTable>> tempRealWithasMap) {
+        if (tempRealWithasMap.isEmpty()) return curTables;
+
+        List<SelectTable> realTables = new ArrayList<>();
+        if (CollectionUtil.isNotEmpty(curTables)) {
+            for (SelectTable curSelectTable : curTables) {
+
+                Set<String> realTableNameList = new HashSet<>();
+                // 会有多个表同时存在在一个字段中
+                String[] selectTableNameArr = curSelectTable.getTableInfo().split(",", -1);
+                int realSelectTableLength = selectTableNameArr.length;
+                for (int i = 0; i < realSelectTableLength; i++) {
+                    String tableName = selectTableNameArr[i];
+                    // 寻找with as别名情况
+                    boolean exists = tempRealWithasMap.containsKey(tableName);
+                    if (exists) {
+                        List<SelectTable> selectTables = tempRealWithasMap.get(tableName);
+                        // 收集最新的真实表名
+                        if (CollectionUtil.isNotEmpty(selectTables)) {
+                            for (SelectTable selectTable : selectTables) {
+                                realTableNameList.add(selectTable.getTableInfo());
+                            }
+                        }
+                    }else {
+                        realTableNameList.add(tableName);
+                    }
+                }
+
+                // 变更最新的tableInfo
+                curSelectTable.setTableInfo(String.join(",", realTableNameList));
+                realTables.add(curSelectTable);
+            }
+        }
+        return realTables;
     }
 
     /**

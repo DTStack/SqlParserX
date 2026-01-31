@@ -19,6 +19,22 @@ public enum SQLParseStrategy {
      *      ) t1
      */
     SUBQUERY_COLUMN_IGNORE_CASE,
+
+    // ===== CTE 相关策略 =====
+    /**
+     * 特性：CTE 支持向前引用（Forward Reference）
+     *  当前支持CTE 支持向前引用数据源类型：Doris。
+     *
+     *  示范：WITH 子句中允许后面的 CTE 引用前面未定义的 CTE
+     *      WITH
+     *      t1 AS (SELECT * FROM t2),  -- 引用了后面定义的 t2
+     *      t2 AS (SELECT * FROM table)
+     *      SELECT * FROM t1
+     *
+     *  注：某些数据库（如 SQL Server）支持这种写法，但标准的 SQL 和大多数数据库（如 PostgreSQL、MySQL）不支持。
+     *  开启此策略后，解析器会自动处理 CTE 的依赖关系。
+     */
+    CTE_FORWARD_REFERENCE,
     ;
 
     SQLParseStrategy() {

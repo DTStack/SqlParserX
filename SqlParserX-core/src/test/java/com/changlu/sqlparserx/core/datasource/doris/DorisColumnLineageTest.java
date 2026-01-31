@@ -6,6 +6,7 @@ import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import org.junit.Test;
 
 import java.util.Arrays;

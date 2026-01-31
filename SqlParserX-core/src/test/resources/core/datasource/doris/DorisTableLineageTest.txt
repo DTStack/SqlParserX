@@ -1,0 +1,22 @@
+--------------------1--------------------
+insert into new_table
+WITH
+t1 AS (
+    SELECT id, name
+    FROM demo_table
+),
+t3 AS (
+    SELECT t1.id, t1.name
+    FROM t1
+),
+t2 AS (
+    SELECT t1.id, t1.name
+    FROM t3
+),
+t4 AS (
+    SELECT id1, name1
+    FROM demo_table2
+)
+SELECT * FROM t2
+union all
+select * from t4

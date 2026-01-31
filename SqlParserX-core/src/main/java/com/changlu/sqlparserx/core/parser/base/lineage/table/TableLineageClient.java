@@ -1,6 +1,7 @@
 package com.changlu.sqlparserx.core.parser.base.lineage.table;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.*;
+import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.parser.ITableLineageClient;
 import com.changlu.sqlparserx.core.select.table.SelectTable;
 import com.changlu.sqlparserx.core.select.table.SelectTableSpecialLineageService;
@@ -16,7 +17,19 @@ public class TableLineageClient implements ITableLineageClient {
     // 来源表
     private Set<String> sourceTables = new HashSet<>();
     private Set<TableRelation> relations = new HashSet<>();
-    private final SelectTableSpecialLineageService selectTableSpecialLineageService = new SelectTableSpecialLineageService();
+    private final SelectTableSpecialLineageService selectTableSpecialLineageService;
+
+    // sql语法特征
+    protected int features;
+
+    public TableLineageClient() {
+        this.selectTableSpecialLineageService = new SelectTableSpecialLineageService();
+    }
+
+    public TableLineageClient(SQLParseStrategy... features) {
+        this.features = SQLParseStrategy.of(features);
+        this.selectTableSpecialLineageService = new SelectTableSpecialLineageService(features);
+    }
 
     private void backInit() {
         this.targetTable = null;
