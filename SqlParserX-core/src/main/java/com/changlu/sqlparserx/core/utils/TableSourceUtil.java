@@ -54,6 +54,13 @@ public class TableSourceUtil implements SQLASTVisitor {
         return Table.TableTransfer.transfer(extractTable(tableSource));
     }
 
+    public static Table extractTable(SQLTableSource sqlTableSource) {
+        if (sqlTableSource instanceof SQLExprTableSource) {
+            return extractTable((SQLExprTableSource) sqlTableSource);
+        }
+        return null;
+    }
+
     /**
      * 获取表对象信息
      *  1、极端场景 select * from ttt.catalog.db.table as tmp

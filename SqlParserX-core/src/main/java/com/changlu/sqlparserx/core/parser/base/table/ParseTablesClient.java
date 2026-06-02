@@ -69,9 +69,19 @@ public class ParseTablesClient implements IParseTableClient {
     }
 
     protected void parseUpdateTables(SQLUpdateStatement x) {
+        Table table = TableSourceUtil.extractTable(x.getTableSource());
+        if (table != null) {
+            this.mainTable = table;
+            this.allTables.add(table);
+        }
     }
 
     protected void parseDeleteTables(SQLDeleteStatement x) {
+        Table table = TableSourceUtil.extractTable(x.getTableSource());
+        if (table != null) {
+            this.mainTable = table;
+            this.allTables.add(table);
+        }
     }
 
     protected void parseDropTables(SQLDropTableStatement x) {

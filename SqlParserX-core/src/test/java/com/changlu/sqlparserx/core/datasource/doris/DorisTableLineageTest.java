@@ -1,7 +1,6 @@
 package com.changlu.sqlparserx.core.datasource.doris;
 
 import com.alibaba.druid.DbType;
-import com.changlu.sqlparserx.core.base.lineage.table.BaseTableLineageWithAsInsertTest;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
@@ -42,7 +41,6 @@ public class DorisTableLineageTest extends AbstractSqlParserTest {
         assertTrue(result.getRelations().contains(new TableRelation("demo_table2", "new_table")));
         assertTrue(result.getRelations().contains(new TableRelation("demo_table", "new_table")));
     }
-
 
 
 }
