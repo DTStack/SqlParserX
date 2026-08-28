@@ -1,11 +1,26 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* SqlParserX 主题色：深空数据蓝紫 */
+  --px-primary: #6366f1;          /* 靛蓝主色 */
+  --px-primary-2: #22d3ee;        /* 青色辅助 */
+  --px-primary-3: #8b5cf6;        /* 紫罗兰 */
+  --px-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #22d3ee 100%);
+  --px-bg-deep: #0b1020;          /* 页面深背景 */
+  --px-bg: #10162e;               /* 卡片背景 */
+  --px-bg-light: #1a2342;         /* 输入区域背景 */
+  --px-border: rgba(99, 102, 241, 0.28);
+  --px-border-light: rgba(34, 211, 238, 0.35);
+  --px-text: #e2e8f0;
+  --px-text-dim: #94a3b8;
+  --px-success: #34d399;
+  --px-danger: #f87171;
+
+  font-family: Inter, system-ui, Avenir, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark;
+  color: var(--px-text);
+  background-color: var(--px-bg-deep);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,26 +28,64 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+body {
+  min-height: 100vh;
+  color: var(--px-text);
+  background:
+    radial-gradient(1000px 500px at 85% -10%, rgba(139, 92, 246, 0.18), transparent 60%),
+    radial-gradient(900px 460px at -10% 20%, rgba(34, 211, 238, 0.14), transparent 60%),
+    radial-gradient(700px 500px at 50% 110%, rgba(99, 102, 241, 0.16), transparent 60%),
+    var(--px-bg-deep);
+  background-attachment: fixed;
+  display: block;
+}
+
+a {
+  font-weight: 500;
+  color: var(--px-primary-2);
+  text-decoration: inherit;
+}
+a:hover {
+  color: #67e8f9;
+}
+
+h1, h2, h3 {
+  color: var(--px-text);
+}
+
+/* 全局滚动条（深色主题） */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.45);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.65);
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+#app {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  min-height: 100vh;
 }
 
 button {
@@ -42,38 +95,52 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
-.card {
-  padding: 2em;
+/* ===== element-ui 深色主题适配 ===== */
+/* 普通按钮 */
+.el-button {
+  background-color: #1a2342;
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #e2e8f0;
 }
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.el-button:hover,
+.el-button:focus {
+  background-color: rgba(99, 102, 241, 0.25);
+  border-color: rgba(34, 211, 238, 0.6);
+  color: #fff;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 消息提示 */
+.el-message {
+  background-color: #141b33;
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.el-message__content { color: #e2e8f0; }
+/* 下拉菜单（兜底） */
+.el-dropdown-menu {
+  background-color: #141b33 !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+}
+.el-dropdown-menu__item { color: #cbd5e1; }
+.el-dropdown-menu__item:hover { background-color: rgba(99, 102, 241, 0.2) !important; color: #fff; }
+/* Tooltip */
+.el-tooltip__popper.is-dark {
+  background: #1a2342;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #e2e8f0;
+}
+/* 消息弹窗 */
+.el-message-box {
+  background-color: #141b33;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+.el-message-box__title { color: #e2e8f0; }
+.el-message-box__content { color: #cbd5e1; }
+.el-message-box__headerbtn .el-message-box__close { color: #94a3b8; }
+.el-message-box__btns .el-button--primary {
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  border: none;
 }

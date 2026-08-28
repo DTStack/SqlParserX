@@ -133,7 +133,7 @@ export default {
 
 .header {
   margin-bottom: -10px;
-  color: #333;
+  color: #e2e8f0;
   padding: 0 20px;
 }
 
@@ -149,9 +149,9 @@ export default {
 /* 保持与LineageVisualizer相同的面板样式 */
 .sql-panel {
   flex: 0 0 400px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   overflow: hidden;
   max-height: 77vh;
@@ -174,29 +174,29 @@ export default {
 
 .data-source-selector label {
   font-size: 14px;
-  color: #606266;
+  color: #cbd5e1;
 }
 
 .data-source-selector select {
   padding: 6px 12px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   font-size: 14px;
-  color: #606266;
-  background-color: #fff;
+  color: #cbd5e1;
+  background-color: #1a2342;
   transition: border-color 0.3s;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #409EFF;
+  border-color: #22d3ee;
 }
 
 .sql-input-wrapper {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -219,17 +219,17 @@ export default {
   display: flex;
   justify-content: flex-end;
   padding-top: 15px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 #sql-input:focus {
   outline: none;
-  border-color: #409EFF;
+  border-color: #22d3ee;
 }
 
 #validate-btn {
   padding: 8px 20px;
-  background-color: #409EFF;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
   color: white;
   border: none;
   border-radius: 4px;
@@ -239,14 +239,14 @@ export default {
 }
 
 #validate-btn:hover {
-  background-color: #66b1ff;
+  background: linear-gradient(135deg, #818cf8, #67e8f9); box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
 }
 
 .result-panel {
   flex: 1;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -271,7 +271,7 @@ export default {
 }
 
 .success-message {
-  color: #67C23A;
+  color: #34d399;
   font-size: 18px;
   display: flex;
   flex-direction: column;
@@ -282,9 +282,9 @@ export default {
 .success-details {
   margin-top: 15px;
   padding: 15px;
-  background-color: #f0f9eb;
+  background-color: rgba(52, 211, 153, 0.12); border: 1px solid rgba(52, 211, 153, 0.35);
   border-radius: 4px;
-  color: #606266;
+  color: #cbd5e1;
   font-size: 14px;
   width: 100%;
   max-height: 300px;
@@ -292,7 +292,7 @@ export default {
 }
 
 .error-message {
-  color: #F56C6C;
+  color: #f87171;
   font-size: 18px;
   display: flex;
   flex-direction: column;
@@ -303,9 +303,9 @@ export default {
 .error-details {
   margin-top: 15px;
   padding: 15px;
-  background-color: #fef0f0;
+  background-color: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.35);
   border-radius: 4px;
-  color: #606266;
+  color: #cbd5e1;
   font-size: 14px;
   width: 100%;
   max-height: 300px;
@@ -317,7 +317,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #909399;
+  color: #64748b;
   font-size: 16px;
 }
 
@@ -325,7 +325,7 @@ export default {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #333;
+  color: #e2e8f0;
   margin-top: 7px;
 }
 
@@ -338,5 +338,47 @@ export default {
     flex: 0 0 auto;
     max-height: 50vh;
   }
+}
+
+
+/* ===== SqlParserX 主题增强 ===== */
+.header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.panel-title::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #6366f1, #22d3ee);
+  flex: none;
+}
+#sql-input {
+  color: #dbeafe;
+  caret-color: #22d3ee;
+}
+#sql-input::placeholder {
+  color: #64748b;
+}
+.result-sql {
+  color: #dbeafe;
+}
+.json-result {
+  color: #dbeafe;
 }
 </style>

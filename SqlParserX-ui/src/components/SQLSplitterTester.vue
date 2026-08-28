@@ -129,9 +129,9 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .sql-panel {
   flex: 0 0 400px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   overflow: hidden;
   max-height: 77vh;
@@ -141,7 +141,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .header {
   margin-bottom: -10px;
-  color: #333;
+  color: #e2e8f0;
   padding: 0 20px;
 }
 
@@ -156,9 +156,9 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .result-panel {
   flex: 1;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -183,22 +183,22 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .data-source-selector label {
   font-size: 14px;
-  color: #606266;
+  color: #cbd5e1;
 }
 
 .data-source-selector select {
   padding: 6px 12px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   font-size: 14px;
-  color: #606266;
-  background-color: #fff;
+  color: #cbd5e1;
+  background-color: #1a2342;
   transition: border-color 0.3s;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #409EFF;
+  border-color: #22d3ee;
 }
 
 .sql-input-container {
@@ -222,13 +222,13 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 #sql-input:focus {
   outline: none;
-  border-color: #409EFF;
+  border-color: #22d3ee;
 }
 
 #split-btn {
   align-self: flex-end;
   padding: 8px 20px;
-  background-color: #409EFF;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
   color: white;
   border: none;
   border-radius: 4px;
@@ -241,14 +241,14 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
 }
 
 #split-btn:hover {
-  background-color: #66b1ff;
+  background: linear-gradient(135deg, #818cf8, #67e8f9); box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
 }
 
 .result-container {
@@ -260,26 +260,26 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 .sql-item {
   margin-bottom: 15px;
   padding: 15px;
-  background-color: #f9f9f9;
+  background-color: rgba(99, 102, 241, 0.1);
   border-radius: 4px;
 }
 
 .sql-index {
   font-weight: bold;
   margin-bottom: 10px;
-  color: #409EFF;
+  color: #818cf8;
 }
 
 .result-sql {
   width: 100%;
   min-height: 100px;
   padding: 10px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: vertical;
-  background-color: #fff;
+  background-color: #1a2342;
 }
 
 
@@ -287,7 +287,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #333;
+  color: #e2e8f0;
   margin-top: 7px;
 }
 
@@ -301,5 +301,47 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
     flex: 0 0 auto;
     max-height: 50vh;
   }
+}
+
+
+/* ===== SqlParserX 主题增强 ===== */
+.header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.panel-title::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #6366f1, #22d3ee);
+  flex: none;
+}
+#sql-input {
+  color: #dbeafe;
+  caret-color: #22d3ee;
+}
+#sql-input::placeholder {
+  color: #64748b;
+}
+.result-sql {
+  color: #dbeafe;
+}
+.json-result {
+  color: #dbeafe;
 }
 </style>

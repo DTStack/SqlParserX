@@ -7,6 +7,7 @@
           <i class="el-icon-s-home"></i>
           <span>返回首页</span>
         </router-link>
+        <div class="header-brand">SqlParserX</div>
         <nav-dropdown></nav-dropdown>
       </div>
     </header>
@@ -40,42 +41,61 @@ export default {
   flex-direction: column;
 }
 
-/* 顶部导航栏样式 */
+/* 顶部导航栏：深色玻璃拟态 */
 .app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 88%);
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  height: 60px; /* 使用固定高度更可靠 */
+  height: 60px;
   display: flex;
   align-items: center;
+  background: rgba(13, 18, 40, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .header-content {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   padding: 0 20px;
   display: flex;
   align-items: center;
+  gap: 18px;
+}
+
+/* 品牌标识 */
+.header-brand {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0 6px;
 }
 
 /* 返回首页按钮样式 */
 .home-link {
   display: flex;
   align-items: center;
-  color: white;
+  color: #c7d2fe;
   text-decoration: none;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 4px;
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
   transition: all 0.3s;
 }
 
 .home-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background: rgba(99, 102, 241, 0.16);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: #fff;
 }
 
 .home-link i {
@@ -100,7 +120,7 @@ export default {
 
 /* 调整下拉菜单样式 */
 .main-layout >>> .nav-dropdown {
-  margin-left: 30px;
+  margin-left: auto;
   position: static;
   background: transparent;
   box-shadow: none;

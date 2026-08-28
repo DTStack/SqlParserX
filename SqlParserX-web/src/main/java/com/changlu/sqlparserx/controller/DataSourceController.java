@@ -32,7 +32,9 @@ public class DataSourceController {
 
     @GetMapping("/types")
     public ResponseResult getDataSourceTypes() {
+        // 仅返回核心库（SqlParserX-core）实际实现解析器的方言对应的数据源类型，与后端支持保持同步
         List<DataSourceOption> dataSourceOptions = Arrays.stream(DatasourceTypeEnum.values())
+                .filter(type -> SqlParserFactory.supports(DataSourceType2DbType.getDbType(type.getCode())))
                 .map(type -> new DataSourceOption(type.getCode(), type.name()))
                 .collect(Collectors.toList());
         return ResponseResult.success(dataSourceOptions);

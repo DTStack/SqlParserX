@@ -780,7 +780,7 @@ html, body {
 
 .header {
   margin-bottom: -10px;
-  color: #333;
+  color: #e2e8f0;
   padding: 0 20px;
 }
 
@@ -799,22 +799,22 @@ html, body {
 
 .data-source-selector label {
   font-size: 14px;
-  color: #606266;
+  color: #cbd5e1;
 }
 
 .data-source-selector select {
   padding: 6px 12px;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   font-size: 14px;
-  color: #606266;
-  background-color: #fff;
+  color: #cbd5e1;
+  background-color: #1a2342;
   transition: border-color 0.3s;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #409EFF;
+  border-color: #22d3ee;
 }
 
 /* 确保组件占满父容器高度 */
@@ -828,7 +828,7 @@ html, body {
 
 .header {
   margin-bottom: -10px;
-  color: #333;
+  color: #e2e8f0;
 }
 
 /* 主容器使用flex占满空间 */
@@ -849,9 +849,9 @@ html, body {
 
 .sql-panel {
   flex: 0 0 400px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   overflow: hidden;
   /* 关键修改：限制SQL面板最大高度为视口高度的90% */
@@ -865,7 +865,7 @@ html, body {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border: 1px solid #dcdfe6;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -892,12 +892,12 @@ html, body {
   display: flex;
   justify-content: flex-end;
   padding-top: 15px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
 }
 
 #parse-btn {
   padding: 8px 20px;
-  background-color: #409EFF;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
   color: white;
   border: none;
   border-radius: 4px;
@@ -907,15 +907,15 @@ html, body {
 }
 
 #parse-btn:hover {
-  background-color: #66b1ff;
+  background: linear-gradient(135deg, #818cf8, #67e8f9); box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
 }
 
 /* 可视化面板占满剩余空间 */
 .visualization-panel {
   flex: 1;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #141b33;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -983,12 +983,12 @@ html, body {
   width: 16px;
   left: 2px;
   bottom: 2px;
-  background-color: white;
+  background-color: #141b33;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #409EFF;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
 }
 
 input:focus + .slider {
@@ -1011,7 +1011,7 @@ input:checked + .slider:before {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #333;
+  color: #e2e8f0;
   margin-top: 7px;
 }
 
@@ -1064,10 +1064,52 @@ input:checked + .slider:before {
 
 .chart-controls i {
   font-size: 16px;
-  color: #606266;
+  color: #cbd5e1;
 }
 
 .chart-controls .el-button:hover i {
-  color: #409EFF;
+  color: #818cf8;
+}
+
+
+/* ===== SqlParserX 主题增强 ===== */
+.header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.panel-title::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #6366f1, #22d3ee);
+  flex: none;
+}
+#sql-input {
+  color: #dbeafe;
+  caret-color: #22d3ee;
+}
+#sql-input::placeholder {
+  color: #64748b;
+}
+.result-sql {
+  color: #dbeafe;
+}
+.json-result {
+  color: #dbeafe;
 }
 </style>

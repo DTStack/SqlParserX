@@ -18,10 +18,53 @@ import com.changlu.sqlparserx.core.parser.starrocks.StarrocksSqlParser;
 import com.changlu.sqlparserx.core.parser.tidb.TidbSqlParser;
 import com.changlu.sqlparserx.core.parser.trino.TrinoSqlParser;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 可根据不同数据源类型来完成不同组件的使用
  */
 public class SqlParserFactory {
+
+    /**
+     * 当前核心库实际实现了解析器的方言集合（与 {@link #getSqlParser(DbType)} 保持一致）
+     */
+    private static final Set<DbType> SUPPORTED_DB_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            DbType.mysql,
+            DbType.hive,
+            DbType.trino,
+            DbType.oracle,
+            DbType.greenplum,
+            DbType.tidb,
+            DbType.postgresql,
+            DbType.sqlserver,
+            DbType.starrocks,
+            DbType.doris,
+            DbType.oceanbase,
+            DbType.oceanbase_oracle,
+            DbType.dm,
+            DbType.clickhouse,
+            DbType.spark
+    )));
+
+    /**
+     * 判断指定的 Druid DbType 是否为核心库实际支持的方言（有独立解析器实现，非回退默认解析器）
+     * @param dbType DbType
+     * @return true=支持
+     */
+    public static boolean supports(DbType dbType) {
+        return dbType != null && SUPPORTED_DB_TYPES.contains(dbType);
+    }
+
+    /**
+     * 获取核心库实际支持的方言集合（不可变）
+     * @return Set<DbType>
+     */
+    public static Set<DbType> getSupportedDbTypes() {
+        return SUPPORTED_DB_TYPES;
+    }
 
     /**
      * 基于Druid的dbType来实现

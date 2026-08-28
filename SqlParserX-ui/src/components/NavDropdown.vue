@@ -2,9 +2,10 @@
   <div class="nav-dropdown">
     <el-dropdown trigger="click" @command="handleCommand">
       <span class="dropdown-trigger">
-        <i class="el-icon-arrow-down"></i> SQL工具集
+        <i class="el-icon-menu"></i> SQL工具集
+        <i class="el-icon-arrow-down caret"></i>
       </span>
-      <el-dropdown-menu slot="dropdown">
+      <el-dropdown-menu slot="dropdown" class="px-dropdown-menu">
         <el-dropdown-item command="/syntax-validator">在线语法解析验证工具</el-dropdown-item>
         <el-dropdown-item command="/lineage">血缘解析可视化工具</el-dropdown-item>
         <el-dropdown-item command="/sql-splitter">SQL切分测试工具</el-dropdown-item>
@@ -30,29 +31,53 @@ export default {
 
 <style scoped>
 .nav-dropdown {
-  position: absolute;
-  top: 20px;
-  left: 20px;
+  position: static;
   z-index: 1000;
 }
 
 .dropdown-trigger {
   display: flex;
   align-items: center;
-  padding: 8px 15px;
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  gap: 6px;
+  padding: 8px 16px;
+  color: #e2e8f0;
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 999px;
   cursor: pointer;
   transition: all 0.3s;
+  font-size: 14px;
 }
 
 .dropdown-trigger:hover {
-  background-color: #f5f7fa;
+  background: rgba(99, 102, 241, 0.28);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
 }
 
-.dropdown-trigger i {
-  margin-right: 5px;
+.dropdown-trigger .caret {
+  font-size: 12px;
+}
+</style>
+
+<style>
+/* 下拉菜单深色主题（element-ui 弹层挂载在 body 下，需全局样式） */
+.px-dropdown-menu.el-dropdown-menu {
+  background: #141b33;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+}
+.px-dropdown-menu .el-dropdown-menu__item {
+  color: #cbd5e1;
+  border-radius: 8px;
   font-size: 14px;
+  padding: 9px 16px;
+}
+.px-dropdown-menu .el-dropdown-menu__item:hover,
+.px-dropdown-menu .el-dropdown-menu__item:focus {
+  background: rgba(99, 102, 241, 0.2);
+  color: #fff;
 }
 </style>
