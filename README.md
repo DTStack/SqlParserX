@@ -1,5 +1,7 @@
 # SqlParserX
 
+> [English](README.en.md) | **简体中文**
+
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Web 服务、MCP Server 与可视化前端。
 
 SqlParserX 是一个基于 **Druid SQL AST（二开 druid 1.2.25）** 构建的 SQL 解析中间件，采用「语法解析层（Druid） + 解析业务层（按数据源扩展）」的分层设计。核心库 `SqlParserX-core` 面向 Java 开发者提供统一的 `ISqlParser` 解析契约；上层封装了 Spring Boot Web 服务（REST API + 静态前端）与 MCP Server（SSE），可将 SQL 解析能力直接暴露给 AI Agent 与大模型应用。
