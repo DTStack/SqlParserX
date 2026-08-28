@@ -40,7 +40,7 @@ export default {
   flex-direction: column;
 }
 
-/* 顶部导航栏：深色玻璃拟态 */
+/* 顶部导航栏：浅色 */
 .app-header {
   position: fixed;
   top: 0;
@@ -50,11 +50,11 @@ export default {
   height: 60px;
   display: flex;
   align-items: center;
-  background: rgba(13, 18, 40, 0.82);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(99, 102, 241, 0.3);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .header-content {
@@ -69,12 +69,9 @@ export default {
 /* 品牌标识 */
 .header-brand {
   font-size: 19px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #111827;
   padding: 0 6px;
 }
 
@@ -82,7 +79,7 @@ export default {
 .home-link {
   display: flex;
   align-items: center;
-  color: #c7d2fe;
+  color: #4b5563;
   text-decoration: none;
   font-size: 15px;
   padding: 8px 14px;
@@ -92,9 +89,9 @@ export default {
 }
 
 .home-link:hover {
-  background: rgba(99, 102, 241, 0.16);
-  border-color: rgba(99, 102, 241, 0.4);
-  color: #fff;
+  background: #eff6ff;
+  border-color: #dbeafe;
+  color: #2563eb;
 }
 
 .home-link i {

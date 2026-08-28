@@ -780,7 +780,7 @@ html, body {
 
 .header {
   margin-bottom: -10px;
-  color: #e2e8f0;
+  color: #1f2937;
   padding: 0 20px;
 }
 
@@ -799,22 +799,22 @@ html, body {
 
 .data-source-selector label {
   font-size: 14px;
-  color: #cbd5e1;
+  color: #4b5563;
 }
 
 .data-source-selector select {
   padding: 6px 12px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 14px;
-  color: #cbd5e1;
-  background-color: #1a2342;
+  color: #4b5563;
+  background-color: #ffffff;
   transition: border-color 0.3s;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #22d3ee;
+  border-color: #2563eb;
 }
 
 /* 确保组件占满父容器高度 */
@@ -828,7 +828,7 @@ html, body {
 
 .header {
   margin-bottom: -10px;
-  color: #e2e8f0;
+  color: #1f2937;
 }
 
 /* 主容器使用flex占满空间 */
@@ -849,9 +849,9 @@ html, body {
 
 .sql-panel {
   flex: 0 0 400px;
-  background-color: #141b33;
+  background-color: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   padding: 20px;
   overflow: hidden;
   /* 关键修改：限制SQL面板最大高度为视口高度的90% */
@@ -865,7 +865,7 @@ html, body {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -892,12 +892,12 @@ html, body {
   display: flex;
   justify-content: flex-end;
   padding-top: 15px;
-  border-top: 1px solid rgba(99, 102, 241, 0.2);
+  border-top: 1px solid #eef0f3;
 }
 
 #parse-btn {
   padding: 8px 20px;
-  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  background: #2563eb;
   color: white;
   border: none;
   border-radius: 4px;
@@ -907,15 +907,15 @@ html, body {
 }
 
 #parse-btn:hover {
-  background: linear-gradient(135deg, #818cf8, #67e8f9); box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
+  background: #1d4ed8;
 }
 
 /* 可视化面板占满剩余空间 */
 .visualization-panel {
   flex: 1;
-  background-color: #141b33;
+  background-color: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -983,12 +983,12 @@ html, body {
   width: 16px;
   left: 2px;
   bottom: 2px;
-  background-color: #141b33;
+  background-color: #ffffff;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  background: #2563eb;
 }
 
 input:focus + .slider {
@@ -1011,7 +1011,7 @@ input:checked + .slider:before {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #e2e8f0;
+  color: #1f2937;
   margin-top: 7px;
 }
 
@@ -1064,11 +1064,11 @@ input:checked + .slider:before {
 
 .chart-controls i {
   font-size: 16px;
-  color: #cbd5e1;
+  color: #4b5563;
 }
 
 .chart-controls .el-button:hover i {
-  color: #818cf8;
+  color: #2563eb;
 }
 
 
@@ -1077,10 +1077,7 @@ input:checked + .slider:before {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #111827;
   display: inline-block;
 }
 .panel-title {
@@ -1089,27 +1086,27 @@ input:checked + .slider:before {
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #1f2937;
 }
 .panel-title::before {
   content: '';
   width: 4px;
   height: 16px;
   border-radius: 2px;
-  background: linear-gradient(180deg, #6366f1, #22d3ee);
+  background: #2563eb;
   flex: none;
 }
 #sql-input {
-  color: #dbeafe;
-  caret-color: #22d3ee;
+  color: #1f2937;
+  caret-color: #2563eb;
 }
 #sql-input::placeholder {
-  color: #64748b;
+  color: #9ca3af;
 }
 .result-sql {
-  color: #dbeafe;
+  color: #1f2937;
 }
 .json-result {
-  color: #dbeafe;
+  color: #1f2937;
 }
 </style>

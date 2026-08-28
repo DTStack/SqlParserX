@@ -129,9 +129,9 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .sql-panel {
   flex: 0 0 400px;
-  background-color: #141b33;
+  background-color: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   padding: 20px;
   overflow: hidden;
   max-height: 77vh;
@@ -141,7 +141,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .header {
   margin-bottom: -10px;
-  color: #e2e8f0;
+  color: #1f2937;
   padding: 0 20px;
 }
 
@@ -156,9 +156,9 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .result-panel {
   flex: 1;
-  background-color: #141b33;
+  background-color: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   padding: 20px;
   position: relative;
   overflow: hidden;
@@ -183,22 +183,22 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 .data-source-selector label {
   font-size: 14px;
-  color: #cbd5e1;
+  color: #4b5563;
 }
 
 .data-source-selector select {
   padding: 6px 12px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   font-size: 14px;
-  color: #cbd5e1;
-  background-color: #1a2342;
+  color: #4b5563;
+  background-color: #ffffff;
   transition: border-color 0.3s;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #22d3ee;
+  border-color: #2563eb;
 }
 
 .sql-input-container {
@@ -222,13 +222,13 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 
 #sql-input:focus {
   outline: none;
-  border-color: #22d3ee;
+  border-color: #2563eb;
 }
 
 #split-btn {
   align-self: flex-end;
   padding: 8px 20px;
-  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  background: #2563eb;
   color: white;
   border: none;
   border-radius: 4px;
@@ -241,14 +241,14 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
 }
 
 #split-btn:hover {
-  background: linear-gradient(135deg, #818cf8, #67e8f9); box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
+  background: #1d4ed8;
 }
 
 .result-container {
@@ -260,26 +260,26 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
 .sql-item {
   margin-bottom: 15px;
   padding: 15px;
-  background-color: rgba(99, 102, 241, 0.1);
+  background-color: #f3f4f6;
   border-radius: 4px;
 }
 
 .sql-index {
   font-weight: bold;
   margin-bottom: 10px;
-  color: #818cf8;
+  color: #2563eb;
 }
 
 .result-sql {
   width: 100%;
   min-height: 100px;
   padding: 10px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   font-family: 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   resize: vertical;
-  background-color: #1a2342;
+  background-color: #ffffff;
 }
 
 
@@ -287,7 +287,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #e2e8f0;
+  color: #1f2937;
   margin-top: 7px;
 }
 
@@ -309,10 +309,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  background: linear-gradient(120deg, #a5b4fc, #22d3ee);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #111827;
   display: inline-block;
 }
 .panel-title {
@@ -321,27 +318,27 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: #e2e8f0;
+  color: #1f2937;
 }
 .panel-title::before {
   content: '';
   width: 4px;
   height: 16px;
   border-radius: 2px;
-  background: linear-gradient(180deg, #6366f1, #22d3ee);
+  background: #2563eb;
   flex: none;
 }
 #sql-input {
-  color: #dbeafe;
-  caret-color: #22d3ee;
+  color: #1f2937;
+  caret-color: #2563eb;
 }
 #sql-input::placeholder {
-  color: #64748b;
+  color: #9ca3af;
 }
 .result-sql {
-  color: #dbeafe;
+  color: #1f2937;
 }
 .json-result {
-  color: #dbeafe;
+  color: #1f2937;
 }
 </style>

@@ -40,19 +40,19 @@ export default {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  color: #e2e8f0;
-  background: rgba(99, 102, 241, 0.14);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  border-radius: 999px;
+  color: #374151;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
   font-size: 14px;
 }
 
 .dropdown-trigger:hover {
-  background: rgba(99, 102, 241, 0.28);
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.35);
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
 .dropdown-trigger .caret {
@@ -61,23 +61,23 @@ export default {
 </style>
 
 <style>
-/* 下拉菜单深色主题（element-ui 弹层挂载在 body 下，需全局样式） */
+/* 下拉菜单浅色主题（element-ui 弹层挂载在 body 下，需全局样式） */
 .px-dropdown-menu.el-dropdown-menu {
-  background: #141b33;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   padding: 6px;
 }
 .px-dropdown-menu .el-dropdown-menu__item {
-  color: #cbd5e1;
+  color: #374151;
   border-radius: 8px;
   font-size: 14px;
   padding: 9px 16px;
 }
 .px-dropdown-menu .el-dropdown-menu__item:hover,
 .px-dropdown-menu .el-dropdown-menu__item:focus {
-  background: rgba(99, 102, 241, 0.2);
-  color: #fff;
+  background: #eff6ff;
+  color: #2563eb;
 }
 </style>

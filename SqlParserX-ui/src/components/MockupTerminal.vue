@@ -70,21 +70,20 @@ export default {
 .terminal-glow {
   position: absolute;
   inset: -30px -40px;
-  background: radial-gradient(closest-side, rgba(99,102,241,0.55), transparent 70%);
+  background: radial-gradient(closest-side, rgba(99,102,241,0.25), transparent 70%);
   filter: blur(40px);
   z-index: -1;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .terminal-frame {
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   background: linear-gradient(180deg, #13132e 0%, #0d0d24 100%);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(99, 102, 241, 0.22);
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.55),
-    0 0 60px rgba(99, 102, 241, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 24px 64px rgba(17, 24, 39, 0.16),
+    0 2px 8px rgba(17, 24, 39, 0.06);
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
   font-size: 14px;
   line-height: 1.7;
