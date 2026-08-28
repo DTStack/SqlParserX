@@ -9,7 +9,7 @@
 
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Web 服务、MCP Server 与可视化前端。
 
-SqlParserX 是一个基于 **Druid SQL AST（二开 druid 1.2.25）** 构建的 SQL 解析中间件，采用「语法解析层（Druid） + 解析业务层（按数据源扩展）」的分层设计。核心库 `SqlParserX-core` 面向 Java 开发者提供统一的 `ISqlParser` 解析契约；上层封装了 Spring Boot Web 服务（REST API + 静态前端）与 MCP Server（SSE），可将 SQL 解析能力直接暴露给 AI Agent 与大模型应用。
+SqlParserX 是一个基于 **Druid SQL AST（官方 druid 1.2.28）** 构建的 SQL 解析中间件，采用「语法解析层（Druid） + 解析业务层（按数据源扩展）」的分层设计。核心库 `SqlParserX-core` 面向 Java 开发者提供统一的 `ISqlParser` 解析契约；上层封装了 Spring Boot Web 服务（REST API + 静态前端）与 MCP Server（SSE），可将 SQL 解析能力直接暴露给 AI Agent 与大模型应用。
 
 ## 特性
 
@@ -29,7 +29,7 @@ SqlParserX 是一个基于 **Druid SQL AST（二开 druid 1.2.25）** 构建的 
 
 | 模块 | 说明 | 技术栈 |
 |---|---|---|
-| `SqlParserX-core` | 核心解析库，所有解析能力的实现载体 | Java 8 + Druid（二开 1.2.25） |
+| `SqlParserX-core` | 核心解析库，所有解析能力的实现载体 | Java 8 + Druid（官方 1.2.28） |
 | `SqlParserX-web` | Spring Boot REST 服务，提供 HTTP API 并托管前端静态资源 | Spring Boot 2.3.12 + Java 8 |
 | `SqlParserX-mcp-server-sse` | MCP Server（SSE 模式），将核心能力注册为 MCP 工具 | Spring Boot 3.4.0 + Spring AI 1.0.0 + Java 17 |
 | `SqlParserX-ui` | 前端工具集（血缘可视化、解析/校验/切分测试） | Vue 2.7 + Element UI 2.x + Vite 5 + ECharts 5 |
@@ -50,7 +50,7 @@ SqlParserX 是一个基于 **Druid SQL AST（二开 druid 1.2.25）** 构建的 
                 │ 依赖
 ┌───────────────▼──────────────────────────────────────┐
 │   SqlParserX-core (ISqlParser / 方言实现)              │
-│   Druid SQL AST（二开 1.2.25）                          │
+│   Druid SQL AST（官方 1.2.28）                        │
 └──────────────────────────────────────────────────────┘
 ```
 

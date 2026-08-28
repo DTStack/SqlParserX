@@ -9,7 +9,7 @@
 
 A multi-dialect SQL parsing engine and toolkit: table parsing, table/column lineage parsing, function parsing, SQL splitting, row-level permission SQL filtering, plus a Web service, an MCP Server and a visualization frontend.
 
-SqlParserX is a SQL parsing middleware built on **Druid SQL AST (forked druid 1.2.25)**, following a layered design of "syntax parsing layer (Druid) + parsing business layer (extensible per datasource)". The core library `SqlParserX-core` provides a unified `ISqlParser` contract for Java developers; on top of it, a Spring Boot Web service (REST API + static frontend) and an MCP Server (SSE) expose the SQL parsing capability directly to AI agents and LLM applications.
+SqlParserX is a SQL parsing middleware built on **Druid SQL AST (official druid 1.2.28)**, following a layered design of "syntax parsing layer (Druid) + parsing business layer (extensible per datasource)". The core library `SqlParserX-core` provides a unified `ISqlParser` contract for Java developers; on top of it, a Spring Boot Web service (REST API + static frontend) and an MCP Server (SSE) expose the SQL parsing capability directly to AI agents and LLM applications.
 
 ## Features
 
@@ -29,7 +29,7 @@ SqlParserX is a SQL parsing middleware built on **Druid SQL AST (forked druid 1.
 
 | Module | Description | Tech Stack |
 |---|---|---|
-| `SqlParserX-core` | Core parsing library implementing all parsing capabilities | Java 8 + Druid (forked 1.2.25) |
+| `SqlParserX-core` | Core parsing library implementing all parsing capabilities | Java 8 + Druid (official 1.2.28) |
 | `SqlParserX-web` | Spring Boot REST service exposing HTTP APIs and hosting frontend static resources | Spring Boot 2.3.12 + Java 8 |
 | `SqlParserX-mcp-server-sse` | MCP Server (SSE mode) registering core capabilities as MCP tools | Spring Boot 3.4.0 + Spring AI 1.0.0 + Java 17 |
 | `SqlParserX-ui` | Frontend toolkit (lineage visualization, parsing/validation/splitting testers) | Vue 2.7 + Element UI 2.x + Vite 5 + ECharts 5 |
@@ -50,7 +50,7 @@ SqlParserX is a SQL parsing middleware built on **Druid SQL AST (forked druid 1.
                 │ depends on
 ┌───────────────▼──────────────────────────────────────┐
 │   SqlParserX-core (ISqlParser / dialect impls)        │
-│   Druid SQL AST (forked 1.2.25)                       │
+│   Druid SQL AST (official 1.2.28)                     │
 └──────────────────────────────────────────────────────┘
 ```
 
