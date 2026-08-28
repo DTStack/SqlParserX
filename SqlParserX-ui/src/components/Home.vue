@@ -337,9 +337,9 @@ export default {
   opacity: 0.55;
   animation: float 14s ease-in-out infinite;
 }
-.orb-1 { width: 460px; height: 460px; background: rgba(99,102,241,0.55); top: -160px; right: -100px; }
-.orb-2 { width: 420px; height: 420px; background: rgba(34,211,238,0.35); top: 380px; left: -160px; animation-delay: -5s; }
-.orb-3 { width: 340px; height: 340px; background: rgba(139,92,246,0.4); top: 1100px; right: 12%; animation-delay: -9s; }
+.orb-1 { width: 460px; height: 460px; background: rgba(99,102,241,0.4); top: -260px; right: -100px; }
+.orb-2 { width: 420px; height: 420px; background: rgba(34,211,238,0.28); top: 260px; left: -160px; animation-delay: -5s; }
+.orb-3 { width: 340px; height: 340px; background: rgba(139,92,246,0.32); top: 1100px; right: 12%; animation-delay: -9s; }
 @keyframes float {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(28px, -32px) scale(1.06); }
@@ -512,6 +512,19 @@ export default {
   background: linear-gradient(135deg, #6366f1, #22d3ee);
 }
 
+.hero-left {
+  position: relative;
+  isolation: isolate;
+}
+.hero-left::before {
+  content: '';
+  position: absolute;
+  inset: -40px -80px -40px -120px;
+  background: radial-gradient(ellipse at 35% 50%, rgba(11, 16, 32, 0.78) 0%, rgba(11, 16, 32, 0.5) 45%, transparent 78%);
+  z-index: -1;
+  pointer-events: none;
+}
+
 .hero-right { display: flex; justify-content: center; }
 
 /* ===== 客户横条 ===== */
@@ -655,7 +668,7 @@ export default {
 .card-mcp { cursor: default; }
 
 /* ===== 数据展示 ===== */
-.stats-section { margin: 80px 0 60px; }
+.stats-section { margin: 56px 0 48px; }
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -681,8 +694,8 @@ export default {
 /* ===== 最终 CTA ===== */
 .final-cta {
   position: relative;
-  margin: 60px 0 40px;
-  padding: 60px 24px;
+  margin: 48px 0 28px;
+  padding: 52px 24px;
   border-radius: 24px;
   background: linear-gradient(160deg, rgba(99,102,241,0.18), rgba(139,92,246,0.12));
   border: 1px solid rgba(99, 102, 241, 0.35);
@@ -746,18 +759,21 @@ export default {
 
 /* ===== 响应式 ===== */
 @media (max-width: 960px) {
-  .hero { grid-template-columns: 1fr; gap: 36px; padding: 40px 0 48px; }
+  .hero { grid-template-columns: 1fr; gap: 36px; padding: 48px 0 36px; }
   .nav-links { display: none; }
   .footer-inner { grid-template-columns: 1fr; }
   .footer-cols { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 640px) {
   .topbar-inner { gap: 12px; padding: 0 14px; }
-  .container { padding: 24px 14px 56px; }
+  .container { padding: 16px 14px 24px; }
   .nav-cta .btn-ghost { display: none; }
   .footer-cols { grid-template-columns: 1fr 1fr; }
   .pill-badges { gap: 6px; }
   .pill { padding: 4px 10px; font-size: 12px; }
   .hero-cta .btn-lg { flex: 1; }
+  .stats-section { margin: 36px 0 28px; }
+  .final-cta { padding: 36px 18px; margin: 36px 0 20px; }
+  .site-footer { padding: 28px 18px 18px; }
 }
 </style>

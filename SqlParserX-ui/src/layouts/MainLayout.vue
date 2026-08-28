@@ -36,7 +36,6 @@ export default {
 <style scoped>
 .main-layout {
   position: relative;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -116,6 +115,13 @@ export default {
 .content-container.has-nav {
   margin-top: 72px;
   padding: 0; /* 移除padding，由内部组件控制 */
+}
+
+/* 首页容器：铺满不推下 */
+.content-container.is-home {
+  margin-top: 0;
+  display: block;
+  flex: none;
 }
 
 /* 调整下拉菜单样式 */
