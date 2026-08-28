@@ -2,6 +2,11 @@
 
 > **English** | [简体中文](README.md)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Language: Java](https://img.shields.io/badge/Language-Java%208-blue.svg)
+![Dialects](https://img.shields.io/badge/Dialects-15%2B-orange.svg)
+[![MCP](https://img.shields.io/badge/MCP-SSE-purple.svg)](SqlParserX-mcp-server-sse)
+
 A multi-dialect SQL parsing engine and toolkit: table parsing, table/column lineage parsing, function parsing, SQL splitting, row-level permission SQL filtering, plus a Web service, an MCP Server and a visualization frontend.
 
 SqlParserX is a SQL parsing middleware built on **Druid SQL AST (forked druid 1.2.25)**, following a layered design of "syntax parsing layer (Druid) + parsing business layer (extensible per datasource)". The core library `SqlParserX-core` provides a unified `ISqlParser` contract for Java developers; on top of it, a Spring Boot Web service (REST API + static frontend) and an MCP Server (SSE) expose the SQL parsing capability directly to AI agents and LLM applications.
@@ -101,6 +106,25 @@ ColumnLineageResult columnLineage = sqlParser.parseColumnLineages(sql, null);
 TableLineageResult tableLineage = sqlParser.parseTableLineages(sql);
 ```
 
+**Sample output** (column lineages from `parseColumnLineages` and table lineages from `parseTableLineages`):
+
+```json
+// Column lineages
+[
+  { "fromTable": "table1", "fromColumn": "col1", "toTable": "result_table", "toColumn": "a" },
+  { "fromTable": "table2", "fromColumn": "col2", "toTable": "result_table", "toColumn": "b" }
+]
+
+// Table lineages
+[
+  { "fromTable": "table1", "toTable": "result_table" },
+  { "fromTable": "table2", "toTable": "result_table" }
+]
+```
+
+> The full fields of a column lineage item (`ColumnLineage`) are `fromCatalog / fromDb / fromTable / fromColumn / toCatalog / toDb / toTable / toColumn`; a table lineage item (`TableLineage`) contains `fromCatalog / fromDb / fromTable / toCatalog / toDb / toTable`.
+
+> [!TIP]
 > See [`SqlParserX-core/README.md`](SqlParserX-core/README.md) for more complete examples and layered extension notes.
 
 ### 2. Deploy the Web Service
@@ -192,6 +216,14 @@ SqlParserX
 - Parameter parsing (`parseParameterSql` / `buildSqlByPrepareCompile`) and `filterSortSelectField` are placeholder implementations at the base layer (returning empty results); they are reserved capabilities not yet implemented.
 - Maven surefire for `SqlParserX-core` sets `skipTests=true` by default, so CI builds do not run tests by default.
 - The frontend `SqlParserX-ui/README.md` still contains the Vite template default text; the actual stack is Vue 2.7 + Element UI 2.x, which does not match the template text.
+
+## Contributing
+
+Contributions of any kind are welcome: bug fixes, new dialect support, lineage parsing enhancements, documentation improvements, etc.
+
+- **Issues**: Please open an issue first to describe the reproduction steps and expected behavior when reporting bugs or requesting new capabilities.
+- **Pull Requests**: Fork this repository, develop on a feature branch (e.g. `feat_1.0.x_x`), follow the existing layered extension pattern (add a dialect implementation under the `parser` package or override the corresponding client), add relevant test cases, then submit a Pull Request.
+- **Development guidelines**: Keep the core library Java 8 compatible; prefer extending `BaseSqlParser` for new dialects and only override methods where real differences exist; organize test cases following the `AllTestsSuite` suite pattern.
 
 ## License
 

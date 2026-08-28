@@ -2,6 +2,11 @@
 
 > [English](README.en.md) | **简体中文**
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Language: Java](https://img.shields.io/badge/Language-Java%208-blue.svg)
+![Dialects](https://img.shields.io/badge/Dialects-15%2B-orange.svg)
+[![MCP](https://img.shields.io/badge/MCP-SSE-purple.svg)](SqlParserX-mcp-server-sse)
+
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Web 服务、MCP Server 与可视化前端。
 
 SqlParserX 是一个基于 **Druid SQL AST（二开 druid 1.2.25）** 构建的 SQL 解析中间件，采用「语法解析层（Druid） + 解析业务层（按数据源扩展）」的分层设计。核心库 `SqlParserX-core` 面向 Java 开发者提供统一的 `ISqlParser` 解析契约；上层封装了 Spring Boot Web 服务（REST API + 静态前端）与 MCP Server（SSE），可将 SQL 解析能力直接暴露给 AI Agent 与大模型应用。
@@ -101,6 +106,25 @@ ColumnLineageResult columnLineage = sqlParser.parseColumnLineages(sql, null);
 TableLineageResult tableLineage = sqlParser.parseTableLineages(sql);
 ```
 
+**输出示例**（以字段血缘 `columnLineages` 与表血缘 `tableLineages` 为例）：
+
+```json
+// parseColumnLineages 返回的字段血缘
+[
+  { "fromTable": "table1", "fromColumn": "col1", "toTable": "result_table", "toColumn": "a" },
+  { "fromTable": "table2", "fromColumn": "col2", "toTable": "result_table", "toColumn": "b" }
+]
+
+// parseTableLineages 返回的表血缘
+[
+  { "fromTable": "table1", "toTable": "result_table" },
+  { "fromTable": "table2", "toTable": "result_table" }
+]
+```
+
+> 字段血缘明细（`ColumnLineage`）完整字段为 `fromCatalog / fromDb / fromTable / fromColumn / toCatalog / toDb / toTable / toColumn`；表血缘明细（`TableLineage`）为 `fromCatalog / fromDb / fromTable / toCatalog / toDb / toTable`。
+
+> [!TIP]
 > 更完整的示例与分层扩展说明见 [`SqlParserX-core/README.md`](SqlParserX-core/README.md)。
 
 ### 2. 部署 Web 服务
@@ -192,6 +216,14 @@ SqlParserX
 - 参数解析（`parseParameterSql` / `buildSqlByPrepareCompile`）与 `filterSortSelectField` 在 base 层为占位实现（返回空），属于预留能力，尚未落地具体逻辑。
 - `SqlParserX-core` 的 Maven surefire 默认 `skipTests=true`，CI 构建默认不执行测试。
 - 前端 `SqlParserX-ui/README.md` 为 Vite 模板默认文案，实际技术栈为 Vue 2.7 + Element UI 2.x，与模板文案不符。
+
+## 贡献指南
+
+欢迎任何形式的贡献：Bug 修复、新方言支持、血缘解析增强、文档改进等。
+
+- **提 Issue**：使用中发现 Bug 或希望新增能力，请先提交 Issue 描述复现步骤与期望行为。
+- **提 PR**：Fork 本仓库，在功能分支（如 `feat_1.0.x_x`）上开发，遵循现有分层扩展模式（在 `parser` 包下新增方言实现或重写对应 Client），补充对应测试用例后提交 Pull Request。
+- **开发规范**：核心库保持 Java 8 兼容；新增方言实现优先继承 `BaseSqlParser`，仅在确有差异时重写方法；测试用例可参考 `AllTestsSuite` 的套件组织方式。
 
 ## 许可证
 
