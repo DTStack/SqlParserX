@@ -1,7 +1,9 @@
 package com.changlu.sqlparserx.core.common;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +17,8 @@ public class AbstractSqlParserTest {
             String path = getSqlTestPath() + testFile;
             String relativePath = this.getClass().getResource(path).getPath();
             StringBuilder sql = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new FileReader(relativePath))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(relativePath), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     sql.append(line).append("\n");
@@ -43,7 +46,8 @@ public class AbstractSqlParserTest {
             StringBuilder currentSql = new StringBuilder();
             Integer currentIndex = null;
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(relativePath))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(relativePath), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.trim().matches("-{5,}\\d+-{5,}")) {

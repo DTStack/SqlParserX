@@ -26,11 +26,17 @@
                 <artifactId>guava</artifactId>
                 <version>30.1-jre</version>
             </dependency>
-            <!-- 二开druid源码 -->
+            <!-- 官方最新 druid 版本（1.2.28，2026-03 发布；原为内部二开版本 7.0.2-SNAPSHOT-druid1.2.25） -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
-                <version>7.0.2-SNAPSHOT-druid1.2.25</version>
+                <version>1.2.28</version>
+            </dependency>
+            <!-- druid 1.2.25+ 内部使用 commons-lang3（官方声明为 optional，需显式引入） -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.12.0</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

@@ -16,12 +16,19 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 默认执行单元测试，可通过 -DskipTests=true 跳过 -->
+        <skipTests>false</skipTests>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
+        </dependency>
+        <!-- druid 内部使用（optional），需显式引入 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -88,9 +95,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.2</version>
                 <configuration>
-                    <!-- 跳过所有测试用例执行 -->
-                    <skipTests>true</skipTests>
+                    <!-- 默认执行测试（skipTests=false），可通过 -DskipTests=true 跳过 -->
+                    <skipTests>${skipTests}</skipTests>
+                    <!-- 排除临时调试/演示测试类（不在正式 AllTestsSuite 套件内） -->
+                    <excludes>
+                        <exclude>**/TmpDruidTest.java</exclude>
+                        <exclude>**/READMETest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
