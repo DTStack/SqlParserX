@@ -944,11 +944,23 @@ html, body {
   display: flex;
   align-items: center;
   z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px 15px;
+  background-color: #ffffff;
+  padding: 7px 14px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  font-size: 13.5px;
+}
+
+.switch-label {
+  color: #9ca3af;
+  font-weight: 500;
+  transition: color 0.25s, font-weight 0.25s;
+  white-space: nowrap;
+}
+.switch-label.active {
+  color: #2563eb;
+  font-weight: 600;
 }
 
 .switch {
@@ -1038,10 +1050,11 @@ input:checked + .slider:before {
   display: flex;
   gap: 8px;
   z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px 12px;
+  background-color: #ffffff;
+  padding: 7px 10px;
   border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .chart-controls button {
