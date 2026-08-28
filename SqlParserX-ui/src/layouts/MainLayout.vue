@@ -13,7 +13,7 @@
     </header>
 
     <!-- 子页面内容容器 -->
-    <div :class="['content-container', { 'has-nav': showNavDropdown }]">
+    <div :class="['content-container', { 'has-nav': showNavDropdown }, { 'is-home': !$route.path || $route.path === '/' }]">
       <router-view></router-view>
     </div>
   </div>
