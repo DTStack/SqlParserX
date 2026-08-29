@@ -357,6 +357,7 @@ WHERE t1.age <= 20;`,
   flex: 1;
   width: 100%;
   overflow: auto;
+  min-height: 0;
 }
 
 .result-content {
@@ -375,34 +376,59 @@ WHERE t1.age <= 20;`,
 }
 
 .result-count {
-  font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 14px;
   color: #059669;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .table-list {
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
 }
 
 .table-item {
-  margin-bottom: 10px;
-  padding: 10px;
-  background-color: #f3f4f6;
-  border-radius: 4px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
   display: flex;
   align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.table-item:hover {
+  border-color: #bfdbfe;
+  background-color: #eff6ff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
 }
 
 .table-index {
-  font-weight: bold;
-  margin-right: 10px;
-  color: #2563eb;
+  flex: none;
+  min-width: 52px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #1d4ed8;
+  background-color: #dbeafe;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
 }
 
 .table-name {
-  font-family: 'Consolas', 'Monaco', monospace;
+  min-width: 0;
+  color: #1e293b;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Monaco, monospace;
   font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .panel-title {

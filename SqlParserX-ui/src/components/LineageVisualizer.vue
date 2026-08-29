@@ -35,15 +35,22 @@
       </div>
 
       <div class="visualization-panel">
-        <div class="panel-title">血缘关系图</div>
-        <!-- 开关按钮及文字说明 -->
-        <div class="switch-container">
-          <span>字段级血缘关系</span>
-          <label class="switch">
-            <input type="checkbox" id="toggle-switch" v-model="isFieldLevel">
-            <span class="slider round"></span>
-          </label>
-          <span>表级别血缘关系</span>
+        <div class="visualization-toolbar">
+          <div class="panel-title">血缘关系图</div>
+          <div class="lineage-level-switch" role="group" aria-label="血缘关系层级">
+            <button
+                type="button"
+                :class="{ active: isFieldLevel }"
+                :aria-pressed="isFieldLevel"
+                @click="isFieldLevel = true"
+            >字段级</button>
+            <button
+                type="button"
+                :class="{ active: !isFieldLevel }"
+                :aria-pressed="!isFieldLevel"
+                @click="isFieldLevel = false"
+            >表级</button>
+          </div>
         </div>
 
         <!-- 图表控制按钮 -->
@@ -937,86 +944,58 @@ html, body {
   min-height: 0;
 }
 
-.switch-container {
-  position: absolute;
-  top: 20px;
-  left: 130px;
+.visualization-toolbar {
   display: flex;
   align-items: center;
-  z-index: 1000;
-  background-color: #ffffff;
-  padding: 7px 14px;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  font-size: 13.5px;
+  gap: 18px;
+  min-height: 38px;
+  padding-right: 190px;
+  margin-bottom: 10px;
 }
 
-.switch-label {
-  color: #9ca3af;
+.visualization-toolbar .panel-title {
+  margin: 0;
+}
+
+.lineage-level-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #f8fafc;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.lineage-level-switch button {
+  min-width: 64px;
+  padding: 5px 14px;
+  border: 0;
+  border-radius: 6px;
+  color: #64748b;
+  background: transparent;
+  font-size: 13px;
   font-weight: 500;
-  transition: color 0.25s, font-weight 0.25s;
+  line-height: 20px;
   white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
-.switch-label.active {
+
+.lineage-level-switch button:hover:not(.active) {
   color: #2563eb;
+  background: #eff6ff;
+}
+
+.lineage-level-switch button.active {
+  color: #1d4ed8;
+  background: #ffffff;
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  margin: 0 10px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: #ffffff;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background: #2563eb;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #409EFF;
-}
-
-input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-.slider.round {
-  border-radius: 20px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
+.lineage-level-switch button:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 1px;
 }
 
 .panel-title {
@@ -1040,6 +1019,30 @@ input:checked + .slider:before {
 
   #container {
     min-height: 400px;
+  }
+
+  .visualization-toolbar {
+    padding-right: 0;
+  }
+
+  .chart-controls {
+    position: static;
+    align-self: flex-end;
+    margin-top: -38px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .visualization-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chart-controls {
+    align-self: flex-start;
+    margin: 0 0 10px;
   }
 }
 

@@ -398,6 +398,7 @@ export default {
   flex: 1;
   width: 100%;
   overflow: auto;
+  min-height: 0;
 }
 
 .result-content {
@@ -408,12 +409,11 @@ export default {
 }
 
 .result-info {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 15px;
-  background-color: #f3f4f6;
-  border-radius: 14px;
+  min-height: 100%;
+  padding: 14px;
+  background-color: #f8fafc;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
 }
 
 .result-item {
@@ -435,10 +435,11 @@ export default {
 }
 
 .result-section {
-  border: 1px solid #eef0f3;
-  border-radius: 14px;
-  padding: 15px;
-  background-color: #fafafa;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 
 .result-section h3 {
@@ -541,14 +542,20 @@ export default {
 }
 
 .json-result {
-  background-color: #2d2d2d;
-  color: #f8f8f2;
-  padding: 15px;
-  border-radius: 4px;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid #dbe4ef;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  color: #334155;
   overflow: auto;
-  font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 12px;
-  max-height: 500px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Monaco, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+  tab-size: 2;
+  white-space: pre;
+  max-height: calc(77vh - 170px);
+  scrollbar-gutter: stable;
 }
 
 .panel-title {
@@ -620,9 +627,6 @@ export default {
   color: #9ca3af;
 }
 .result-sql {
-  color: #1f2937;
-}
-.json-result {
   color: #1f2937;
 }
 </style>
