@@ -1,0 +1,23 @@
+SqlParserX-ui/src/components/CreateTableParser.vue
+  s_5c90afbbd37ff6::t_6e49ad7402c2bd 401,412-416,438-442,545-550,552-558,632
+SqlParserX-ui/src/components/TableParser.vue
+  s_5c90afbbd37ff6::t_a8c0c5d3bd5561 360,379,381-382,388-391,395-399,402-409,413-421,425-427,429-431,491
+SqlParserX-ui/src/components/LineageVisualizer.vue
+  s_5c90afbbd37ff6::t_3ca8191f470a21 38-53,947,950-953,956-957,960-967,970-981,984-986,989-993,996-998,1023-1046
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "105abb55b5bc622f61bf018a7ef87f173781f37c",
+  "prompts": {},
+  "sessions": {
+    "s_5c90afbbd37ff6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04949-d781-7d61-a276-67ccaf5e9ebb",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
