@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.changlu</groupId>
+    <groupId>com.dtstack</groupId>
     <artifactId>SqlParserX</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -69,10 +69,15 @@
                 <version>2.43.0</version>
                 <configuration>
                     <java>
+                        <!-- 类头 License 声明：spotless:apply 自动补全、spotless:check 强制校验 -->
+                        <licenseHeader>
+                            <file>${session.executionRootDirectory}/config/license-header.txt</file>
+                            <delimiter>package</delimiter>
+                        </licenseHeader>
                         <!-- 使用 Eclipse 格式化器：相比 google-java-format，不会重排 Javadoc/块注释，
                              可保留手工排版的多行注释（如 @Author/@Date 等头注释） -->
                         <eclipse>
-                            <file>${maven.multiModuleProjectDirectory}/config/eclipse-formatter.xml</file>
+                            <file>${session.executionRootDirectory}/config/eclipse-formatter.xml</file>
                         </eclipse>
                         <!--  移除未使用的引用import  -->
                         <removeUnusedImports></removeUnusedImports>
@@ -80,7 +85,7 @@
                               默认是都带上一个空行的，这里是为了区分自己模块代码和其他引用模块代码
                           -->
                         <importOrder>
-                            <order>com.changlu,,javax,java,scala,\#</order>
+                            <order>com.dtstack,,javax,java,scala,\#</order>
                         </importOrder>
                     </java>
                     <!--   单独针对pom.xml来进行格式化，指定缩进的空格数，这里是 4。这意味着 POM 文件中的每个缩进级别将使用 4 个空格。  -->

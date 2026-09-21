@@ -2,7 +2,7 @@
 
 > **English** | [简体中文](README.md)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 ![Language: Java](https://img.shields.io/badge/Language-Java%208-blue.svg)
 ![Dialects](https://img.shields.io/badge/Dialects-15%2B-orange.svg)
 [![MCP](https://img.shields.io/badge/MCP-SSE-purple.svg)](SqlParserX-mcp-server-sse)
@@ -78,7 +78,7 @@ Add `SqlParserX-core` to your project and obtain a parser from the factory:
 
 ```xml
 <dependency>
-    <groupId>com.changlu</groupId>
+    <groupId>com.dtstack</groupId>
     <artifactId>SqlParserX-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -86,11 +86,11 @@ Add `SqlParserX-core` to your project and obtain a parser from the factory:
 
 ```java
 import com.alibaba.druid.DbType;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.dtstack.sqlparserx.core.parser.ISqlParser;
+import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
+import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 
 ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
 
@@ -227,4 +227,4 @@ Contributions of any kind are welcome: bug fixes, new dialect support, lineage p
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache License 2.0](LICENSE).

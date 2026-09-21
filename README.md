@@ -2,14 +2,18 @@
 
 > [English](README.en.md) | **简体中文**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 ![Language: Java](https://img.shields.io/badge/Language-Java%208-blue.svg)
 ![Dialects](https://img.shields.io/badge/Dialects-15%2B-orange.svg)
 [![MCP](https://img.shields.io/badge/MCP-SSE-purple.svg)](SqlParserX-mcp-server-sse)
 
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Web 服务、MCP Server 与可视化前端。
 
-SqlParserX 是一个基于 **Druid SQL AST（官方 druid 1.2.28）** 构建的 SQL 解析中间件，采用「语法解析层（Druid） + 解析业务层（按数据源扩展）」的分层设计。核心库 `SqlParserX-core` 面向 Java 开发者提供统一的 `ISqlParser` 解析契约；上层封装了 Spring Boot Web 服务（REST API + 静态前端）与 MCP Server（SSE），可将 SQL 解析能力直接暴露给 AI Agent 与大模型应用。
+SqlParserX 是一套「**语法解析层复用 + 解析业务层自研**」的 SQL 解析中间件：
+
+- **语法解析层（复用）**：直接依赖官方 **Druid 1.2.28**，复用其 SQL AST 解析与 15+ 方言的词法/语法能力，不重复造轮子。
+- **解析业务层（自研）**：本项目在 Druid AST 之上构建统一的业务解析契约 `ISqlParser`，按数据源扩展出表解析、表/字段血缘、建表解析、函数解析、SQL 切分、行级权限过滤等能力。
+- **能力出口（上层封装）**：`SqlParserX-web`（Spring Boot REST + 前端）与 `SqlParserX-mcp-server-sse`（MCP Server），将解析能力暴露给 Web 应用与 AI Agent。
 
 ## 特性
 
@@ -25,43 +29,53 @@ SqlParserX 是一个基于 **Druid SQL AST（官方 druid 1.2.28）** 构建的 
 - **MCP Server**：以 SSE 方式将 SQL 解析能力注册为 MCP 工具，供 Claude / 通义等 AI Agent 直接调用。
 - **可视化前端**：基于 ECharts 的字段/表血缘可视化，以及表解析、建表解析、SQL 切分、语法校验等在线工具。
 
-## 模块架构
+## 核心架构
 
-| 模块 | 说明 | 技术栈 |
-|---|---|---|
-| `SqlParserX-core` | 核心解析库，所有解析能力的实现载体 | Java 8 + Druid（官方 1.2.28） |
-| `SqlParserX-web` | Spring Boot REST 服务，提供 HTTP API 并托管前端静态资源 | Spring Boot 2.3.12 + Java 8 |
-| `SqlParserX-mcp-server-sse` | MCP Server（SSE 模式），将核心能力注册为 MCP 工具 | Spring Boot 3.4.0 + Spring AI 1.0.0 + Java 17 |
-| `SqlParserX-ui` | 前端工具集（血缘可视化、解析/校验/切分测试） | Vue 2.7 + Element UI 2.x + Vite 5 + ECharts 5 |
+SqlParserX 采用分层解耦设计，各层职责清晰、可独立演进：
 
 ```
-┌──────────────────────────────────────────────────────┐
-│   SqlParserX-ui (Vue 2 + ECharts 血缘可视化)           │
-└───────────────┬──────────────────────────────────────┘
-                │ HTTP
-┌───────────────▼──────────────────────────────────────┐
-│   SqlParserX-web (Spring Boot REST :8888)             │
-│   /api/datasource  /api/lineage  /api/sql             │
-└───────────────┬──────────────────────────────────────┘
-                │
-┌───────────────▼──────────────────────────────────────┐
-│   SqlParserX-mcp-server-sse (MCP Tools :8067)         │
-└───────────────┬──────────────────────────────────────┘
-                │ 依赖
-┌───────────────▼──────────────────────────────────────┐
-│   SqlParserX-core (ISqlParser / 方言实现)              │
-│   Druid SQL AST（官方 1.2.28）                        │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  能力出口层                                                │
+│  SqlParserX-web (REST :8888) │ SqlParserX-mcp-server-sse   │
+│  SqlParserX-ui (Vue2 + ECharts 血缘可视化)                  │
+└───────────────────────────┬──────────────────────────────┘
+                            │ 依赖统一契约 ISqlParser
+┌───────────────────────────▼──────────────────────────────┐
+│  解析业务层（本项目自研）  SqlParserX-core                  │
+│  工厂 → 接口 → 基类 → 方言扩展                              │
+│  表解析 / 血缘 / 建表 / 函数 / 切分 / 行级权限过滤            │
+└───────────────────────────┬──────────────────────────────┘
+                            │ 复用 AST 与方言词法/语法
+┌───────────────────────────▼──────────────────────────────┐
+│  语法解析层（第三方组件）  Druid SQL AST 1.2.28             │
+└──────────────────────────────────────────────────────────┘
 ```
 
-### 核心分层设计
+**业务层内部分层**：`SqlParserFactory`（按 Druid `DbType` 选择方言）→ `ISqlParser`（统一契约）→ `BaseSqlParser`（AST 分发到各 Client）→ 各方言实现（按需重写表/血缘解析）。
 
-`SqlParserX-core` 遵循「工厂 → 接口 → 基类 → 方言」的分层：
+| 模块 | 层次 | 说明 | 技术栈 |
+|---|---|---|---|
+| `SqlParserX-core` | 解析业务层 | 核心解析库，所有解析能力的实现载体 | Java 8 + Druid 官方 1.2.28 |
+| `SqlParserX-web` | 能力出口层 | Spring Boot REST 服务，提供 HTTP API 并托管前端静态资源 | Spring Boot 2.3.12 + Java 8 |
+| `SqlParserX-mcp-server-sse` | 能力出口层 | MCP Server（SSE 模式），将核心能力注册为 MCP 工具 | Spring Boot 3.4.0 + Spring AI 1.0.0 + Java 17 |
+| `SqlParserX-ui` | 能力出口层 | 前端工具集（血缘可视化、解析/校验/切分测试） | Vue 2.7 + Element UI 2.x + Vite 5 + ECharts 5 |
 
-- **工厂** `SqlParserFactory`：按 Druid `DbType` 返回对应方言解析器，未匹配则回退默认实现。
-- **统一契约** `ISqlParser`：`parseTables` / `parseCreateTable` / `parseColumnLineages` / `parseTableLineages` / `parseFunction` / `parseParameterSql` / `buildSqlByPrepareCompile` / `getRowLevelPermissionSql`。
-- **基类** `BaseSqlParser`：将 SQL 转为 Druid AST 后委派给对应的 Client（表 / 血缘 / 参数 / 过滤）。
-- **方言实现**：各数据源继承基类，按需重写表解析、血缘解析等（如 Doris 的 CTE 前向引用、MySQL 的 RENAME TABLE、Hive 的字段血缘）。
+### 核心契约 `ISqlParser`
+
+业务层对外统一契约，所有方言解析器均实现该接口：
+
+```java
+ParseTableResult   parseTables(String sql);                                          // 表解析
+ParseCreateTableResult parseCreateTable(String sql);                                 // 建表解析
+ColumnLineageResult parseColumnLineages(String sql, Map<String,List<Column>> meta);  // 字段血缘
+TableLineageResult parseTableLineages(String sql);                                   // 表血缘
+Set<String>        parseFunction(String sql);                                        // 函数解析
+String             getRowLevelPermissionSql(String sql, List<...> permissionParams); // 行级权限过滤
+```
+
+### 分层扩展模式
+
+方言实现优先继承 `BaseSqlParser`，仅在确有差异时重写对应 Client。例如当 Druid 语法层新增了 `MySqlRenameTableStatement`，而通用 `ParseTableClient` 未处理时，可在 `parser.mysql` 包下自定义 `MySqlParseTableClient` 继承并重写 `parseTables`。详见 [`SqlParserX-core/README.md`](SqlParserX-core/README.md)。
 
 ## 支持的数据源方言
 
@@ -72,13 +86,15 @@ SqlParserX 是一个基于 **Druid SQL AST（官方 druid 1.2.28）** 构建的 
 
 ## 快速开始
 
+三种使用方式：作为 Maven 依赖嵌入 Java 项目、部署 Web 服务、启动 MCP Server 供 AI Agent 调用。
+
 ### 1. 作为 Maven 依赖使用核心库
 
 在项目中引入 `SqlParserX-core`，通过工厂获取解析器：
 
 ```xml
 <dependency>
-    <groupId>com.changlu</groupId>
+    <groupId>com.dtstack</groupId>
     <artifactId>SqlParserX-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -86,11 +102,11 @@ SqlParserX 是一个基于 **Druid SQL AST（官方 druid 1.2.28）** 构建的 
 
 ```java
 import com.alibaba.druid.DbType;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.dtstack.sqlparserx.core.parser.ISqlParser;
+import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
+import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 
 ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
 
@@ -227,4 +243,4 @@ SqlParserX
 
 ## 许可证
 
-本项目采用 [MIT License](LICENSE)。
+本项目采用 [Apache License 2.0](LICENSE)。

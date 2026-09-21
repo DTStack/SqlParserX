@@ -36,7 +36,7 @@
         <div class="hero-left">
           <div class="pill-badges">
             <span class="pill"><span class="dot-live"></span> v1.0 · 稳定可用</span>
-            <span class="pill">MIT 协议</span>
+            <span class="pill">Apache 2.0 协议</span>
             <span class="pill">Druid 1.2.28</span>
           </div>
 
@@ -182,7 +182,7 @@
             <div class="stat-label">核心解析能力</div>
           </div>
           <div class="stat-item">
-            <div class="stat-num">MIT</div>
+            <div class="stat-num">Apache 2.0</div>
             <div class="stat-label">开源协议</div>
           </div>
         </div>
@@ -212,7 +212,7 @@
             <span class="brand-name">SqlParserX</span>
           </div>
           <p class="footer-tag">多数据库方言 SQL 解析引擎</p>
-          <p class="footer-copy">MIT License · Copyright © 2026 changlu</p>
+          <p class="footer-copy">Apache License 2.0 · Copyright © 2026 changlu</p>
         </div>
         <div class="footer-cols">
           <div class="footer-col">

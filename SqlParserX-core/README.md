@@ -1,32 +1,29 @@
 # 快速使用指南
 
-针对不同数据源除了解析语法树之外，对于语法树再进行额外单独提供了不同的扩展解析能力。
+SqlParserX-core 是 SqlParserX 的核心解析模块。它在 Druid 语法树的基础上，针对不同数据源提供了统一的扩展解析能力：只需传入 SQL 与数据源类型，即可获得表、函数、字段血缘、表血缘等结构化结果。
 
-特性：
+## 特性
 
-1、基于数据源实现不同解析能力扩展
+- **面向数据源扩展**：基于数据源实现差异化解析，同一套 API 覆盖多方言 SQL。
+- **统一解析能力**，包含：
+  - 解析表
+  - 解析函数
+  - 解析字段血缘
+  - 解析表血缘
 
-2、支持功能：
- 
-+   解析表
-+   解析函数
-+   解析字段血缘
-+   解析表血缘
-
-
-示范：
+## 使用示范
 
 ```java
-package com.changlu.sqlparser.core;
+package com.dtstack.sqlparserx.core;
 
 import com.alibaba.druid.DbType;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.domain.TableLineage;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+import com.dtstack.sqlparserx.core.parser.ISqlParser;
+import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
+import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
+import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.domain.TableLineage;
+import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import org.junit.Test;
 
 import java.util.*;
@@ -101,21 +98,24 @@ public class READMETest {
 
 # 关于分层能力扩展
 
-语法解析分层：druid-core模块内部
+SqlParserX-core 采用分层设计，便于解耦与按数据源定制解析逻辑：
 
-解析业务层分层：datasourcex模块
-分层目的
-+   1、解耦
-+   2、针对不同数据源可重写相应的解析实现
- 
- 主要一个场景就是由于语法解析层中可能会基于base类进行扩展，那么对应相应解析实现也应当在对应数据源去做扩展维护处理
- 
-示范：解析表操作
+- **语法解析层**：位于 `druid-core` 模块内部，负责通用语法树解析。
+- **解析业务层**：位于本模块（`SqlParserX-core`），负责面向业务场景的解析能力。
 
-举例对于mysql中对于某个sql实现解析，去自定义了MySqlRenameTableStatement类在druid-core中
+分层的目的：
 
-而对于通用的ParseTableClient里没有对MySqlRenameTableStatement处理，此时我们就可以在包目录下：
+1. 解耦：语法解析与业务解析职责分离。
+2. 可扩展：不同数据源可重写相应的解析实现。
 
-com.changlu.sqlparserx.core.parser.base.table.client.mysql
+主要场景：当语法解析层基于 base 类进行了扩展时，对应的解析实现也应在相应数据源中扩展维护。
 
-自定义一个MySqlParseTableClient类，继承ParseTableClient，重写parseTables方法，额外对MySqlRenameTableStatement进行解析处理即可。
+## 扩展示范：解析表操作
+
+以 MySQL 为例，语法解析层在 `druid-core` 中自定义了 `MySqlRenameTableStatement`，而通用的 `ParseTableClient` 并未处理该节点。此时可在如下包目录下：
+
+```
+com.dtstack.sqlparserx.core.parser.base.table.client.mysql
+```
+
+自定义一个 `MySqlParseTableClient` 类，继承 `ParseTableClient` 并重写 `parseTables` 方法，额外对 `MySqlRenameTableStatement` 进行解析处理即可。

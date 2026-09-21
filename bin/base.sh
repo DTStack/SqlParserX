@@ -10,6 +10,6 @@ java \
 -Xdebug \
 -Xrunjdwp:server=y,transport=dt_socket,address=0.0.0.0:40889,suspend=n \
 -cp /opt/tools/sqlparserx/lib/*:/opt/tools/sqlparserx/dtstack/* \
-com.changlu.sqlparserx.SqlParserXWebApplication
+com.dtstack.sqlparserx.SqlParserXWebApplication
 
-java -cp /Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/lib/*:/Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/dtstack/* com.changlu.sqlparserx.SqlParserXWebApplication
+java -cp /Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/lib/*:/Users/edy/changlu_workspace/daishuyun/code/diy/testsqlparserx/dtstack/* com.dtstack.sqlparserx.SqlParserXWebApplication
