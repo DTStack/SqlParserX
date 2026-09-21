@@ -1,15 +1,16 @@
 package com.changlu.sqlparserx.core.base.tables;
 
-import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.parser.SQLParserUtils;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
 import org.junit.Test;
 
 import java.util.List;
@@ -110,7 +111,6 @@ public class BaseParseTablesTest extends AbstractSqlParserTest {
         assertEquals(true, allTables.contains(new Table(null, null, "table3", null)));
         assertEquals(true, allTables.contains(new Table(null, null, "table2", null)));
     }
-
 
     @Test
     public void test_06_parseTables_select_subquery_union() {

@@ -1,9 +1,5 @@
 package com.changlu.sqlparserx.controller;
 
-import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.parser.SQLParserUtils;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
@@ -12,6 +8,11 @@ import com.changlu.sqlparserx.domain.ResponseResult;
 import com.changlu.sqlparserx.enums.DataSourceType2DbType;
 import com.changlu.sqlparserx.enums.DatasourceTypeEnum;
 import com.changlu.sqlparserx.vo.TableParseRequest;
+
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController

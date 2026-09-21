@@ -1,9 +1,10 @@
 package com.changlu.sqlparserx.core.parser.base.sqlfilter.row.builder;
 
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.expr.*;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.TableInfo;
+
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.expr.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,7 +15,8 @@ public class BaseExprBuilder {
     public BaseExprBuilder() {
     }
 
-    public SQLExpr buildCondition(RowLevelPermissionFilterParam param, TableInfo tableInfo, boolean paramNotNeedUseTable) {
+    public SQLExpr buildCondition(RowLevelPermissionFilterParam param, TableInfo tableInfo,
+            boolean paramNotNeedUseTable) {
         SQLExpr fieldExpr = createFieldExpression(param.getFieldName(), tableInfo, paramNotNeedUseTable);
         String dataType = param.getFieldType();
 
@@ -25,72 +27,69 @@ public class BaseExprBuilder {
     }
 
     private SQLExpr buildConditionByOperator(SQLExpr fieldExpr,
-                                             RowLevelPermissionFilterParam param,
-                                             String dataType) {
+            RowLevelPermissionFilterParam param,
+            String dataType) {
         switch (param.getOperatorEnum()) {
-            case IN:
-            case NOT_IN:
+            case IN :
+            case NOT_IN :
                 return buildInCondition(fieldExpr, param, dataType);
-            case EQ:
-            case NOT_EQ:
+            case EQ :
+            case NOT_EQ :
                 return buildComparisonCondition(fieldExpr, param, dataType);
-            case NULL:
+            case NULL :
                 return createNullCondition(fieldExpr);
-            default:
+            default :
                 return buildFallbackCondition(fieldExpr, param, dataType);
         }
     }
 
     private SQLExpr buildInCondition(SQLExpr fieldExpr,
-                                     RowLevelPermissionFilterParam param,
-                                     String dataType) {
+            RowLevelPermissionFilterParam param,
+            String dataType) {
         SQLInListExpr inExpr = new SQLInListExpr(fieldExpr);
-        param.getFieldValue().forEach(value ->
-                inExpr.getTargetList().add(createValueExpression(value, dataType))
-        );
+        param.getFieldValue().forEach(value -> inExpr.getTargetList().add(createValueExpression(value, dataType)));
         inExpr.setNot(param.getOperatorEnum() == RowLevelPermissionFilterParam.OperatorEnum.NOT_IN);
         return inExpr;
     }
 
     private SQLExpr buildComparisonCondition(SQLExpr fieldExpr,
-                                             RowLevelPermissionFilterParam param,
-                                             String dataType) {
+            RowLevelPermissionFilterParam param,
+            String dataType) {
         return new SQLBinaryOpExpr(
                 fieldExpr,
                 getComparisonOperator(param.getOperatorEnum()),
-                createValueExpression(param.getFieldValue().get(0), dataType)
-        );
+                createValueExpression(param.getFieldValue().get(0), dataType));
     }
 
     private SQLExpr buildFallbackCondition(SQLExpr fieldExpr,
-                                           RowLevelPermissionFilterParam param,
-                                           String dataType) {
+            RowLevelPermissionFilterParam param,
+            String dataType) {
         List<Object> fieldValues = param.getFieldValue();
-        if (fieldValues == null || fieldValues.isEmpty()) return null;
+        if (fieldValues == null || fieldValues.isEmpty())
+            return null;
         // 若是有一个元素默认就是eq，多个元素就是in
         if (fieldValues.size() == 1) {
             return new SQLBinaryOpExpr(
                     fieldExpr,
                     SQLBinaryOperator.Equality,
-                    createValueExpression(param.getFieldValue().get(0), dataType)
-            );
-        }else {
+                    createValueExpression(param.getFieldValue().get(0), dataType));
+        } else {
             SQLInListExpr inExpr = new SQLInListExpr(fieldExpr);
-            fieldValues.forEach(value ->
-                    inExpr.getTargetList().add(createValueExpression(value, dataType))
-            );
+            fieldValues.forEach(value -> inExpr.getTargetList().add(createValueExpression(value, dataType)));
             return inExpr;
         }
     }
 
     private SQLBinaryOperator getComparisonOperator(RowLevelPermissionFilterParam.OperatorEnum operator) {
-        return operator == RowLevelPermissionFilterParam.OperatorEnum.EQ ?
-                SQLBinaryOperator.Equality : SQLBinaryOperator.NotEqual;
+        return operator == RowLevelPermissionFilterParam.OperatorEnum.EQ
+                ? SQLBinaryOperator.Equality
+                : SQLBinaryOperator.NotEqual;
     }
 
     // 后续可扩展各个supportBuild方法 根据传递具体filed类型来判断创建expr
     private SQLExpr createValueExpression(Object value, String fieldType) {
-        if (value == null) return new SQLNullExpr();
+        if (value == null)
+            return new SQLNullExpr();
 
         if (fieldType == null) {
             return new SQLCharExpr(value.toString());
@@ -116,14 +115,17 @@ public class BaseExprBuilder {
     private SQLExpr createFieldExpression(String fieldName, TableInfo tableInfo, boolean paramNotNeedUseTable) {
         // 1、优先走别名
         String alias = tableInfo.getAlias();
-        if (alias != null) return new SQLPropertyExpr(alias, fieldName);
+        if (alias != null)
+            return new SQLPropertyExpr(alias, fieldName);
 
         // 2、若是没有别名且当前一组select关联表只有一个时，直接使用属性，无需带table
-        if (paramNotNeedUseTable) return new SQLIdentifierExpr(fieldName);
+        if (paramNotNeedUseTable)
+            return new SQLIdentifierExpr(fieldName);
 
         // 3、若是无别名，有table名则带上table名
         String tableName = tableInfo.getTableName();
-        if (tableName != null) return new SQLPropertyExpr(tableName, fieldName);
+        if (tableName != null)
+            return new SQLPropertyExpr(tableName, fieldName);
 
         // 4、无表、别名 不带任何属性
         return new SQLIdentifierExpr(fieldName);
@@ -132,8 +134,7 @@ public class BaseExprBuilder {
     protected List<String> getSupportBuildNumberExprDataTypes() {
         return Arrays.asList(
                 "BIT", "TINYINT", "SMALLINT", "MEDIUMINT", "INT", "BIGINT",
-                "FLOAT", "DOUBLE", "DECIMAL"
-        );
+                "FLOAT", "DOUBLE", "DECIMAL");
     }
 
     protected List<String> getSupportBuildBooleanExprDataTypes() {

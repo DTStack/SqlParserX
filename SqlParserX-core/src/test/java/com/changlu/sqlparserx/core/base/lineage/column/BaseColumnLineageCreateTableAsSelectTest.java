@@ -1,12 +1,13 @@
 package com.changlu.sqlparserx.core.base.lineage.column;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.BaseColumnLineageAnalyzerTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.domain.ColumnLineage;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.*;
@@ -40,7 +41,6 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         assertEquals(0, analyze.getColumnRelations().size());
     }
 
-
     /**
      * 字段中带有catalog.schema.table.column 如 default_catalog.changluya_db.orders2.order_id2
      */
@@ -57,7 +57,7 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
     @Test
     public void test_03_SimpleCreateTableByAsSelect() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("source_table", Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
@@ -79,16 +79,12 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
     @Test
     public void test_04_ComplexCreateTableAsSelect() {
         String sql = readSqlByIndex(sqlTxtName, 4);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("users",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
                 this.put("orders",
-                        Arrays.asList(new Column("amount", 0)
-                                , new Column("id", 1)
-                        ));
+                        Arrays.asList(new Column("amount", 0), new Column("id", 1)));
             }
         };
         // 实现字段血缘分析
@@ -111,12 +107,10 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
     @Test
     public void test_05_createTableAsSelectSubQuery() {
         String sql = readSqlByIndex(sqlTxtName, 5);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("table2",
-                        Arrays.asList(new Column("col1", 0)
-                                , new Column("col2", 1)
-                        ));
+                        Arrays.asList(new Column("col1", 0), new Column("col2", 1)));
             }
         };
         // 实现字段血缘分析
@@ -150,12 +144,18 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         System.out.println();
         assertEquals("tz", result.getTargetTable());
         assertEquals(6, columnLineages.size());
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EID", null, null, "tz", "ID")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "OBJECTCODE", null, null, "tz", "CompanyCode")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "ADDRESS", null, null, "tz", "LOGOPath")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EITIME", null, null, "tz", "EnterTime")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EUTIME", null, null, "tz", "UpdateTime")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EisDel", null, null, "tz", "EISDEL")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EID", null, null,
+                "tz", "ID")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "OBJECTCODE", null,
+                null, "tz", "CompanyCode")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "ADDRESS", null, null,
+                "tz", "LOGOPath")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EITIME", null, null,
+                "tz", "EnterTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EUTIME", null, null,
+                "tz", "UpdateTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "CDSY_PICTURES", "EisDel", null, null,
+                "tz", "EISDEL")));
     }
 
     /**
@@ -179,9 +179,11 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         assertEquals("a", result.getTargetTable());
         assertEquals(4, columnLineages.size());
         assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "b", "id1", null, null, "a", "id1")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "b", "name1", null, null, "a", "name1")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "b", "name1", null, null, "a",
+                "name1")));
         assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "c", "id2", null, null, "a", "id2")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "c", "name2", null, null, "a", "name2")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "c", "name2", null, null, "a",
+                "name2")));
     }
 
     /**
@@ -198,8 +200,10 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         List<ColumnLineage> columnLineages = result.getColumnLineages();
         assertEquals("tz", result.getTargetTable());
         assertEquals(2, columnLineages.size());
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "id", null, null, "tz", "id")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "salary", null, null, "tz", "salary_level")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "id", null, null, "tz",
+                "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "employees", "salary", null, null,
+                "tz", "salary_level")));
     }
 
     /**
@@ -234,26 +238,46 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         assertEquals("tz", result.getTargetTable());
         // 暂未确认（后期可再验证）
         assertEquals(20, columnLineages.size());
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EID", null, null, "tz", "ID")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "LAS_Code")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachType", null, null, "tz", "AttachType")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachName", null, null, "tz", "AttachName")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachNo", null, null, "tz", "AttachNo")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "AttachOrigName")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachSize", null, null, "tz", "AttachSize")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachPages", null, null, "tz", "AttachPages")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "SOUATTACHNAME", null, null, "tz", "SouAttchname")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "D_Path")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Name")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "F_Name")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null, null, "tz", "F_Name")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Type")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null, null, "tz", "F_Url")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME", null, null, "tz", "F_Url")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null, null, "tz", "F_Url")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EUTIME", null, null, "tz", "UpdateTime")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EITIME", null, null, "tz", "EnterTime")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EISDEL", null, null, "tz", "EisDel")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EID", null, null,
+                "tz", "ID")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null,
+                null, "tz", "LAS_Code")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachType",
+                null, null, "tz", "AttachType")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachName",
+                null, null, "tz", "AttachName")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachNo", null,
+                null, "tz", "AttachNo")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME",
+                null, null, "tz", "AttachOrigName")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachSize",
+                null, null, "tz", "AttachSize")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "AttachPages",
+                null, null, "tz", "AttachPages")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "SOUATTACHNAME",
+                null, null, "tz", "SouAttchname")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME",
+                null, null, "tz", "D_Path")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME",
+                null, null, "tz", "F_Name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null,
+                null, "tz", "F_Name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null,
+                null, "tz", "F_Name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME",
+                null, null, "tz", "F_Type")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNO", null,
+                null, "tz", "F_Url")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "ATTACHNAME",
+                null, null, "tz", "F_Url")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "INFOCODE", null,
+                null, "tz", "F_Url")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EUTIME", null,
+                null, "tz", "UpdateTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EITIME", null,
+                null, "tz", "EnterTime")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "INFO_NW_RELATTACH", "EISDEL", null,
+                null, "tz", "EisDel")));
     }
 
     /**
@@ -282,10 +306,14 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         List<ColumnLineage> columnLineages = result.getColumnLineages();
         assertEquals("newTable", result.getTargetTable());
         assertEquals(4, columnLineages.size());
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "id", null, null, "newTable", "id")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "name", null, null, "newTable", "name")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "id", null, null, "newTable", "id")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "name", null, null, "newTable", "name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "id", null, null, "newTable",
+                "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table1", "name", null, null,
+                "newTable", "name")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "id", null, null, "newTable",
+                "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, null, "table2", "name", null, null,
+                "newTable", "name")));
     }
 
     @Test
@@ -297,13 +325,20 @@ public class BaseColumnLineageCreateTableAsSelectTest extends BaseColumnLineageA
         List<ColumnLineage> columnLineages = result.getColumnLineages();
         assertEquals("newTable", result.getTargetTable());
         assertEquals(7, columnLineages.size());
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "id", null, null, "newTable", "id")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "invite_task_ids", null, null, "newTable", "invite_task_ids")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "condition_id", null, null, "newTable", "condition_id1")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "created_time", null, null, "newTable", "created_time")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "updated_time", null, null, "newTable", "updated_time")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "from_channel", null, null, "newTable", "from_channel")));
-        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "invite_nums", null, null, "newTable", "invite_nums")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf", "id",
+                null, null, "newTable", "id")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "invite_task_ids", null, null, "newTable", "invite_task_ids")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "condition_id", null, null, "newTable", "condition_id1")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "created_time", null, null, "newTable", "created_time")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "updated_time", null, null, "newTable", "updated_time")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "from_channel", null, null, "newTable", "from_channel")));
+        assertEquals(true, columnLineages.contains(new ColumnLineage(null, "ods", "ods_task_condition_invite_hf",
+                "invite_nums", null, null, "newTable", "invite_nums")));
     }
 
 }

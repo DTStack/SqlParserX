@@ -1,11 +1,12 @@
 package com.changlu.sqlparserx.core.base.lineage.column;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.BaseColumnLineageAnalyzerTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.*;
@@ -49,33 +50,19 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
 //                "    t5_level, department, older_count\n" +
 //                ")\n";
         insertSqlList.add(readSqlByIndex(sqlTxtName, 2));
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("digua_ceshi.demo_table_digua",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                                , new Column("age", 2)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1), new Column("age", 2)));
                 this.put("digua_ceshi.new_table",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                                , new Column("age", 2)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1), new Column("age", 2)));
                 this.put("digua_ceshi.new_table2",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                                , new Column("age", 2)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1), new Column("age", 2)));
                 this.put("digua_ceshi.hierarchy_table",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                                , new Column("manager_id", 2)
-                                , new Column("level", 3)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1), new Column("manager_id", 2),
+                                new Column("level", 3)));
                 this.put("digua_ceshi.departments",
-                        Arrays.asList(new Column("department", 0)
-                                , new Column("employee_id", 1)
-                        ));
+                        Arrays.asList(new Column("department", 0), new Column("employee_id", 1)));
             }
         };
         // sql1测试
@@ -124,12 +111,10 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
                 "    FROM a\n" +
                 ")\n" +
                 "SELECT * FROM cte;";
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("digua_ceshi.a",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -145,12 +130,10 @@ public class BaseColumnLineageWithAsInsertTest extends BaseColumnLineageAnalyzer
                 "    FROM wwz_00002\n" +
                 ")\n" +
                 "SELECT * FROM wwz_00003;";
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("digua_ceshi.wwz_00002",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);

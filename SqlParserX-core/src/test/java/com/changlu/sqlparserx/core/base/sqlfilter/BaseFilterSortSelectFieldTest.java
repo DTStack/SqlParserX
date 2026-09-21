@@ -1,13 +1,14 @@
 package com.changlu.sqlparserx.core.base.sqlfilter;
 
-import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.parser.SQLParserUtils;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -222,7 +223,5 @@ public class BaseFilterSortSelectFieldTest extends AbstractSqlParserTest {
         Assert.assertEquals(rowLevelPermissionSql, readSqlByIndex(sqlTxtName, 16));
 //        System.out.println(rowLevelPermissionSql);
     }
-
-
 
 }

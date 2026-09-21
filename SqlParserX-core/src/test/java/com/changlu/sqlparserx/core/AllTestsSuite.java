@@ -3,6 +3,7 @@ package com.changlu.sqlparserx.core;
 import com.changlu.sqlparserx.core.base.BaseSuite;
 import com.changlu.sqlparserx.core.datasource.DatasourceSuite;
 import com.changlu.sqlparserx.core.util.SQLParseStrategySimpleTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

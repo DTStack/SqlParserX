@@ -19,8 +19,7 @@ public class ParseTableResult {
 
     public ParseTableResult(Table mainTable, Set<Table> allTables) {
         this.mainTable = mainTable;
-        this.allTables = allTables;
-        ;
+        this.allTables = allTables;;
     }
 
     public Table getMainTable() {
@@ -41,7 +40,8 @@ public class ParseTableResult {
 
     // 对外暴露
     public Set<String> getAllTableName() {
-        Set<String> tables = this.allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(Collectors.toSet());
+        Set<String> tables = this.allTables.stream().map((table -> Table.TableTransfer.transfer(table))).collect(
+                Collectors.toSet());
         return tables;
     }
 

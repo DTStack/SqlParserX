@@ -1,5 +1,11 @@
 package com.changlu.sqlparserx.core.parser.starrocks.table;
 
+import com.changlu.sqlparserx.core.domain.Pair;
+import com.changlu.sqlparserx.core.parser.base.table.ParseCreateTableClient;
+import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.DistributedByTypeEnum;
+import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.TableKeyEnum;
+import com.changlu.sqlparserx.core.utils.CommonUtil;
+
 import com.alibaba.druid.sql.ast.DistributedByType;
 import com.alibaba.druid.sql.ast.statement.SQLCreateTableStatement;
 import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
@@ -7,11 +13,6 @@ import com.alibaba.druid.sql.ast.statement.SQLUnique;
 import com.alibaba.druid.sql.dialect.starrocks.ast.StarRocksAggregateKey;
 import com.alibaba.druid.sql.dialect.starrocks.ast.StarRocksDuplicateKey;
 import com.alibaba.druid.sql.dialect.starrocks.ast.statement.StarRocksCreateTableStatement;
-import com.changlu.sqlparserx.core.domain.Pair;
-import com.changlu.sqlparserx.core.parser.base.table.ParseCreateTableClient;
-import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.DistributedByTypeEnum;
-import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.TableKeyEnum;
-import com.changlu.sqlparserx.core.utils.CommonUtil;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class StarrocksParseCreateTableClient extends ParseCreateTableClient {
     protected TableKeyEnum dealTableKey(SQLUnique unique) {
         if (unique instanceof StarRocksDuplicateKey) {
             return TableKeyEnum.DUPLICATE;
-        }else if (unique instanceof StarRocksAggregateKey) {
+        } else if (unique instanceof StarRocksAggregateKey) {
             return TableKeyEnum.AGGREGATE;
         }
         return super.dealTableKey(unique);

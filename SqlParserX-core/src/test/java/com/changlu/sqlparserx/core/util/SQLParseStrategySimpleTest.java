@@ -1,7 +1,9 @@
 package com.changlu.sqlparserx.core.util;
 
 import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
+
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -23,7 +25,7 @@ public class SQLParseStrategySimpleTest {
         // 启用COLUMN_IGNORE_CASE策略
         int strategies = SQLParseStrategy.COLUMN_IGNORE_CASE.mask;
         assertTrue(SQLParseStrategy.isEnabled(strategies, SQLParseStrategy.COLUMN_IGNORE_CASE));
-        
+
         // 没有启用任何策略
         assertFalse(SQLParseStrategy.isEnabled(0, SQLParseStrategy.COLUMN_IGNORE_CASE));
     }

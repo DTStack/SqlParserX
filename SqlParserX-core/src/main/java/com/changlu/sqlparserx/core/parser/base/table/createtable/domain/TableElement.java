@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @ToString
@@ -37,7 +36,8 @@ public class TableElement {
     public TableElement() {
     }
 
-    public TableElement(String name, String type, List<String> arguments, String polymerizeType, String comment, Integer columnStrategy, Integer scale, Integer precision) {
+    public TableElement(String name, String type, List<String> arguments, String polymerizeType, String comment,
+            Integer columnStrategy, Integer scale, Integer precision) {
         this.name = name;
         this.type = type;
         this.arguments = arguments;

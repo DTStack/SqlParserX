@@ -1,14 +1,14 @@
 package com.changlu.sqlparserx.core.parser.base.lineage.table;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.parser.ITableLineageClient;
 import com.changlu.sqlparserx.core.select.table.SelectTable;
 import com.changlu.sqlparserx.core.select.table.SelectTableSpecialLineageService;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.*;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TableLineageClient implements ITableLineageClient {
 
@@ -44,7 +44,7 @@ public class TableLineageClient implements ITableLineageClient {
     public TableLineageResult parseTableLineages(SQLStatement sqlStatement) {
         if (sqlStatement instanceof SQLInsertStatement) {
             this.parseInsertSQL((SQLInsertStatement) sqlStatement);
-        }else if (sqlStatement instanceof SQLCreateTableStatement) {
+        } else if (sqlStatement instanceof SQLCreateTableStatement) {
             this.parseCreateSQL((SQLCreateTableStatement) sqlStatement);
         }
         return getResult();
@@ -95,16 +95,17 @@ public class TableLineageClient implements ITableLineageClient {
         // check是否满足with as场景
         if (withSubqueryClause != null) {
             // 3.1、构建with map
-            Map<String, List<SelectTable>> tableInfoByTableMap = selectTableSpecialLineageService.buildTableInfoByTableMap(withSubqueryClause);
+            Map<String, List<SelectTable>> tableInfoByTableMap = selectTableSpecialLineageService
+                    .buildTableInfoByTableMap(withSubqueryClause);
 
             // 3.2、处理with as场景 & 主体select字段情况 过滤掉主体中引用with as 别名表字段情况
-            selectTables = selectTableSpecialLineageService.matchWithAsAndSelectTables(selectTables, tableInfoByTableMap);
+            selectTables = selectTableSpecialLineageService.matchWithAsAndSelectTables(selectTables,
+                    tableInfoByTableMap);
         }
 
         // 添加到原始表中
         addSourceTable(selectTables);
     }
-
 
     /**
      * 添加到原始来源表

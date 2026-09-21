@@ -27,11 +27,12 @@ public class TableRelation {
         return Table.TableTransfer.parse(this.targetTable);
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         TableRelation that = (TableRelation) o;
         return Objects.equals(sourceTable, that.sourceTable) && Objects.equals(targetTable, that.targetTable);
     }

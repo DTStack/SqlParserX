@@ -58,7 +58,7 @@ public class Table {
         this.aliasTableName = aliasTableName;
     }
 
-    public static class TableTransfer{
+    public static class TableTransfer {
 
         /**
          * 将Table对象转换为字符串表示
@@ -129,10 +129,13 @@ public class Table {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Table table = (Table) o;
-        return Objects.equals(catalog, table.catalog) && Objects.equals(db, table.db) && Objects.equals(name, table.name) && Objects.equals(aliasTableName, table.aliasTableName);
+        return Objects.equals(catalog, table.catalog) && Objects.equals(db, table.db) && Objects.equals(name,
+                table.name) && Objects.equals(aliasTableName, table.aliasTableName);
     }
 
     @Override

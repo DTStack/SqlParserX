@@ -1,9 +1,10 @@
 package com.changlu.sqlparserx.core.base.function;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.Set;

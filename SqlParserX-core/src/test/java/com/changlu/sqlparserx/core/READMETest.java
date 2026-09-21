@@ -1,6 +1,5 @@
 package com.changlu.sqlparser.core;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
@@ -8,6 +7,8 @@ import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResul
 import com.changlu.sqlparserx.core.parser.base.lineage.domain.TableLineage;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.*;
@@ -39,16 +40,12 @@ public class READMETest {
         // 2.2、解析字段血缘
         System.out.println("\n====解析字段血缘====");
         // 针对select * from table 场景，可传入tableColumnsMap封装真实的表字段信息
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("users",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
                 this.put("orders",
-                        Arrays.asList(new Column("amount", 0)
-                                , new Column("id", 1)
-                        ));
+                        Arrays.asList(new Column("amount", 0), new Column("id", 1)));
             }
         };
         ColumnLineageResult columnLineageResult = sqlParser.parseColumnLineages(sql, tableColumnsMap);

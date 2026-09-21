@@ -1,11 +1,5 @@
 package com.changlu.sqlparserx.core.parser.base.lineage.column;
 
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.SQLObject;
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
-import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.sqlparserx.core.config.Constant;
 import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.parser.IColumnLineageClient;
@@ -15,6 +9,10 @@ import com.changlu.sqlparserx.core.select.column.SelectColumn;
 import com.changlu.sqlparserx.core.select.column.SelectColumnItem;
 import com.changlu.sqlparserx.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,7 @@ public class ColumnLineageClient implements IColumnLineageClient {
         this.tableColumnsMap = tableColumnsMap;
         if (tableColumnsMap != null && !tableColumnsMap.isEmpty()) {
             this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(tableColumnsMap, features);
-        }else {
+        } else {
             this.selectColumnSpecialLineageService = new SelectColumnSpecialLineageService(features);
         }
     }
@@ -60,7 +58,7 @@ public class ColumnLineageClient implements IColumnLineageClient {
     public ColumnLineageResult parseColumnLineages(SQLStatement sqlStatement) {
         if (sqlStatement instanceof SQLInsertStatement) {
             this.parseInsertSQL((SQLInsertStatement) sqlStatement);
-        }else if (sqlStatement instanceof SQLCreateTableStatement) {
+        } else if (sqlStatement instanceof SQLCreateTableStatement) {
             this.parseCreateSQL((SQLCreateTableStatement) sqlStatement);
         }
         return getResult();
@@ -85,9 +83,10 @@ public class ColumnLineageClient implements IColumnLineageClient {
 //            }
 //        }else
         // 若是insert sql指定字段写入
-        if (insertTableColumns != null && !insertTableColumns.isEmpty()){
+        if (insertTableColumns != null && !insertTableColumns.isEmpty()) {
             // 写法2：插入指定列场景 insert into table values(xxx, xxx) select xxx, xxx
-            targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns, targetTable);
+            targetColumns = selectColumnSpecialLineageService.buildSelectColumnsBySQLExprs(insertTableColumns,
+                    targetTable);
         }
 
         // 2、优先with as场景处理
@@ -109,13 +108,14 @@ public class ColumnLineageClient implements IColumnLineageClient {
         }
 
         // 3、获取到主体查询的一组columns
-        List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelect(query, withSqlAliasTableNames);
+        List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelect(query,
+                withSqlAliasTableNames);
 
         // 处理含有with as场景 & 主体selct字段情况 过滤掉主体中引用with as 别名字段依赖
         if (columnInfoByTableMap != null) {
-            selectColumns = selectColumnSpecialLineageService.matchWithAsAndSelectColumns(selectColumns, columnInfoByTableMap);
+            selectColumns = selectColumnSpecialLineageService.matchWithAsAndSelectColumns(selectColumns,
+                    columnInfoByTableMap);
         }
-
 
         // 4、若是没有指定insert的字段，那么此时targetColumns为空
         if (insertTableColumns.isEmpty() || targetColumns.isEmpty()) {
@@ -123,7 +123,7 @@ public class ColumnLineageClient implements IColumnLineageClient {
             if (columns != null && !columns.isEmpty()) {
                 // 从元数据表中获取字段信息
                 targetColumns = queryMetaTableColumns(columns, targetTable);
-            }else {
+            } else {
                 // 没有对应元数据源表字段信息 从主体select中获取字段信息
                 targetColumns = queryTargetTableColumns(selectColumns, targetTable);
             }
@@ -153,11 +153,11 @@ public class ColumnLineageClient implements IColumnLineageClient {
 
         List<SelectColumnItem> insertTableColumns = new ArrayList<>();
         for (Column column : columns) {
-            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), column.getColumnName()));
+            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), column
+                    .getColumnName()));
         }
         return insertTableColumns;
     }
-
 
     /**
      * 查询获取insert目标字段集合 从主体selectColumns中获取目标字段集合
@@ -167,7 +167,8 @@ public class ColumnLineageClient implements IColumnLineageClient {
     private List<SelectColumnItem> queryTargetTableColumns(List<SelectColumn> selectColumns, Table targetTable) {
         List<SelectColumnItem> insertTableColumns = new ArrayList<>();
         for (SelectColumn selectColumn : selectColumns) {
-            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), selectColumn.getAliasName()));
+            insertTableColumns.add(new SelectColumnItem(Table.TableTransfer.transfer(targetTable), selectColumn
+                    .getAliasName()));
         }
         return insertTableColumns;
     }
@@ -196,7 +197,8 @@ public class ColumnLineageClient implements IColumnLineageClient {
 //            if (targetColumns.isEmpty()) return false;
 
             // 2、收集以当前select主体结构所追溯汇总得到的一组来源字段
-            List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(selectQuery);
+            List<SelectColumn> selectColumns = selectColumnSpecialLineageService.queryColumnsBySqlSelectQuery(
+                    selectQuery);
 
             List<SelectColumnItem> targetColumns = this.queryTargetTableColumns(selectColumns, targetTable);
 
@@ -227,13 +229,16 @@ public class ColumnLineageClient implements IColumnLineageClient {
                     // 针对最终无匹配表场景情况，应当过滤 举例：select '0' as a from table 这类并不能作为血缘
                     if (selectTableNameArr[j] == null
                             || selectColumnNameArr[j].isEmpty()
-                            || Constant.NO_RELATION_TABLE.equals(selectTableNameArr[j])) continue;
+                            || Constant.NO_RELATION_TABLE.equals(selectTableNameArr[j]))
+                        continue;
                     // 添加血缘关系
                     // 目标端一组列表中的真实表名 => 目标表、目标端一组列表中的别名字段 => 目标字段
                     // 来源端的真实表名 => 来源表名、来源端的真实字段 => 来源字段
-                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn.getColumnName());
-                }catch (Exception e) {
-                    String msgInfo = String.format("addColumnRelations error! columnName => %s, tableInfo => %s", selectColumn.getColumnName(), selectColumn.getTableInfo());
+                    addRelation(selectTableNameArr[j], selectColumnNameArr[j], targetColumn.getTableInfo(), targetColumn
+                            .getColumnName());
+                } catch (Exception e) {
+                    String msgInfo = String.format("addColumnRelations error! columnName => %s, tableInfo => %s",
+                            selectColumn.getColumnName(), selectColumn.getTableInfo());
                     log.error(msgInfo, e);
                     throw new RuntimeException(msgInfo);
                 }
@@ -249,11 +254,11 @@ public class ColumnLineageClient implements IColumnLineageClient {
      * @param targetColumn 目标字段
      */
     private void addRelation(String sourceTable, String sourceColumn,
-                             String targetTable, String targetColumn) {
+            String targetTable, String targetColumn) {
         String relationKey = targetTable + "." + targetColumn;
         // 无来源表 & 无来源字段场景情况
         if (sourceTable == null && sourceColumn == null
-            || sourceTable != null && sourceTable.isEmpty()  // 无来源表场景（一般是来源字段为一个字面量值，而非一个表的字段,不算作血缘）
+                || sourceTable != null && sourceTable.isEmpty()  // 无来源表场景（一般是来源字段为一个字面量值，而非一个表的字段,不算作血缘）
         ) {
             columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>());
             return;
@@ -262,15 +267,13 @@ public class ColumnLineageClient implements IColumnLineageClient {
         // 来源不为空情况
         ColumnLineageResult.ColumnRelation relation = new ColumnLineageResult.ColumnRelation(
                 sourceTable != null ? sourceTable + "." + sourceColumn : sourceColumn,
-                targetTable + "." + targetColumn
-        );
+                targetTable + "." + targetColumn);
 
         // 检查是否已存在相同关系
-        List<ColumnLineageResult.ColumnRelation> relations = columnRelations.computeIfAbsent(relationKey, k -> new ArrayList<>());
-        boolean relationExists = relations.stream().anyMatch(r ->
-                Objects.equals(r.getSource(), relation.getSource()) &&
-                        Objects.equals(r.getTarget(), relation.getTarget())
-        );
+        List<ColumnLineageResult.ColumnRelation> relations = columnRelations.computeIfAbsent(relationKey,
+                k -> new ArrayList<>());
+        boolean relationExists = relations.stream().anyMatch(r -> Objects.equals(r.getSource(), relation.getSource()) &&
+                Objects.equals(r.getTarget(), relation.getTarget()));
 
         if (!relationExists) {
             // 添加到来源表中

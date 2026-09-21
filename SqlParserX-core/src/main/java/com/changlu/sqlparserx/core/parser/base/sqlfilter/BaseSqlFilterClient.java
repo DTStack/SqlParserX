@@ -1,22 +1,18 @@
 package com.changlu.sqlparserx.core.parser.base.sqlfilter;
 
+import com.changlu.sqlparserx.core.parser.ISqlFilterClient;
+import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.BaseRowLevelPermissionHandler;
+import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+
 import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.*;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
-import com.changlu.sqlparserx.core.parser.ISqlFilterClient;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.BaseRowLevelPermissionHandler;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.TableInfo;
-import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @description  sql过滤相关client，如行级、列级权限sql

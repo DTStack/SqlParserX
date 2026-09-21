@@ -1,7 +1,5 @@
 package com.changlu.sqlparserx.core.parser.base.parameter.domain;
 
-import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
-
 import java.util.List;
 
 /**
@@ -104,7 +102,7 @@ public class ApiParamSpan {
         this.mustFlag = mustFlag;
     }
 
-    public boolean getMustFlag(){
+    public boolean getMustFlag() {
         return this.mustFlag;
     }
 

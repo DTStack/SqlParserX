@@ -1,22 +1,22 @@
 package com.changlu.sqlparserx.core.select.column;
 
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.SQLOrderBy;
-import com.alibaba.druid.sql.ast.SQLOver;
-import com.alibaba.druid.sql.ast.expr.*;
-import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.sql.parser.SQLParserFeature;
-import com.alibaba.druid.util.StringUtils;
+import com.changlu.sqlparserx.core.config.Constant;
 import com.changlu.sqlparserx.core.domain.Pair;
 import com.changlu.sqlparserx.core.enums.ColumnTypeEnum;
 import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
 import com.changlu.sqlparserx.core.enums.TableNameMatchStrategy;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
-import com.changlu.sqlparserx.core.config.Constant;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.ColumnUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLOrderBy;
+import com.alibaba.druid.sql.ast.SQLOver;
+import com.alibaba.druid.sql.ast.expr.*;
+import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,11 +87,12 @@ public class SelectColumnSpecialLineageService {
         List<SelectColumn> selectColumns = new ArrayList<>();
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             return queryColumnsBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
-        }else if (sqlSelectQuery instanceof SQLUnionQuery) {
+        } else if (sqlSelectQuery instanceof SQLUnionQuery) {
             // 场景4：select union 场景特殊化处理含合并逻辑
             SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
             List<SQLSelectQuery> relations = sqlUnionQuery.getRelations();
-            if (relations == null || relations.isEmpty()) return selectColumns;
+            if (relations == null || relations.isEmpty())
+                return selectColumns;
             // 遍历所有union 查询
             List<SelectColumn> preSelectColumnList = queryColumnsBySqlSelectQuery(relations.get(0));
             int firstSelectColumnSize = preSelectColumnList.size();
@@ -129,14 +130,16 @@ public class SelectColumnSpecialLineageService {
      * @param curSelectColumns
      * @return
      */
-    public List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList, List<SelectColumn> curSelectColumns){
+    public List<SelectColumn> unionMergeSelectColumns(List<SelectColumn> preSelectColumnList,
+            List<SelectColumn> curSelectColumns) {
         int minSize = Math.min(preSelectColumnList.size(), curSelectColumns.size());
         int maxSize = Math.max(preSelectColumnList.size(), curSelectColumns.size());
         List<SelectColumn> unionSelectColumns = new ArrayList<>();
         // 遍历前minSize个字段
         for (int i = 0; i < minSize; i++) {
             String tableName = preSelectColumnList.get(i).getTableInfo() + "," + curSelectColumns.get(i).getTableInfo();
-            String columnName = preSelectColumnList.get(i).getColumnName() + "," + curSelectColumns.get(i).getColumnName();
+            String columnName = preSelectColumnList.get(i).getColumnName() + "," + curSelectColumns.get(i)
+                    .getColumnName();
             String aliasName = preSelectColumnList.get(i).getAliasName();
             SelectColumn selectColumn = new SelectColumn(tableName, columnName, aliasName);
             // 过滤处理，针对别名相同情况，真实表名 & 真实字段名 相同情况只保留一个
@@ -146,7 +149,9 @@ public class SelectColumnSpecialLineageService {
         // 处理额外情况：针对union all 场景中前后字段数量不一致时，我们依旧支持匹配处理
         if (maxSize != minSize) {
             // 识别到最多字段的一组
-            List<SelectColumn> moreSelectColumns = preSelectColumnList.size() > curSelectColumns.size() ? preSelectColumnList : curSelectColumns;
+            List<SelectColumn> moreSelectColumns = preSelectColumnList.size() > curSelectColumns.size()
+                    ? preSelectColumnList
+                    : curSelectColumns;
             // 举例：min=2、max=3，
             // 0     1    2
             // id   name  age
@@ -160,14 +165,14 @@ public class SelectColumnSpecialLineageService {
         return unionSelectColumns;
     }
 
-
     /**
      * 获取到SQLSelect中所有的字段【不关注别名】
      * @param selectQueryBlock select语句
      * @return 关联到的所有字段(只关注获取到字段来源表名 & 字段名)
      */
     public List<SelectColumn> queryColumnsBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
-        if (selectQueryBlock == null) return null;
+        if (selectQueryBlock == null)
+            return null;
         // 遍历SELECT项并处理
         List<SelectColumn> selectColumns = buildSelectColumnsBySelectItems(selectQueryBlock.getSelectList());
 
@@ -177,7 +182,6 @@ public class SelectColumnSpecialLineageService {
         selectColumns = queryFromTableByColumns(fromTable, selectColumns);
         return selectColumns;
     }
-
 
     /**
      * select & from表各类场景匹配规则逻辑处理
@@ -192,8 +196,10 @@ public class SelectColumnSpecialLineageService {
             // #feat2：结合select & from 结合转换字段处理
             SQLExprTableSource sqlExprTableSource = (SQLExprTableSource) fromTable;
             // 真实表名 表别名
-            String sourceTableName = TableSourceUtil.extractTableName((SQLExprTableSource)fromTable);
-            String aliasSourceTableName = sqlExprTableSource.getAlias() == null ? sourceTableName : TableSourceUtil.removeQuotes(sqlExprTableSource.getAlias());
+            String sourceTableName = TableSourceUtil.extractTableName((SQLExprTableSource) fromTable);
+            String aliasSourceTableName = sqlExprTableSource.getAlias() == null
+                    ? sourceTableName
+                    : TableSourceUtil.removeQuotes(sqlExprTableSource.getAlias());
             // 完成真实表名的替换
             for (SelectColumn selectColumn : selectColumns) {
                 // #feat3：基于#feat2的特殊情况（单列多字段场景）
@@ -220,24 +226,24 @@ public class SelectColumnSpecialLineageService {
                         if (tableNameStrategy == TableNameMatchStrategy.DEFAULT_FROM_TABLE) {
                             // 策略1：默认就是from对应的表名
                             tableNameList.add(sourceTableName);
-                        }else {
+                        } else {
                             // 策略2：根据外界（表元数据）传入的表字段来进行判断是否有来匹配
 //                            tableNameList.add(sourceTableName);
                             if (Constant.ALL.equals(columnNames[i]) ||
                                     checkExistInWithTables(sourceTableName) ||
-                                        checkColumnRealExists(columnNames[i], sourceTableName)) {
+                                    checkColumnRealExists(columnNames[i], sourceTableName)) {
                                 tableNameList.add(sourceTableName);
-                            }else {
+                            } else {
                                 // 无来源表情况
                                 tableNameList.add(Constant.NO_RELATION_TABLE);
                             }
                         }
-                    }else {
+                    } else {
                         // 2、真实表不为空情况
                         // 如果字段的表名与当前from表的别名一致，则设置当前from的真实表名
                         if (curColumnTableName.equals(aliasSourceTableName)) {
                             tableNameList.add(sourceTableName);
-                        }else {
+                        } else {
                             // 如果不一致，表明当前并非使用的是别名，直接使用当前该字段的表名
                             tableNameList.add(curColumnTableName);
                         }
@@ -282,12 +288,13 @@ public class SelectColumnSpecialLineageService {
                                 // age        age      table1
                                 for (Column metaTableColumn : metaTableColumns) {
                                     String metaTableColumnColumnName = metaTableColumn.getColumnName();
-                                    newBuildSelectColumns.add(new SelectColumn(sourceTableName, metaTableColumnColumnName, metaTableColumnColumnName));
+                                    newBuildSelectColumns.add(new SelectColumn(sourceTableName,
+                                            metaTableColumnColumnName, metaTableColumnColumnName));
                                 }
-                            }else {
+                            } else {
                                 newBuildSelectColumns.add(selectColumn);
                             }
-                        }else {
+                        } else {
                             String[] columnNameArr = columnName.split(",", -1);
                             String[] tableNameArr = tableInfo.split(",", -1);
                             List<String> columnNameList = new ArrayList<>();
@@ -302,7 +309,7 @@ public class SelectColumnSpecialLineageService {
                                         columnNameList.add(metaTableColumn.getColumnName());
                                         tableNameList.add(sourceTableName);
                                     }
-                                }else{
+                                } else {
                                     columnNameList.add(columnNameArr[i]);
                                     tableNameList.add(tableNameArr[i]);
                                 }
@@ -328,7 +335,7 @@ public class SelectColumnSpecialLineageService {
             // 实现当前一组columns & 子查询columns合并处理
             selectColumns = this.doMergeSubqueryColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
-        else if (fromTable instanceof SQLJoinTableSource){
+        else if (fromTable instanceof SQLJoinTableSource) {
             SQLJoinTableSource sqlJoinTableSource = (SQLJoinTableSource) fromTable;
             SQLTableSource left = sqlJoinTableSource.getLeft();
             SQLTableSource right = sqlJoinTableSource.getRight();
@@ -363,10 +370,12 @@ public class SelectColumnSpecialLineageService {
      * @param subquerySelectColumns List<SelectColumn>
      * @return List<SelectColumn>
      */
-    private List<SelectColumn> doMergeSubqueryColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
+    private List<SelectColumn> doMergeSubqueryColumns(List<SelectColumn> selectColumns,
+            List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
         // subquerySelectColumns中 外层属性* 切带有子查询情况
         //   举例：select * from (select * from new_table) as t; 外层的* 字段取决于子查询中的所有字段
-        selectColumns = dealSubQuerySelectColumnsByAllColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
+        selectColumns = dealSubQuerySelectColumnsByAllColumns(selectColumns, subquerySelectColumns,
+                subQueryTableAliasName);
         // selectColumns & subquerySelectColumns 进行match匹配操作
         selectColumns = matchSubQuerySelectColumns(selectColumns, subquerySelectColumns, subQueryTableAliasName);
         return selectColumns;
@@ -400,7 +409,8 @@ public class SelectColumnSpecialLineageService {
      * @param subquerySelectColumns from (select xxx from table1) 中的子查询查询字段列表集合
      * @return selectColumns
      */
-    private List<SelectColumn> dealSubQuerySelectColumnsByAllColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
+    private List<SelectColumn> dealSubQuerySelectColumnsByAllColumns(List<SelectColumn> selectColumns,
+            List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
         List<SelectColumn> buildNewSelectColumns = new ArrayList<>();
         for (SelectColumn selectColumn : selectColumns) {
             String tableInfo = selectColumn.getTableInfo();
@@ -479,8 +489,7 @@ public class SelectColumnSpecialLineageService {
     private boolean checkColumns(List<Column> columns, String columnName) {
         boolean ignoreCase = SQLParseStrategy.isEnabled(
                 this.features,
-                SQLParseStrategy.COLUMN_IGNORE_CASE
-        );
+                SQLParseStrategy.COLUMN_IGNORE_CASE);
 
         for (Column column : columns) {
             boolean isMatch = ignoreCase
@@ -501,21 +510,21 @@ public class SelectColumnSpecialLineageService {
      * @param subquerySelectColumns 子查询select集合
      * @return
      */
-    private List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns, List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
-        if (subquerySelectColumns == null || subquerySelectColumns.isEmpty()) return selectColumns;
+    private List<SelectColumn> matchSubQuerySelectColumns(List<SelectColumn> selectColumns,
+            List<SelectColumn> subquerySelectColumns, String subQueryTableAliasName) {
+        if (subquerySelectColumns == null || subquerySelectColumns.isEmpty())
+            return selectColumns;
 
         List<SelectColumn> res = new ArrayList<>();
 
         // 是否开启子查询字段匹配忽略大小写
         boolean isEnableSubqueryColumnIgnore = SQLParseStrategy.isEnabled(
                 this.features,
-                SQLParseStrategy.SUBQUERY_COLUMN_IGNORE_CASE
-        );
+                SQLParseStrategy.SUBQUERY_COLUMN_IGNORE_CASE);
 
         Map<String, SelectColumn> subQuerySelectMap = subquerySelectColumns.stream()
                 .collect(Collectors.toMap(
-                        column -> isEnableSubqueryColumnIgnore ?
-                                column.getAliasName().toLowerCase() :  // 开启忽略大小写时使用小写
+                        column -> isEnableSubqueryColumnIgnore ? column.getAliasName().toLowerCase() :  // 开启忽略大小写时使用小写
                                 column.getAliasName(),                 // 不开启时使用原值
                         column -> column,           // Value mapper
                         (existing, replacement) -> {  // 处理重复key的情况
@@ -523,8 +532,7 @@ public class SelectColumnSpecialLineageService {
                             // 例如记录日志或抛出异常
                             log.info("Duplicate aliasName found: {}", existing.getAliasName());
                             return existing;  // 默认保留已存在的
-                        }
-                ));
+                        }));
 
         // 1、遍历select所有字段尝试去进行匹配
         for (SelectColumn selectColumn : selectColumns) {
@@ -551,9 +559,7 @@ public class SelectColumnSpecialLineageService {
                 if (checkColumnTableMatchSubQueryTable(curColumnTableName, subQueryTableAliasName)) {
 
                     // 根据配置决定匹配时是否忽略大小写
-                    String lookupKey = isEnableSubqueryColumnIgnore ?
-                            curColumnName.toLowerCase() :
-                            curColumnName;
+                    String lookupKey = isEnableSubqueryColumnIgnore ? curColumnName.toLowerCase() : curColumnName;
 
                     // core match alias name
                     if (subQuerySelectMap.containsKey(lookupKey)) {
@@ -609,7 +615,8 @@ public class SelectColumnSpecialLineageService {
         List<SelectColumn> selectColumns = new ArrayList<>();
         for (SQLSelectItem sqlSelectItem : selectList) {
             SelectColumn selectColumn = buildSelectColumnBySelectItem(sqlSelectItem);
-            if (selectColumn != null) selectColumns.add(selectColumn);
+            if (selectColumn != null)
+                selectColumns.add(selectColumn);
         }
         return selectColumns;
     }
@@ -620,7 +627,8 @@ public class SelectColumnSpecialLineageService {
         SelectColumn selectColumn = new SelectColumn();
         // 将expr表达式 => SelectColumn（无别名）
         SelectColumnItem selectColumnItem = buildSelectColumnItem(expr);
-        if (selectColumn == null) return null;
+        if (selectColumn == null)
+            return null;
 
         // 移除别名中的引号
         String aliasColumnName = ColumnUtil.removeQuotes(selectItem.getAlias());
@@ -656,7 +664,8 @@ public class SelectColumnSpecialLineageService {
      * @return
      */
     public SelectColumnItem buildSelectColumnItem(SQLExpr expr) {
-        if (expr == null) return null;
+        if (expr == null)
+            return null;
         ColumnTypeEnum columnTypeEnum = ColumnTypeEnum.BELONGS_TO_FIELD;
         String columnName = "";
         String tableInfo = "";
@@ -675,7 +684,7 @@ public class SelectColumnSpecialLineageService {
             // 如：select catalog.db.table.id 中的catalog.db.table
             SQLExpr owner = ((SQLPropertyExpr) expr).getOwner();
             tableInfo = Table.TableTransfer.transfer(TableSourceUtil.extractTable(owner));
-        }else if (expr instanceof SQLAggregateExpr || expr instanceof SQLMethodInvokeExpr) {
+        } else if (expr instanceof SQLAggregateExpr || expr instanceof SQLMethodInvokeExpr) {
             // SQLAggregateExpr 聚合表达式场景：如sum、count、avg、concat场景。
             // SQLMethodInvokeExpr：now()、concat(id, name)
             SQLMethodInvokeExpr aggregateExpr = (SQLMethodInvokeExpr) expr;
@@ -710,18 +719,17 @@ public class SelectColumnSpecialLineageService {
                 tableInfo = Constant.NO_RELATION_TABLE;
                 columnTypeEnum = ColumnTypeEnum.LITERAL_VALUE;
             }
-        }else if (expr instanceof SQLBinaryOpExpr) {
+        } else if (expr instanceof SQLBinaryOpExpr) {
             // SELECT t5.level + 1 二元表达式场景
-            SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr)expr;
+            SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr) expr;
             // 左右两边表达式情况
             List<SQLExpr> sqlBinaryOpExprList = Arrays.asList(
                     sqlBinaryOpExpr.getLeft(),
-                    sqlBinaryOpExpr.getRight()
-            );
+                    sqlBinaryOpExpr.getRight());
             Pair<String, String> columnNameAndTableInfo = getColumnAndTablePairBySQLExpr(sqlBinaryOpExprList);
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
-        }else if (expr instanceof SQLAllColumnExpr) {
+        } else if (expr instanceof SQLAllColumnExpr) {
             // select db.t1.* from xxx，其中db.t1.*就是一个SQLAllColumnExpr
             SQLAllColumnExpr sqlAllColumnExpr = (SQLAllColumnExpr) expr;
             columnName = Constant.ALL;
@@ -735,11 +743,12 @@ public class SelectColumnSpecialLineageService {
                 // 若是匹配到多个字段，则取第一个
 //                SelectColumn selectColumn = selectColumns.get(0);
                 // 若是匹配到多个字段，则完成合并
-                Pair<String, String> columnAndTablePairBySelectColumns = getColumnAndTablePairBySelectColumns(selectColumns);
+                Pair<String, String> columnAndTablePairBySelectColumns = getColumnAndTablePairBySelectColumns(
+                        selectColumns);
                 columnName = columnAndTablePairBySelectColumns.getFirst();
                 tableInfo = columnAndTablePairBySelectColumns.getSecond();
             }
-        } else if (expr instanceof SQLCaseExpr){
+        } else if (expr instanceof SQLCaseExpr) {
             /**
              * 示例：
              * CASE
@@ -765,10 +774,11 @@ public class SelectColumnSpecialLineageService {
             Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(sqlExprs);
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
-        }else if (expr instanceof SQLCastExpr) {
+        } else if (expr instanceof SQLCastExpr) {
             // 场景：select CAST(ROUND(ATTACHNO) AS char)
             SQLCastExpr sqlCastExpr = (SQLCastExpr) expr;
-            Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(Arrays.asList(sqlCastExpr.getExpr()));
+            Pair<String, String> columnNameAndTableInfo = this.getColumnAndTablePairBySQLExpr(Arrays.asList(sqlCastExpr
+                    .getExpr()));
             columnName = columnNameAndTableInfo.getFirst();
             tableInfo = columnNameAndTableInfo.getSecond();
         } else if (expr instanceof SQLInListExpr) {
@@ -815,7 +825,8 @@ public class SelectColumnSpecialLineageService {
 
     private List<SQLExpr> getSqlExprBySqlOver(SQLOver over) {
         List<SQLExpr> sqlExprs = new ArrayList<>();
-        if (over == null) return sqlExprs;
+        if (over == null)
+            return sqlExprs;
 
         // 添加partitionBy中的表达式参数
         List<SQLExpr> partitionBy = over.getPartitionBy();
@@ -847,7 +858,9 @@ public class SelectColumnSpecialLineageService {
             // 递归逻辑获取
             SelectColumnItem selectColumnItem = buildSelectColumnItem(sqlExpr);
             // 若是在当前聚合函数、表达式情况，过滤掉其中的字面量值
-            if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem.getColumnType())) continue;
+            if (selectColumnItem == null || !ColumnTypeEnum.BELONGS_TO_FIELD.getFieldName().equals(selectColumnItem
+                    .getColumnType()))
+                continue;
             // 复杂场景情况去除重复字段
             String[] selectColumns = selectColumnItem.getColumnName().split(",", -1);
             String[] selectColumnTables = selectColumnItem.getTableInfo().split(",", -1);
@@ -855,7 +868,8 @@ public class SelectColumnSpecialLineageService {
             List<String> filterSelectColumnTables = new ArrayList<>();
             for (int i = 0; i < selectColumns.length; i++) {
                 // 去除掉重复字段的情况
-                if (checkColumnNames.contains(selectColumns[i])) continue;
+                if (checkColumnNames.contains(selectColumns[i]))
+                    continue;
                 filterSelectColumns.add(selectColumns[i]);
                 filterSelectColumnTables.add(selectColumnTables[i]);
 
@@ -926,12 +940,14 @@ public class SelectColumnSpecialLineageService {
                         String[] selectTableNameArr = selectColumn.getTableInfo().split(",");
                         for (int i = 0; i < selectColumnNameArr.length; i++) {
                             // 核心过滤掉递归CTE场景的字段依赖别名情况
-                            if (aliasTableName.equals(selectTableNameArr[i])) continue;
+                            if (aliasTableName.equals(selectTableNameArr[i]))
+                                continue;
                             selectColumnNames.add(selectColumnNameArr[i]);
                             seletTableNames.add(selectTableNameArr[i]);
                         }
                         // 若是去除引入别名字段依赖情况后，数组数量为空情况，则跳过（一般不会出现该问题）
-                        if (selectColumnNames.isEmpty()) continue;
+                        if (selectColumnNames.isEmpty())
+                            continue;
                         selectColumn.setColumnName(String.join(",", selectColumnNames));
                         selectColumn.setTableInfo(String.join(",", seletTableNames));
                         filterSelectColumns.add(selectColumn);
@@ -950,7 +966,8 @@ public class SelectColumnSpecialLineageService {
      * @param columnInfoByTableMap with as map场景
      * @return 消除掉主体select引用with as别名后得到的一组selectColumns
      */
-    public List<SelectColumn> matchWithAsAndSelectColumns(List<SelectColumn> selectColumns, Map<String, List<SelectColumn>> columnInfoByTableMap) {
+    public List<SelectColumn> matchWithAsAndSelectColumns(List<SelectColumn> selectColumns,
+            Map<String, List<SelectColumn>> columnInfoByTableMap) {
         List<SelectColumn> result = new ArrayList<>();
 
         // 遍历每个SELECT列
@@ -978,12 +995,12 @@ public class SelectColumnSpecialLineageService {
                     List<SelectColumn> curMatchMapColumns = columnInfoByTableMap.get(tableInfo);
                     // * 场景直接匹配全部返回
                     if (Constant.ALL.equals(columnName)) {
-                        if (!curMatchMapColumns.isEmpty()){
+                        if (!curMatchMapColumns.isEmpty()) {
                             for (SelectColumn curMatchMapColumn : curMatchMapColumns) {
                                 result.add(curMatchMapColumn.cloneOwn());
                             }
                         }
-                    }else {
+                    } else {
                         // 非*场景
                         boolean found = false;
                         // 在WITH AS表的列中搜索匹配项
@@ -1002,7 +1019,7 @@ public class SelectColumnSpecialLineageService {
                             newColumnNames.add(columnName);
                         }
                     }
-                }else {
+                } else {
                     // 无匹配到，表示该表名非with as中，保留原始值
                     newTableInfos.add(tableInfo);
                     newColumnNames.add(columnName);
@@ -1010,14 +1027,14 @@ public class SelectColumnSpecialLineageService {
             }
 
             // 过滤掉无匹配到with as表情况
-            if (newTableInfos.isEmpty()) continue;;
+            if (newTableInfos.isEmpty())
+                continue;;
 
             // 创建新的SelectColumn对象(使用解析后的引用)
             SelectColumn newColumn = new SelectColumn(
                     String.join(",", newTableInfos),
                     String.join(",", newColumnNames),
-                    aliasName
-            );
+                    aliasName);
             result.add(newColumn);
         }
 
@@ -1036,6 +1053,3 @@ public class SelectColumnSpecialLineageService {
         this.tableNameStrategy = tableNameStrategy;
     }
 }
-
-
-

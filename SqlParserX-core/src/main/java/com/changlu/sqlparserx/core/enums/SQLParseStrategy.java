@@ -63,9 +63,7 @@ public enum SQLParseStrategy {
      * @throws IllegalArgumentException 如果strategy为null
      */
     public static int config(int strategies, SQLParseStrategy strategy, boolean enable) {
-        return enable ?
-            strategies | strategy.mask : 
-            strategies & ~strategy.mask;
+        return enable ? strategies | strategy.mask : strategies & ~strategy.mask;
     }
 
     /**
@@ -76,8 +74,9 @@ public enum SQLParseStrategy {
      * @throws IllegalArgumentException 如果strategies数组为null
      */
     public static int of(SQLParseStrategy... features) {
-        if (features == null) return 0;
-        
+        if (features == null)
+            return 0;
+
         int value = 0;
         for (SQLParseStrategy s : features) {
             value |= s.mask;

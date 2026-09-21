@@ -1,11 +1,12 @@
 package com.changlu.sqlparserx.core.base.lineage.column;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.BaseColumnLineageAnalyzerTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -37,14 +38,11 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
     @Test
     public void test_01_select_allcolumn_from() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("dwd_jszt_jyjs0504",
-                        Arrays.asList(new Column("gh", 0)
-                                , new Column("xm", 1)
-                                , new Column("dqszdwmc", 2)
-                                , new Column("zdxsjsjlmc", 3)
-                        ));
+                        Arrays.asList(new Column("gh", 0), new Column("xm", 1), new Column("dqszdwmc", 2), new Column(
+                                "zdxsjsjlmc", 3)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -59,14 +57,11 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
     @Test
     public void test_02_select_allcolumn_from() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("dwd_jszt_jyjs0504",
-                        Arrays.asList(new Column("gh", 0)
-                                , new Column("xm", 1)
-                                , new Column("dqszdwmc", 2)
-                                , new Column("zdxsjsjlmc", 3)
-                        ));
+                        Arrays.asList(new Column("gh", 0), new Column("xm", 1), new Column("dqszdwmc", 2), new Column(
+                                "zdxsjsjlmc", 3)));
             }
         };
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.hive);
@@ -82,24 +77,16 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
     @Test
     public void test_03_insert_select() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("a1",
-                        Arrays.asList(new Column("id1", 0)
-                                , new Column("name1", 1)
-                        ));
+                        Arrays.asList(new Column("id1", 0), new Column("name1", 1)));
                 this.put("a2",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
                 this.put("a3",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
                 this.put("a4",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
@@ -113,6 +100,5 @@ public class BaseColumnLineageInsertSelectTest extends BaseColumnLineageAnalyzer
         assertRelation(relations, "a1.name1", "a3.name");
         assertRelation(relations, "a1.name1", "a4.name");
     }
-
 
 }

@@ -1,14 +1,15 @@
 package com.changlu.sqlparserx.core.parser.base.lineage;
 
+import com.changlu.sqlparserx.core.parser.IColumnLineageClient;
+import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
-import com.changlu.sqlparserx.core.parser.IColumnLineageClient;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class ColumnLineageAnalyzer {
     public ColumnLineageResult analyze(String sql) {
         return analyze(sql, null);
     }
-    
+
     public ColumnLineageResult analyze(String sql, Map<String, List<Column>> tableColumnsMap) {
         return analyze(sql, tableColumnsMap, DbType.mysql);
     }

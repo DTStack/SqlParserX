@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class AbstractSqlParserTest {
 
-    public String readSqlFile(String testFile){
+    public String readSqlFile(String testFile) {
         try {
             String path = getSqlTestPath() + testFile;
             String relativePath = this.getClass().getResource(path).getPath();
@@ -25,7 +25,7 @@ public class AbstractSqlParserTest {
                 }
             }
             return sql.toString();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("读取文件异常！");
         }
@@ -73,7 +73,7 @@ public class AbstractSqlParserTest {
             }
 
             if (!sqlMap.containsKey(index)) {
-                throw new IllegalArgumentException("SQL索引"+index+"不存在，有效范围:" + sqlMap.keySet());
+                throw new IllegalArgumentException("SQL索引" + index + "不存在，有效范围:" + sqlMap.keySet());
             }
 
             return sqlMap.get(index);

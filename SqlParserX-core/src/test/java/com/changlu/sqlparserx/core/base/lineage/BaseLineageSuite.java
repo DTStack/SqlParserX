@@ -6,6 +6,7 @@ import com.changlu.sqlparserx.core.base.lineage.column.BaseColumnLineageWithAsIn
 import com.changlu.sqlparserx.core.base.lineage.table.BaseTableLineageCreateTableAsSelectTest;
 import com.changlu.sqlparserx.core.base.lineage.table.BaseTableLineageInsertSelectTest;
 import com.changlu.sqlparserx.core.base.lineage.table.BaseTableLineageWithAsInsertTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

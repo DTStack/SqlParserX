@@ -58,9 +58,8 @@ public class LogbackComponent implements InitializingBean {
         }
     }
 
-
     @Override
-    public void afterPropertiesSet(){
+    public void afterPropertiesSet() {
         try {
             setupLogger();
         } catch (Throwable e) {

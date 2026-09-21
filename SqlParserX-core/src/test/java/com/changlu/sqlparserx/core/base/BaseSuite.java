@@ -4,6 +4,7 @@ import com.changlu.sqlparserx.core.base.function.BaseParseFunctionTest;
 import com.changlu.sqlparserx.core.base.lineage.BaseLineageSuite;
 import com.changlu.sqlparserx.core.base.sqlfilter.BaseFilterSortSelectFieldTest;
 import com.changlu.sqlparserx.core.base.tables.BaseParseTablesTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

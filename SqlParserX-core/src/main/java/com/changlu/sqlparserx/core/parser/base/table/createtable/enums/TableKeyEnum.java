@@ -6,7 +6,7 @@ public enum TableKeyEnum {
     // AGGREGATE(2)聚合键
     // UNIQUE(3)唯一键
     // PRIMARY(4)主键
-    DUPLICATE(1),AGGREGATE(2),UNIQUE(3),PRIMARY(4);
+    DUPLICATE(1), AGGREGATE(2), UNIQUE(3), PRIMARY(4);
 
     private final Integer code;
 

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.changlu</groupId>
@@ -17,6 +15,8 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 代码格式化强制校验开关：默认开启，可通过 -Dspotless.check.skip=true 关闭 -->
+        <spotless.check.skip>false</spotless.check.skip>
     </properties>
 
     <dependencyManagement>
@@ -61,5 +61,55 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!--   自动格式化代码强制工具  -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.43.0</version>
+                <configuration>
+                    <java>
+                        <!-- 使用 Eclipse 格式化器：相比 google-java-format，不会重排 Javadoc/块注释，
+                             可保留手工排版的多行注释（如 @Author/@Date 等头注释） -->
+                        <eclipse>
+                            <file>${maven.multiModuleProjectDirectory}/config/eclipse-formatter.xml</file>
+                        </eclipse>
+                        <!--  移除未使用的引用import  -->
+                        <removeUnusedImports></removeUnusedImports>
+                        <!--  import 导入的顺序 空白（,,）：表示多加一个空行。
+                              默认是都带上一个空行的，这里是为了区分自己模块代码和其他引用模块代码
+                          -->
+                        <importOrder>
+                            <order>com.changlu,,javax,java,scala,\#</order>
+                        </importOrder>
+                    </java>
+                    <!--   单独针对pom.xml来进行格式化，指定缩进的空格数，这里是 4。这意味着 POM 文件中的每个缩进级别将使用 4 个空格。  -->
+                    <pom>
+                        <includes>
+                            <include>pom.xml</include>
+                        </includes>
+                        <sortPom>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                        </sortPom>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!--   定义操作的唯一标识   -->
+                        <id>format</id>
+                        <goals>
+                            <!--  执行应用代码格式化规则，根据<configuration> 中定义的规则去进行格式化
+                                 这里我们注释掉，打包项目的时候并不直接进行代码格式化，而是需要用户自己去主动格式化
+                            -->
+                            <!--                            <goal>apply</goal>-->
+                            <!--  代码格式化检查：如果代码不符合规则，Spotless 插件会抛出构建错误，确保代码风格一致   -->
+                            <goal>check</goal>
+                        </goals>
+                        <!--  Maven 的生命周期阶段之一：在 compile 阶段之前执行，用于处理源代码   -->
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

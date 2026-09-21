@@ -1,6 +1,5 @@
 package com.changlu.sqlparserx.core.parser;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.parser.base.BaseSqlParser;
 import com.changlu.sqlparserx.core.parser.clickhouse.ClickHouseSqlParser;
 import com.changlu.sqlparserx.core.parser.dm.DmSqlParser;
@@ -17,6 +16,8 @@ import com.changlu.sqlparserx.core.parser.sqlserver.SqlServerSqlParser;
 import com.changlu.sqlparserx.core.parser.starrocks.StarrocksSqlParser;
 import com.changlu.sqlparserx.core.parser.tidb.TidbSqlParser;
 import com.changlu.sqlparserx.core.parser.trino.TrinoSqlParser;
+
+import com.alibaba.druid.DbType;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,8 +47,7 @@ public class SqlParserFactory {
             DbType.oceanbase_oracle,
             DbType.dm,
             DbType.clickhouse,
-            DbType.spark
-    )));
+            DbType.spark)));
 
     /**
      * 判断指定的 Druid DbType 是否为核心库实际支持的方言（有独立解析器实现，非回退默认解析器）

@@ -1,14 +1,15 @@
 package com.changlu.sqlparserx.core.parser.base.sqlfilter.row;
 
+import com.changlu.sqlparserx.core.parser.base.sqlfilter.RowLevelPermissionHandler;
+import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.TableInfo;
+import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOperator;
 import com.alibaba.druid.sql.ast.statement.*;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.RowLevelPermissionHandler;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.TableInfo;
-import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.function.Consumer;
 public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler {
 
     @Override
-    public String getRowLevelPermissionSql(SQLStatement sqlStatement, List<RowLevelPermissionFilterParam> permissionParams) {
+    public String getRowLevelPermissionSql(SQLStatement sqlStatement,
+            List<RowLevelPermissionFilterParam> permissionParams) {
         if (sqlStatement instanceof SQLInsertStatement) {
             handleInsertStatement((SQLInsertStatement) sqlStatement, permissionParams);
         } else if (sqlStatement instanceof SQLSelectStatement) {
@@ -34,9 +36,9 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
      * 通用处理方法 - 适用于带有WHERE子句的语句(UPDATE/DELETE)
      */
     protected void handleStatementWithWhereClause(SQLTableSource from,
-                                                  SQLExpr existingWhere,
-                                                  List<RowLevelPermissionFilterParam> permissionParams,
-                                                  Consumer<SQLExpr> whereSetter) {
+            SQLExpr existingWhere,
+            List<RowLevelPermissionFilterParam> permissionParams,
+            Consumer<SQLExpr> whereSetter) {
         List<TableInfo> tableInfos = handleInSQLTableSource(from, permissionParams);
 
         SQLExpr combinedCondition = buildCombinedConditionForTables(tableInfos, permissionParams);
@@ -50,7 +52,7 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
      * 为多个表构建组合条件
      */
     protected SQLExpr buildCombinedConditionForTables(List<TableInfo> tableInfos,
-                                                      List<RowLevelPermissionFilterParam> permissionParams) {
+            List<RowLevelPermissionFilterParam> permissionParams) {
         boolean paramNotNeedUseTable = tableInfos.size() == 1;
         SQLExpr combinedCondition = null;
 
@@ -60,7 +62,8 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
                 if (combinedCondition == null) {
                     combinedCondition = tableCondition;
                 } else {
-                    combinedCondition = new SQLBinaryOpExpr(combinedCondition, SQLBinaryOperator.BooleanAnd, tableCondition);
+                    combinedCondition = new SQLBinaryOpExpr(combinedCondition, SQLBinaryOperator.BooleanAnd,
+                            tableCondition);
                 }
             }
         }
@@ -86,14 +89,16 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
         return new SQLBinaryOpExpr(existingWhere, SQLBinaryOperator.BooleanAnd, newCondition);
     }
 
-    private void handleSelectStatement(SQLSelectStatement selectStatement, List<RowLevelPermissionFilterParam> permissionParams) {
+    private void handleSelectStatement(SQLSelectStatement selectStatement,
+            List<RowLevelPermissionFilterParam> permissionParams) {
         SQLSelect select = selectStatement.getSelect();
         if (select != null) {
             handleSelectQuery(select.getQuery(), permissionParams);
         }
     }
 
-    private void handleInsertStatement(SQLInsertStatement insertStatement, List<RowLevelPermissionFilterParam> permissionParams) {
+    private void handleInsertStatement(SQLInsertStatement insertStatement,
+            List<RowLevelPermissionFilterParam> permissionParams) {
         SQLSelect query = insertStatement.getQuery();
         if (query != null) {
             handleSelectQuery(query.getQuery(), permissionParams);
@@ -112,7 +117,7 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
 
     // 处理select结构
     private void handleSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock,
-                                        List<RowLevelPermissionFilterParam> permissionParams) {
+            List<RowLevelPermissionFilterParam> permissionParams) {
         SQLTableSource from = selectQueryBlock.getFrom();
 
         List<TableInfo> tableInfos = handleInSQLTableSource(from, permissionParams);
@@ -126,7 +131,7 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
                 SQLExpr existingWhere = selectQueryBlock.getWhere();
                 if (existingWhere == null) {
                     selectQueryBlock.setWhere(combinedCondition);
-                }else {
+                } else {
                     // 若是原始存在的为or条件，如：WHERE price > 45.0 OR customer_name = 'John'，新条件为newCondition，则需要将条件进行(price > 45.0 OR customer_name = 'John')
                     if (existingWhere instanceof SQLBinaryOpExpr) {
                         SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr) existingWhere;
@@ -134,35 +139,36 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
                             sqlBinaryOpExpr.setParenthesized(true);
                         }
                     }
-                    selectQueryBlock.setWhere(new SQLBinaryOpExpr(existingWhere, SQLBinaryOperator.BooleanAnd, combinedCondition));
+                    selectQueryBlock.setWhere(new SQLBinaryOpExpr(existingWhere, SQLBinaryOperator.BooleanAnd,
+                            combinedCondition));
                 }
             }
         }
     }
 
     // 处理update结构
-    protected void handleUpdateStatement(SQLUpdateStatement sqlStatement, List<RowLevelPermissionFilterParam> permissionParams) {
+    protected void handleUpdateStatement(SQLUpdateStatement sqlStatement,
+            List<RowLevelPermissionFilterParam> permissionParams) {
         handleStatementWithWhereClause(
                 // SQLUpdateStatement中的from表通过tablesource获取
                 (sqlStatement).getTableSource(),
                 (sqlStatement).getWhere(),
                 permissionParams,
-                (sqlStatement)::setWhere
-        );
+                (sqlStatement)::setWhere);
     }
 
     // 处理delete结构
     private void handleDeleteStatement(SQLDeleteStatement sqlStatement,
-                                       List<RowLevelPermissionFilterParam> permissionParams) {
+            List<RowLevelPermissionFilterParam> permissionParams) {
         handleStatementWithWhereClause(
                 (sqlStatement).getFrom(),
                 (sqlStatement).getWhere(),
                 permissionParams,
-                (sqlStatement)::setWhere
-        );
+                (sqlStatement)::setWhere);
     }
 
-    public List<TableInfo> handleInSQLTableSource(SQLTableSource from, List<RowLevelPermissionFilterParam> permissionParams) {
+    public List<TableInfo> handleInSQLTableSource(SQLTableSource from,
+            List<RowLevelPermissionFilterParam> permissionParams) {
         List<TableInfo> collectSelectTables = new ArrayList<>();
 
         if (from instanceof SQLExprTableSource) {
@@ -183,7 +189,7 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
     }
 
     private void handleSubqueryTableSource(SQLSubqueryTableSource subqueryTableSource,
-                                           List<RowLevelPermissionFilterParam> permissionParams) {
+            List<RowLevelPermissionFilterParam> permissionParams) {
         handleSelectQuery(subqueryTableSource.getSelect().getQuery(), permissionParams);
     }
 
@@ -194,7 +200,7 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
      * @param paramNotNeedUseTable boolean 构建的条件中是否属性不需要带表名，若是例如 select * from order，单表就无需带上表名 如：select * from table where region in ('abc')
      */
     private SQLExpr buildCombinedCondition(List<RowLevelPermissionFilterParam> permissionParams,
-                                           TableInfo tableInfo, boolean paramNotNeedUseTable) {
+            TableInfo tableInfo, boolean paramNotNeedUseTable) {
         SQLExpr combinedCondition = null;
 
         for (RowLevelPermissionFilterParam param : permissionParams) {
@@ -215,7 +221,8 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
         return tableName == null || tableName.endsWith(param.getTableName());
     }
 
-    private SQLExpr createSingleCondition(RowLevelPermissionFilterParam param, TableInfo tableInfo, boolean paramNotNeedUseTable) {
+    private SQLExpr createSingleCondition(RowLevelPermissionFilterParam param, TableInfo tableInfo,
+            boolean paramNotNeedUseTable) {
         if (param.getFieldValue() == null || param.getFieldValue().isEmpty()) {
             return null;
         }
@@ -223,11 +230,13 @@ public class BaseRowLevelPermissionHandler implements RowLevelPermissionHandler 
     }
 
     private SQLExpr combineConditions(SQLExpr existing, SQLExpr newCondition,
-                                      RowLevelPermissionFilterParam param) {
-        if (existing == null) return newCondition;
+            RowLevelPermissionFilterParam param) {
+        if (existing == null)
+            return newCondition;
 
-        SQLBinaryOperator operator = param.getLinkOperatorEnum() == RowLevelPermissionFilterParam.LinkOperatorEnum.OR ?
-                SQLBinaryOperator.BooleanOr : SQLBinaryOperator.BooleanAnd;
+        SQLBinaryOperator operator = param.getLinkOperatorEnum() == RowLevelPermissionFilterParam.LinkOperatorEnum.OR
+                ? SQLBinaryOperator.BooleanOr
+                : SQLBinaryOperator.BooleanAnd;
         return new SQLBinaryOpExpr(existing, operator, newCondition);
     }
 

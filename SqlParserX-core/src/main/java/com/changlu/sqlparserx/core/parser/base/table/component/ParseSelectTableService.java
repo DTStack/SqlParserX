@@ -1,12 +1,13 @@
 package com.changlu.sqlparserx.core.parser.base.table.component;
 
+import com.changlu.sqlparserx.core.select.table.SelectTable;
+import com.changlu.sqlparserx.core.select.table.SelectTableSpecialLineageService;
+
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
 import com.alibaba.druid.sql.ast.expr.SQLInSubQueryExpr;
 import com.alibaba.druid.sql.ast.statement.SQLSelect;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
-import com.changlu.sqlparserx.core.select.table.SelectTable;
-import com.changlu.sqlparserx.core.select.table.SelectTableSpecialLineageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ParseSelectTableService extends SelectTableSpecialLineageService {
             SQLSelect sqlSelect = sqlInSubQueryExpr.getSubQuery();
             List<SelectTable> selectTables = super.queryTablesBySqlSelect(sqlSelect);
             tables.addAll(selectTables);
-        }else if (sqlExpr instanceof SQLBinaryOpExpr) {
+        } else if (sqlExpr instanceof SQLBinaryOpExpr) {
             // 举例：id IN ( SELECT id FROM tz2) AND name IN ( SELECT name FROM tz3)
             SQLBinaryOpExpr sqlBinaryOpExpr = (SQLBinaryOpExpr) sqlExpr;
             SQLExpr left = sqlBinaryOpExpr.getLeft();

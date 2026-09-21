@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 // 通用select 转换的字段追溯信息
-public class SelectColumn{
+public class SelectColumn {
 
     // 真实表信息
     private String tableInfo;

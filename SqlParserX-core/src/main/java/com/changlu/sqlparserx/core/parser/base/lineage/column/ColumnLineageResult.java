@@ -9,9 +9,9 @@ public class ColumnLineageResult {
     // 字段血缘关系 key:目标字段 value:目标字段来源字段
     private final Map<String, List<ColumnRelation>> columnRelations;
     private final List<ColumnLineage> columnLineages;
-    
-    public ColumnLineageResult(String targetTable, 
-                             Map<String, List<ColumnRelation>> columnRelations, List<ColumnLineage> columnLineages) {
+
+    public ColumnLineageResult(String targetTable,
+            Map<String, List<ColumnRelation>> columnRelations, List<ColumnLineage> columnLineages) {
         this.targetTable = targetTable;
         this.columnRelations = Collections.unmodifiableMap(columnRelations);
         this.columnLineages = columnLineages;
@@ -24,28 +24,28 @@ public class ColumnLineageResult {
     public String getTargetTable() {
         return targetTable;
     }
-    
+
     public Map<String, List<ColumnRelation>> getColumnRelations() {
         return columnRelations;
     }
-    
+
     public static class ColumnRelation {
         private final String source;
         private final String target;
-        
+
         public ColumnRelation(String source, String target) {
             this.source = source;
             this.target = target;
         }
-        
+
         public String getSource() {
             return source;
         }
-        
+
         public String getTarget() {
             return target;
         }
-        
+
         @Override
         public String toString() {
             return source + " -> " + target;
@@ -65,7 +65,7 @@ public class ColumnLineageResult {
                 for (ColumnLineageResult.ColumnRelation relation : value) {
                     System.out.println(relation);
                 }
-            }else {
+            } else {
                 System.out.println("null -> " + targetColumn);
             }
         }

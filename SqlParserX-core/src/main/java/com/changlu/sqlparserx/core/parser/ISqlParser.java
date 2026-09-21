@@ -1,7 +1,5 @@
 package com.changlu.sqlparserx.core.parser;
 
-import com.alibaba.druid.DbType;
-import com.alibaba.druid.sql.ast.SQLStatement;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageClient;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
@@ -18,11 +16,14 @@ import com.changlu.sqlparserx.core.parser.base.table.BaseParseTableClient;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
+import com.alibaba.druid.DbType;
+import com.alibaba.druid.sql.ast.SQLStatement;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface ISqlParser{
+public interface ISqlParser {
 
     /**
      * 解析列血缘
@@ -73,7 +74,7 @@ public interface ISqlParser{
      * @param sql String sql
      * @return ParseCreateTableResult 解析结果
      */
-   ParseCreateTableResult parseCreateTable(String sql);
+    ParseCreateTableResult parseCreateTable(String sql);
 
     /**
      * 解析sql中的函数
@@ -89,7 +90,8 @@ public interface ISqlParser{
      * @param tableColumnsMap Map<List<Column>>
      * @return ParseParameterResult
      */
-    ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck, Map<String, List<DataTypeColumn>> tableColumnsMap);
+    ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck,
+            Map<String, List<DataTypeColumn>> tableColumnsMap);
 
     /**
      * 预编译场景处理带变量sql
@@ -98,7 +100,8 @@ public interface ISqlParser{
      * @param columns Map<String,ParamInfo> 参数信息
      * @return PrepareCompileResult 构建预编译处理结果集合
      */
-    PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams, Map<String, ParamInfo> columns);
+    PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams,
+            Map<String, ParamInfo> columns);
 
     /**
      * 行级权限过滤

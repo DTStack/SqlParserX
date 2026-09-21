@@ -1,7 +1,6 @@
 package com.changlu.sqlparserx.core.parser;
 
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.RowLevelPermissionHandler;
-import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.builder.BaseExprBuilder;
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 
 import java.util.LinkedHashSet;

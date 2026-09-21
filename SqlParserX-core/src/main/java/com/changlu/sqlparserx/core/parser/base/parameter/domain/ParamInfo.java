@@ -97,13 +97,13 @@ public class ParamInfo {
     /**
      * 检查参数是否是必填参数且没有填写值
      */
-    private void checkValueOmit(){
-        if (this.imperative && Objects.isNull(this.value)){
+    private void checkValueOmit() {
+        if (this.imperative && Objects.isNull(this.value)) {
             throw new RuntimeException("必填参数" + this.name + "未没有值");
         }
     }
 
-    public boolean hasValue(){
+    public boolean hasValue() {
         checkValueOmit();
         return Objects.nonNull(this.value);
     }

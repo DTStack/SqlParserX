@@ -1,12 +1,12 @@
 package com.changlu.sqlparserx.core.datasource.doris;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.BaseColumnLineageAnalyzerTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -29,12 +29,10 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_01_insert() {
         String sql = readSqlByIndex(sqlTxtName, 1);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("wwz_0122",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -47,12 +45,10 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_02_insert_allcolumns() {
         String sql = readSqlByIndex(sqlTxtName, 2);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("wwz_012",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -65,16 +61,12 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_03_insert_overwrite() {
         String sql = readSqlByIndex(sqlTxtName, 3);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("wwz_012",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
                 this.put("wwz_013",
-                        Arrays.asList(new Column("id", 0)
-                                , new Column("name", 1)
-                        ));
+                        Arrays.asList(new Column("id", 0), new Column("name", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -90,16 +82,12 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
     @Test
     public void test_04_insert_overwrite() {
         String sql = readSqlByIndex(sqlTxtName, 4);
-        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>(){
+        Map<String, List<Column>> tableColumnsMap = new HashMap<String, List<Column>>() {
             {
                 this.put("t1",
-                        Arrays.asList(new Column("id1", 0)
-                                , new Column("name1", 1)
-                        ));
+                        Arrays.asList(new Column("id1", 0), new Column("name1", 1)));
                 this.put("t2",
-                        Arrays.asList(new Column("ID", 0)
-                                , new Column("NAME", 1)
-                        ));
+                        Arrays.asList(new Column("ID", 0), new Column("NAME", 1)));
             }
         };
         ColumnLineageResult result = sqlParser.parseColumnLineages(sql, tableColumnsMap);
@@ -119,36 +107,66 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertEquals(30, relations.size());
         assertEquals(30, result.getColumnLineages().size());
         // 目前针对目标表的字段列名以SQL中的字段为准，而不是以表中的字段为准
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_channel_id", "ods.ods_growth_adjust_activity_channel_hf.id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_id", "ods.ods_growth_adjust_activity_channel_hf.activity_id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_name", "dim.dim_growth_activity_activity_info_df.activity_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_status", "dim.dim_growth_activity_activity_info_df.activity_status");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.ch_type", "dim.dim_growth_activity_channel_info_df.ch_type");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.first_ch_name", "dim.dim_growth_activity_channel_info_df.first_ch_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.first_ch_sign", "ods.ods_growth_adjust_activity_channel_hf.first_ch");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.second_ch_name", "dim.dim_growth_activity_channel_info_df.second_ch_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.second_ch_sign", "ods.ods_growth_adjust_activity_channel_hf.second_ch");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.third_ch_name", "dim.dim_growth_activity_channel_info_df.third_ch_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.third_ch_sign", "ods.ods_growth_adjust_activity_channel_hf.third_ch");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.ch", "ods.ods_growth_adjust_activity_channel_hf.ch");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_type", "dim.dim_growth_activity_activity_info_df.activity_type");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_type_name", "dim.dim_growth_activity_activity_info_df.activity_type_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.preview_url", "dim.dim_growth_activity_activity_info_df.preview_url");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_url", "dim.dim_growth_activity_activity_info_df.activity_url");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.business_id", "dim.dim_growth_activity_activity_info_df.business_id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.business_name", "dim.dim_growth_activity_activity_info_df.business_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.reward_amt", "dim.dim_growth_activity_activity_info_df.reward_amt");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_begin_time", "dim.dim_growth_activity_activity_info_df.activity_begin_time");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_end_time", "dim.dim_growth_activity_activity_info_df.activity_end_time");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.register_begin_time", "dim.dim_growth_activity_activity_info_df.register_begin_time");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.register_end_time", "dim.dim_growth_activity_activity_info_df.register_end_time");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.create_user_id", "dim.dim_growth_activity_activity_info_df.create_user_id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.create_user_name", "dim.dim_growth_activity_activity_info_df.create_user_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_id", "dim.dim_growth_activity_activity_info_df.source_system_id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_name", "dim.dim_growth_activity_activity_info_df.source_system_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_create_user_id", "dim.dim_growth_activity_activity_info_df.source_system_create_user_id");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_create_user_name", "dim.dim_growth_activity_activity_info_df.source_system_create_user_name");
-        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_business_type", "dim.dim_growth_activity_activity_info_df.source_system_business_type");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_channel_id",
+                "ods.ods_growth_adjust_activity_channel_hf.id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_id",
+                "ods.ods_growth_adjust_activity_channel_hf.activity_id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_name",
+                "dim.dim_growth_activity_activity_info_df.activity_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_status",
+                "dim.dim_growth_activity_activity_info_df.activity_status");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.ch_type",
+                "dim.dim_growth_activity_channel_info_df.ch_type");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.first_ch_name",
+                "dim.dim_growth_activity_channel_info_df.first_ch_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.first_ch_sign",
+                "ods.ods_growth_adjust_activity_channel_hf.first_ch");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.second_ch_name",
+                "dim.dim_growth_activity_channel_info_df.second_ch_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.second_ch_sign",
+                "ods.ods_growth_adjust_activity_channel_hf.second_ch");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.third_ch_name",
+                "dim.dim_growth_activity_channel_info_df.third_ch_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.third_ch_sign",
+                "ods.ods_growth_adjust_activity_channel_hf.third_ch");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.ch",
+                "ods.ods_growth_adjust_activity_channel_hf.ch");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_type",
+                "dim.dim_growth_activity_activity_info_df.activity_type");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_type_name",
+                "dim.dim_growth_activity_activity_info_df.activity_type_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.preview_url",
+                "dim.dim_growth_activity_activity_info_df.preview_url");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_url",
+                "dim.dim_growth_activity_activity_info_df.activity_url");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.business_id",
+                "dim.dim_growth_activity_activity_info_df.business_id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.business_name",
+                "dim.dim_growth_activity_activity_info_df.business_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.reward_amt",
+                "dim.dim_growth_activity_activity_info_df.reward_amt");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_begin_time",
+                "dim.dim_growth_activity_activity_info_df.activity_begin_time");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.activity_end_time",
+                "dim.dim_growth_activity_activity_info_df.activity_end_time");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.register_begin_time",
+                "dim.dim_growth_activity_activity_info_df.register_begin_time");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.register_end_time",
+                "dim.dim_growth_activity_activity_info_df.register_end_time");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.create_user_id",
+                "dim.dim_growth_activity_activity_info_df.create_user_id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.create_user_name",
+                "dim.dim_growth_activity_activity_info_df.create_user_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_id",
+                "dim.dim_growth_activity_activity_info_df.source_system_id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_name",
+                "dim.dim_growth_activity_activity_info_df.source_system_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_create_user_id",
+                "dim.dim_growth_activity_activity_info_df.source_system_create_user_id");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_create_user_name",
+                "dim.dim_growth_activity_activity_info_df.source_system_create_user_name");
+        assertRelation(relations, "dim.dim_growth_activity_activity_channel_df.source_system_business_type",
+                "dim.dim_growth_activity_activity_info_df.source_system_business_type");
     }
 
     @Test
@@ -210,6 +228,5 @@ public class DorisColumnLineageTest extends BaseColumnLineageAnalyzerTest {
         assertRelation(relations, "dw_dim.dim_lease_account_df.param2", "real_table.is_basic_household");
         assertRelation(relations, "dw_dim.dim_lease_account_df.param2", "real_table.updation_ts");
     }
-
 
 }

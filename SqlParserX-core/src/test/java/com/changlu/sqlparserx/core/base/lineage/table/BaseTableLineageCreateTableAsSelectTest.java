@@ -1,11 +1,12 @@
 package com.changlu.sqlparserx.core.base.lineage.table;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableRelation;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,7 +35,6 @@ public class BaseTableLineageCreateTableAsSelectTest extends AbstractSqlParserTe
         assertEquals(0, result.getRelations().size());
     }
 
-
     /**
      * 表中带有default_catalog.changluya_db.orders
      */
@@ -47,7 +47,8 @@ public class BaseTableLineageCreateTableAsSelectTest extends AbstractSqlParserTe
         assertTrue(result.getSourceTables().contains("default_catalog.changluya_db.orders"));
 
         assertEquals(1, result.getRelations().size());
-        assertTrue(result.getRelations().contains(new TableRelation("default_catalog.changluya_db.orders", "new_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("default_catalog.changluya_db.orders",
+                "new_table")));
     }
 
     /**

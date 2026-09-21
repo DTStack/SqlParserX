@@ -1,9 +1,10 @@
 package com.changlu.sqlparserx.core.parser.hive;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.parser.IColumnLineageClient;
 import com.changlu.sqlparserx.core.parser.base.BaseSqlParser;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
+
+import com.alibaba.druid.DbType;
 
 import java.util.List;
 import java.util.Map;

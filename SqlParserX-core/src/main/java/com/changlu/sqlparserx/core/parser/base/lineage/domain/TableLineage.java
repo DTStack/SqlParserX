@@ -75,8 +75,10 @@ public class TableLineage {
     // equals()
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         TableLineage that = (TableLineage) o;
         return Objects.equals(fromCatalog, that.fromCatalog) &&
                 Objects.equals(fromDb, that.fromDb) &&

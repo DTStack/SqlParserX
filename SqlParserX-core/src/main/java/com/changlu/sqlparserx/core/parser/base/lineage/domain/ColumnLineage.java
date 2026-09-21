@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * 字段血缘
  */
-public class ColumnLineage{
+public class ColumnLineage {
     private String fromCatalog;
     private String fromDb;
     private String fromTable;
@@ -19,7 +19,8 @@ public class ColumnLineage{
     public ColumnLineage() {
     }
 
-    public ColumnLineage(String fromCatalog, String fromDb, String fromTable, String fromColumn, String toCatalog, String toDb, String toTable, String toColumn) {
+    public ColumnLineage(String fromCatalog, String fromDb, String fromTable, String fromColumn, String toCatalog,
+            String toDb, String toTable, String toColumn) {
         this.fromCatalog = fromCatalog;
         this.fromDb = fromDb;
         this.fromTable = fromTable;
@@ -96,10 +97,15 @@ public class ColumnLineage{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ColumnLineage that = (ColumnLineage) o;
-        return Objects.equals(fromCatalog, that.fromCatalog) && Objects.equals(fromDb, that.fromDb) && Objects.equals(fromTable, that.fromTable) && Objects.equals(fromColumn, that.fromColumn) && Objects.equals(toCatalog, that.toCatalog) && Objects.equals(toDb, that.toDb) && Objects.equals(toTable, that.toTable) && Objects.equals(toColumn, that.toColumn);
+        return Objects.equals(fromCatalog, that.fromCatalog) && Objects.equals(fromDb, that.fromDb) && Objects.equals(
+                fromTable, that.fromTable) && Objects.equals(fromColumn, that.fromColumn) && Objects.equals(toCatalog,
+                        that.toCatalog) && Objects.equals(toDb, that.toDb) && Objects.equals(toTable, that.toTable)
+                && Objects.equals(toColumn, that.toColumn);
     }
 
     @Override

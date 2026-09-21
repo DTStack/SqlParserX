@@ -1,17 +1,18 @@
 package com.changlu.sqlparserx.core.parser.base.table;
 
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.util.StringUtils;
+import com.changlu.sqlparserx.core.parser.IParseTableClient;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.base.table.component.ParseSelectTableService;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 import com.changlu.sqlparserx.core.select.column.SelectColumnItem;
 import com.changlu.sqlparserx.core.select.column.SelectColumnSpecialLineageService;
 import com.changlu.sqlparserx.core.select.table.SelectTable;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
-import com.changlu.sqlparserx.core.parser.IParseTableClient;
 import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,19 +38,19 @@ public class ParseTablesClient implements IParseTableClient {
     public ParseTableResult parseTables(SQLStatement stmt) {
         if (stmt instanceof SQLSelectStatement) {
             parseSelectTables((SQLSelectStatement) stmt);
-        }else if (stmt instanceof SQLUpdateStatement) {
+        } else if (stmt instanceof SQLUpdateStatement) {
             parseUpdateTables((SQLUpdateStatement) stmt);
-        }else if (stmt instanceof SQLDeleteStatement) {
+        } else if (stmt instanceof SQLDeleteStatement) {
             parseDeleteTables((SQLDeleteStatement) stmt);
-        }else if (stmt instanceof SQLDropTableStatement) {
+        } else if (stmt instanceof SQLDropTableStatement) {
             parseDropTables((SQLDropTableStatement) stmt);
-        }else if (stmt instanceof SQLTruncateStatement) {
+        } else if (stmt instanceof SQLTruncateStatement) {
             parseTruncateTables((SQLTruncateStatement) stmt);
-        }else if (stmt instanceof SQLCommentStatement) {
+        } else if (stmt instanceof SQLCommentStatement) {
             parseCommentTables((SQLCommentStatement) stmt);
-        }else if (stmt instanceof SQLCreateTableStatement) {
+        } else if (stmt instanceof SQLCreateTableStatement) {
             parseCreateTables((SQLCreateTableStatement) stmt);
-        }else if (stmt instanceof SQLInsertStatement) {
+        } else if (stmt instanceof SQLInsertStatement) {
             parseInsertTables((SQLInsertStatement) stmt);
         }
         return getParseTableResult();
@@ -99,10 +100,11 @@ public class ParseTablesClient implements IParseTableClient {
         if (type == SQLCommentStatement.Type.COLUMN) {
             SelectColumnSpecialLineageService selectColumnSpecialLineageService = new SelectColumnSpecialLineageService();
             // expr表达式为
-            SelectColumnItem selectColumnItem = selectColumnSpecialLineageService.buildSelectColumnItem(exprTableSource.getExpr());
+            SelectColumnItem selectColumnItem = selectColumnSpecialLineageService.buildSelectColumnItem(exprTableSource
+                    .getExpr());
             String tableName = selectColumnItem.getTableInfo();
             mainTable = Table.TableTransfer.parse(tableName);
-        }else {
+        } else {
             mainTable = TableSourceUtil.extractTable(exprTableSource);
         }
         this.allTables.add(mainTable);
@@ -141,7 +143,8 @@ public class ParseTablesClient implements IParseTableClient {
         // check是否满足with as场景
         if (withSubqueryClause != null) {
             // 3.1、构建with map
-            Map<String, List<SelectTable>> tableInfoByTableMap = parseSelectTableService.buildTableInfoByTableMap(withSubqueryClause);
+            Map<String, List<SelectTable>> tableInfoByTableMap = parseSelectTableService.buildTableInfoByTableMap(
+                    withSubqueryClause);
 
             // 3.2、处理with as场景 & 主体select字段情况 过滤掉主体中引用with as 别名表字段情况
             selectTables = matchWithAsAndAddAnotherTables(selectTables, tableInfoByTableMap);
@@ -161,11 +164,11 @@ public class ParseTablesClient implements IParseTableClient {
         }
     }
 
-
     /**
      * with as 场景处理：考虑完成selectTables中具有的别名替换 & 其他未引用别名场景的tables也要添加进来
      */
-    private List<SelectTable> matchWithAsAndAddAnotherTables(List<SelectTable> selectTables, Map<String, List<SelectTable>> tableInfoByTableMap) {
+    private List<SelectTable> matchWithAsAndAddAnotherTables(List<SelectTable> selectTables,
+            Map<String, List<SelectTable>> tableInfoByTableMap) {
         // 用于记录后续替换过的with as 的别名
         Set<String> usedAliases = new HashSet<>();
         // 1、提前转换map
@@ -200,7 +203,7 @@ public class ParseTablesClient implements IParseTableClient {
                         tableGroup.add(tableInfo);
                         usedAliases.add(tableName);
                     }
-                }else {
+                } else {
                     tableGroup.add(tableName);
                 }
 

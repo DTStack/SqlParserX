@@ -1,12 +1,13 @@
 package com.changlu.sqlparserx.core.select.table;
 
+import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
+import com.changlu.sqlparserx.core.utils.CollectionUtil;
+import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.expr.SQLQueryExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.util.StringUtils;
-import com.changlu.sqlparserx.core.enums.SQLParseStrategy;
-import com.changlu.sqlparserx.core.utils.CollectionUtil;
-import com.changlu.sqlparserx.core.utils.TableSourceUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,9 +16,10 @@ public class SelectTableSpecialLineageService {
 
     private int features;
 
-    public SelectTableSpecialLineageService() {}
+    public SelectTableSpecialLineageService() {
+    }
 
-    public SelectTableSpecialLineageService( SQLParseStrategy... features){
+    public SelectTableSpecialLineageService(SQLParseStrategy... features) {
         this.features = SQLParseStrategy.of(features);
     }
 
@@ -33,10 +35,11 @@ public class SelectTableSpecialLineageService {
         List<SelectTable> selectTables = new ArrayList<>();
         if (sqlSelectQuery instanceof SQLSelectQueryBlock) {
             selectTables = this.queryTableBySqlSelectQueryBlock((SQLSelectQueryBlock) sqlSelectQuery);
-        }else if (sqlSelectQuery instanceof SQLUnionQuery) {
+        } else if (sqlSelectQuery instanceof SQLUnionQuery) {
             SQLUnionQuery sqlUnionQuery = (SQLUnionQuery) sqlSelectQuery;
             List<SQLSelectQuery> relations = sqlUnionQuery.getRelations();
-            if (relations == null || relations.isEmpty()) return selectTables;
+            if (relations == null || relations.isEmpty())
+                return selectTables;
             for (int i = 0; i < relations.size(); i++) {
                 List<SelectTable> curSelectTables = queryTablesBySqlSelectQuery(relations.get(i));
                 selectTables.addAll(curSelectTables);
@@ -53,7 +56,8 @@ public class SelectTableSpecialLineageService {
     }
 
     protected List<SelectTable> queryTableBySqlSelectQueryBlock(SQLSelectQueryBlock selectQueryBlock) {
-        if (selectQueryBlock == null) return null;
+        if (selectQueryBlock == null)
+            return null;
         // 从表字段中筛选得到表
         List<SelectTable> tables = this.queryTableBySQLSelectItems(selectQueryBlock.getSelectList());
         // 表来源拆分
@@ -97,8 +101,10 @@ public class SelectTableSpecialLineageService {
             // #feat2：结合select & from 结合转换字段处理
             SQLExprTableSource sqlExprTableSource = (SQLExprTableSource) fromTable;
             // 真实表名 表别名
-            String sourceTableName = TableSourceUtil.extractTableName((SQLExprTableSource)fromTable);
-            String aliasTableName = sqlExprTableSource.getAlias() == null ? sourceTableName : sqlExprTableSource.getAlias();
+            String sourceTableName = TableSourceUtil.extractTableName((SQLExprTableSource) fromTable);
+            String aliasTableName = sqlExprTableSource.getAlias() == null
+                    ? sourceTableName
+                    : sqlExprTableSource.getAlias();
             tables.add(new SelectTable(sourceTableName, aliasTableName));
         }// 场景2：子查询表（SQLSubqueryTableSource） 如：from (select xxx, xxx from table 1)
         else if (fromTable instanceof SQLSubqueryTableSource) {
@@ -116,7 +122,7 @@ public class SelectTableSpecialLineageService {
             SelectTable selectTable = this.doMergeSubqueryTables(subQuerySelectTables, aliasTableName);
             tables.add(selectTable);
         } // 场景3：join表 如：from table1 left|inner|right join table2 on table1.id = table2.id
-        else if (fromTable instanceof SQLJoinTableSource){
+        else if (fromTable instanceof SQLJoinTableSource) {
             SQLJoinTableSource sqlJoinTableSource = (SQLJoinTableSource) fromTable;
             SQLTableSource left = sqlJoinTableSource.getLeft();
             SQLTableSource right = sqlJoinTableSource.getRight();
@@ -184,8 +190,7 @@ public class SelectTableSpecialLineageService {
         // 单独处理cte向前引用场景
         boolean enableCteForwardReference = SQLParseStrategy.isEnabled(
                 this.features,
-                SQLParseStrategy.CTE_FORWARD_REFERENCE
-        );
+                SQLParseStrategy.CTE_FORWARD_REFERENCE);
 
         // 开启cte向前引用场景
         if (enableCteForwardReference) {
@@ -200,7 +205,8 @@ public class SelectTableSpecialLineageService {
      * @param tableInfoByTableMap Map<List<SelectTable>>
      * @return Map<String,List<SelectTable>>
      */
-    private Map<String, List<SelectTable>> findRealCteForwardReferenceTableMap(Map<String, List<SelectTable>> tableInfoByTableMap) {
+    private Map<String, List<SelectTable>> findRealCteForwardReferenceTableMap(
+            Map<String, List<SelectTable>> tableInfoByTableMap) {
         Map<String, List<SelectTable>> tempRealWithasMap = new LinkedHashMap<>();
         if (tableInfoByTableMap != null && !tableInfoByTableMap.isEmpty()) {
             // 遍历每一个现有可能存在临时with as 别名表的map
@@ -227,8 +233,10 @@ public class SelectTableSpecialLineageService {
      * @param tempRealWithasMap Map<List<SelectTable>>
      * @return List<SelectTable>
      */
-    private List<SelectTable> findRealWithasTables(List<SelectTable> curTables, Map<String, List<SelectTable>> tempRealWithasMap) {
-        if (tempRealWithasMap.isEmpty()) return curTables;
+    private List<SelectTable> findRealWithasTables(List<SelectTable> curTables,
+            Map<String, List<SelectTable>> tempRealWithasMap) {
+        if (tempRealWithasMap.isEmpty())
+            return curTables;
 
         List<SelectTable> realTables = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(curTables)) {
@@ -250,7 +258,7 @@ public class SelectTableSpecialLineageService {
                                 realTableNameList.add(selectTable.getTableInfo());
                             }
                         }
-                    }else {
+                    } else {
                         realTableNameList.add(tableName);
                     }
                 }
@@ -267,7 +275,8 @@ public class SelectTableSpecialLineageService {
      * with as 场景处理：当前只考虑完成selectTables中具有的别名替换
      *  注意：这块逻辑表血缘 与 表解析有一些小区别（表解析应当将with as中的所有表字段全部解析拿到的）
      */
-    public List<SelectTable> matchWithAsAndSelectTables(List<SelectTable> selectTables, Map<String, List<SelectTable>> tableInfoByTableMap) {
+    public List<SelectTable> matchWithAsAndSelectTables(List<SelectTable> selectTables,
+            Map<String, List<SelectTable>> tableInfoByTableMap) {
         /**
          * filter逻辑：针对with as递归cte场景单独处理
          * t5 -> [{tableInfo:"t5, table1"}, {tableInfo:"table2"}]

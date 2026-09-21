@@ -1,11 +1,12 @@
 package com.changlu.sqlparserx.core.base.lineage.table;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableRelation;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -68,11 +69,16 @@ public class BaseTableLineageWithAsInsertTest extends AbstractSqlParserTest {
         assertTrue(result.getSourceTables().contains("digua_ceshi.departments"));
 
         assertEquals(5, result.getRelations().size());
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.demo_table_digua", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table2", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.hierarchy_table", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.departments", "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.demo_table_digua",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table2",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.hierarchy_table",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.departments",
+                "digua_ceshi.result_table")));
     }
 
     /**
@@ -92,12 +98,16 @@ public class BaseTableLineageWithAsInsertTest extends AbstractSqlParserTest {
         assertTrue(result.getSourceTables().contains("digua_ceshi.departments"));
 
         assertEquals(5, result.getRelations().size());
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.demo_table_digua", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table2", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.hierarchy_table", "digua_ceshi.result_table")));
-        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.departments", "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.demo_table_digua",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.new_table2",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.hierarchy_table",
+                "digua_ceshi.result_table")));
+        assertTrue(result.getRelations().contains(new TableRelation("digua_ceshi.departments",
+                "digua_ceshi.result_table")));
     }
-
 
 }

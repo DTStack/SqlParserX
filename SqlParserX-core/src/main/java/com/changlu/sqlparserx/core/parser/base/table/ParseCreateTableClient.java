@@ -1,19 +1,20 @@
 package com.changlu.sqlparserx.core.parser.base.table;
 
-import com.alibaba.druid.sql.ast.*;
-import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
-import com.alibaba.druid.sql.ast.statement.*;
 import com.changlu.sqlparserx.core.domain.Pair;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import com.changlu.sqlparserx.core.parser.base.table.createtable.domain.*;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.DistributedByTypeEnum;
 import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.TableKeyEnum;
 import com.changlu.sqlparserx.core.parser.base.table.createtable.enums.TablePartitionEnum;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.utils.CollectionUtil;
 import com.changlu.sqlparserx.core.utils.CommonUtil;
 import com.changlu.sqlparserx.core.utils.TableSourceUtil;
+
+import com.alibaba.druid.sql.ast.*;
+import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
+import com.alibaba.druid.sql.ast.statement.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,7 +104,8 @@ public class ParseCreateTableClient implements IParseTableClient {
      */
     protected Map<String, String> parseTableProperties(List<SQLAssignItem> tableOptions) {
         Map<String, String> properties = new HashMap<>();
-        if (CollectionUtil.isEmpty(tableOptions)) return properties;
+        if (CollectionUtil.isEmpty(tableOptions))
+            return properties;
         for (SQLAssignItem tableOption : tableOptions) {
             String target = CommonUtil.sqlExpr2Value(tableOption.getTarget());
             String value = CommonUtil.sqlExpr2Value(tableOption.getValue());
@@ -118,7 +120,8 @@ public class ParseCreateTableClient implements IParseTableClient {
      * @return TableDistributedBuckets
      */
     protected TableDistributedBuckets parseTableDistributedBuckets(SQLCreateTableStatement stmt) {
-        if (stmt == null) return new TableDistributedBuckets();
+        if (stmt == null)
+            return new TableDistributedBuckets();
         // 分桶数
         int buckets = stmt.getBuckets();
         // 获取到分桶类型 & 分桶字段
@@ -145,7 +148,8 @@ public class ParseCreateTableClient implements IParseTableClient {
     }
 
     protected TablePartition parseTablePartition(SQLPartitionBy partitionBy) {
-        if (partitionBy == null) return new TablePartition();
+        if (partitionBy == null)
+            return new TablePartition();
         TablePartition tablePartition = new TablePartition();
         List<SQLExpr> columns = partitionBy.getColumns();
         List<SQLPartition> partitions = partitionBy.getPartitions();
@@ -197,7 +201,7 @@ public class ParseCreateTableClient implements IParseTableClient {
         TablePartitionEnum tablePartitionEnum = null;
         if (partitionBy instanceof SQLPartitionByRange) {
             tablePartitionEnum = TablePartitionEnum.RANGER;
-        }else if (partitionBy instanceof SQLPartitionByList) {
+        } else if (partitionBy instanceof SQLPartitionByList) {
             tablePartitionEnum = TablePartitionEnum.LIST;
         }
         return tablePartitionEnum;
@@ -209,7 +213,8 @@ public class ParseCreateTableClient implements IParseTableClient {
      * @return TableKey
      */
     protected TableKey parseTableKey(SQLUnique unique) {
-        if (unique == null) return new TableKey();
+        if (unique == null)
+            return new TableKey();
         TableKey tableKey = new TableKey();
         // 处理指定类型键值的类型信息（默认unique）
         tableKey.setTableKeyEnum(dealTableKey(unique));
@@ -218,7 +223,7 @@ public class ParseCreateTableClient implements IParseTableClient {
         List<SQLSelectOrderByItem> columns = unique.getColumns();
         List<String> columnNames = new ArrayList<>();
         if (CollectionUtil.isNotEmpty(columns)) {
-            columnNames = columns.stream().map((column)->{
+            columnNames = columns.stream().map((column) -> {
                 String columnName = column.getExpr().toString();
                 return CommonUtil.removeQuotes(columnName);
             }).collect(Collectors.toList());
@@ -239,7 +244,8 @@ public class ParseCreateTableClient implements IParseTableClient {
         List<TableElement> resultList = new ArrayList<>();
         for (SQLTableElement sqlTableElement : tableElementList) {
             if (sqlTableElement instanceof SQLColumnDefinition) {
-                resultList.addAll(parseColumnDefinition(Collections.singletonList((SQLColumnDefinition) sqlTableElement)));
+                resultList.addAll(parseColumnDefinition(Collections.singletonList(
+                        (SQLColumnDefinition) sqlTableElement)));
             }
         }
         return resultList;
@@ -262,11 +268,12 @@ public class ParseCreateTableClient implements IParseTableClient {
             if (Objects.nonNull(comment)) {
                 element.setComment(CommonUtil.removeQuotes(comment.toString()));
             }
-            element.setArguments(columnDefinition.getDataType().getArguments().stream().map(x -> x.toString()).collect(Collectors.toList()));
+            element.setArguments(columnDefinition.getDataType().getArguments().stream().map(x -> x.toString()).collect(
+                    Collectors.toList()));
             element.setAggType(CommonUtil.sqlExpr2Value(aggType));
             resultList.add(element);
         }
         return resultList;
     }
-    
+
 }

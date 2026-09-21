@@ -1,9 +1,10 @@
 package com.changlu.sqlparserx.core.parser.base.table;
 
-import com.alibaba.druid.sql.ast.SQLStatement;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+
+import com.alibaba.druid.sql.ast.SQLStatement;
 
 /**
  * @description  解析表基类client
@@ -31,4 +32,4 @@ public class BaseParseTableClient implements IParseTableClient {
     protected ParseCreateTableClient getParseCreateTableClient() {
         return new ParseCreateTableClient();
     }
- }
+}

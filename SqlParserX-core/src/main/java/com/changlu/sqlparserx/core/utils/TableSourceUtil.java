@@ -1,5 +1,11 @@
 package com.changlu.sqlparserx.core.utils;
 
+import com.changlu.sqlparserx.core.parser.IParseTableClient;
+import com.changlu.sqlparserx.core.parser.ISqlParser;
+import com.changlu.sqlparserx.core.parser.SqlParserFactory;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
@@ -7,11 +13,6 @@ import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
-import com.changlu.sqlparserx.core.parser.IParseTableClient;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class TableSourceUtil implements SQLASTVisitor {
     /**
      * 解析真实表
      */
-    public static List<String> parseTables(String sql, DbType dbType){
+    public static List<String> parseTables(String sql, DbType dbType) {
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
         ParseTableResult parseTableResult = sqlParser.parseTables(sql);
         return new ArrayList<>(parseTableResult.getAllTableName());
@@ -32,14 +33,14 @@ public class TableSourceUtil implements SQLASTVisitor {
     /**
      * 解析真实表
      */
-    public static ParseTableResult parseTables(SQLStatement stmt){
+    public static ParseTableResult parseTables(SQLStatement stmt) {
         return parseTables(stmt, null);
     }
 
     /**
      * 解析真实表
      */
-    public static ParseTableResult parseTables(SQLStatement stmt, DbType dbType){
+    public static ParseTableResult parseTables(SQLStatement stmt, DbType dbType) {
         ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
         IParseTableClient parseTableClient = sqlParser.getParseTableClient();
         return parseTableClient.parseTables(stmt);
@@ -71,7 +72,8 @@ public class TableSourceUtil implements SQLASTVisitor {
      * @return
      */
     public static Table extractTable(SQLExprTableSource tableSource) {
-        if (tableSource == null) return null;
+        if (tableSource == null)
+            return null;
         // 别名
         String aliasTableName = null;
 
@@ -104,14 +106,14 @@ public class TableSourceUtil implements SQLASTVisitor {
             // 尝试去获取db
             if (hasDbNamePropertyExprOwner instanceof SQLIdentifierExpr) {
                 db = ((SQLIdentifierExpr) hasDbNamePropertyExprOwner).getName();
-            } else if ( hasDbNamePropertyExprOwner instanceof SQLPropertyExpr) {
+            } else if (hasDbNamePropertyExprOwner instanceof SQLPropertyExpr) {
                 db = ((SQLPropertyExpr) hasDbNamePropertyExprOwner).getName();
 
                 // 尝试去获取catalog
                 SQLExpr hasCataLogPropertyExprOwner = ((SQLPropertyExpr) hasDbNamePropertyExprOwner).getOwner();
                 if (hasCataLogPropertyExprOwner instanceof SQLIdentifierExpr) {
                     catalog = ((SQLIdentifierExpr) hasCataLogPropertyExprOwner).getName();
-                }else if (hasCataLogPropertyExprOwner instanceof SQLPropertyExpr) {
+                } else if (hasCataLogPropertyExprOwner instanceof SQLPropertyExpr) {
                     catalog = ((SQLPropertyExpr) hasCataLogPropertyExprOwner).getName();
                 }
             }
@@ -137,6 +139,5 @@ public class TableSourceUtil implements SQLASTVisitor {
                 .replaceAll("'", "")
                 .replaceAll("\"", "");
     }
-
 
 }

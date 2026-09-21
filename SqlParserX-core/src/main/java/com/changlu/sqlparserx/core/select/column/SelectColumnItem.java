@@ -54,8 +54,10 @@ public class SelectColumnItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SelectColumnItem that = (SelectColumnItem) o;
         return Objects.equals(tableInfo, that.tableInfo) && Objects.equals(columnName, that.columnName);
     }

@@ -29,28 +29,28 @@ public class ResponseResult<T> {
         this.data = data;
     }
 
-    public static <T> ResponseResult<T> success(String msg, T data){
-        return new ResponseResult<T>(200,msg,data);
+    public static <T> ResponseResult<T> success(String msg, T data) {
+        return new ResponseResult<T>(200, msg, data);
     }
 
-    public static <T> ResponseResult<T> success(){
+    public static <T> ResponseResult<T> success() {
         return new ResponseResult(200, null);
     }
 
-    public static <T> ResponseResult<T> success(T data){
-        return new ResponseResult<T>(200,data);
+    public static <T> ResponseResult<T> success(T data) {
+        return new ResponseResult<T>(200, data);
     }
 
-    public static <T> ResponseResult<T> error(String msg){
-        return new ResponseResult<T>(500,msg,null);
+    public static <T> ResponseResult<T> error(String msg) {
+        return new ResponseResult<T>(500, msg, null);
     }
 
-    public static <T> ResponseResult<T> error(String msg, T data){
-        return new ResponseResult<T>(500,msg, data);
+    public static <T> ResponseResult<T> error(String msg, T data) {
+        return new ResponseResult<T>(500, msg, data);
     }
 
-    public static <T> ResponseResult<T> error(Integer code, String msg){
-        return new ResponseResult<T>(code,msg,null);
+    public static <T> ResponseResult<T> error(Integer code, String msg) {
+        return new ResponseResult<T>(code, msg, null);
     }
 
     /**
@@ -58,10 +58,10 @@ public class ResponseResult<T> {
      * @param rows 影响行数
      * @return
      */
-    public static ResponseResult toResponse(int rows){
+    public static ResponseResult toResponse(int rows) {
         if (rows > 0) {
-            return ResponseResult.success("成功",null);
-        }else {
+            return ResponseResult.success("成功", null);
+        } else {
             return ResponseResult.error("操作失败");
         }
     }
@@ -71,10 +71,10 @@ public class ResponseResult<T> {
      * @param bool 结果
      * @return
      */
-    public static ResponseResult toResponse(boolean bool){
+    public static ResponseResult toResponse(boolean bool) {
         if (bool) {
-            return ResponseResult.success("成功",null);
-        }else {
+            return ResponseResult.success("成功", null);
+        } else {
             return ResponseResult.error("操作失败");
         }
     }

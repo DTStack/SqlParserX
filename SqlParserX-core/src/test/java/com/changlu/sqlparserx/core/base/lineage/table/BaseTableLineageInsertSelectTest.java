@@ -1,11 +1,12 @@
 package com.changlu.sqlparserx.core.base.lineage.table;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableRelation;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

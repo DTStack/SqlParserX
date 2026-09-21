@@ -1,12 +1,13 @@
 package com.changlu.sqlparserx.core.datasource.doris;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.common.AbstractSqlParserTest;
 import com.changlu.sqlparserx.core.parser.ISqlParser;
 import com.changlu.sqlparserx.core.parser.SqlParserFactory;
 import com.changlu.sqlparserx.core.parser.base.lineage.domain.TableLineage;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.lineage.table.TableRelation;
+
+import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.List;
@@ -41,6 +42,5 @@ public class DorisTableLineageTest extends AbstractSqlParserTest {
         assertTrue(result.getRelations().contains(new TableRelation("demo_table2", "new_table")));
         assertTrue(result.getRelations().contains(new TableRelation("demo_table", "new_table")));
     }
-
 
 }

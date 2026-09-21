@@ -1,13 +1,9 @@
 package com.changlu.sqlparserx.core.parser.base;
 
-import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
-import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
-import com.alibaba.druid.sql.parser.SQLParserUtils;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
-import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.changlu.sqlparserx.core.parser.*;
 import com.changlu.sqlparserx.core.parser.base.lineage.column.Column;
+import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
+import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.changlu.sqlparserx.core.parser.base.parameter.domain.DataTypeColumn;
 import com.changlu.sqlparserx.core.parser.base.parameter.domain.ParamInfo;
 import com.changlu.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult;
@@ -15,11 +11,15 @@ import com.changlu.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult
 import com.changlu.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
+import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
+import com.alibaba.druid.sql.parser.SQLParserUtils;
+import com.alibaba.druid.sql.parser.SQLStatementParser;
+import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 
 import java.util.*;
-
 
 public class BaseSqlParser implements ISqlParser {
 
@@ -40,7 +40,8 @@ public class BaseSqlParser implements ISqlParser {
     }
 
     @Override
-    public ColumnLineageResult parseColumnLineages(SQLStatement sqlStatement, Map<String, List<Column>> tableColumnsMap) {
+    public ColumnLineageResult parseColumnLineages(SQLStatement sqlStatement,
+            Map<String, List<Column>> tableColumnsMap) {
         IColumnLineageClient columnLineageClient = this.getColumnLineageClient(tableColumnsMap);
         return columnLineageClient.parseColumnLineages(sqlStatement);
     }
@@ -80,7 +81,7 @@ public class BaseSqlParser implements ISqlParser {
         Set<String> res = new HashSet<>();
         List<SQLStatement> statements = this.createStatements(sql);
         for (SQLStatement sqlStatement : statements) {
-            sqlStatement.accept(new SQLASTVisitorAdapter(){
+            sqlStatement.accept(new SQLASTVisitorAdapter() {
                 @Override
                 public boolean visit(SQLMethodInvokeExpr x) {
                     res.add(x.getMethodName());
@@ -98,13 +99,15 @@ public class BaseSqlParser implements ISqlParser {
     }
 
     @Override
-    public ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck, Map<String, List<DataTypeColumn>> tableColumnsMap) {
+    public ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck,
+            Map<String, List<DataTypeColumn>> tableColumnsMap) {
         SQLStatement statement = this.createStatement(sql);
         return getParseParameterClient().parseParameterSql(statement, isIgnoreSyntaxCheck, tableColumnsMap);
     }
 
     @Override
-    public PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams, Map<String, ParamInfo> columns) {
+    public PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams,
+            Map<String, ParamInfo> columns) {
         SQLStatement statement = this.createStatement(sql);
         return getParseParameterClient().buildSqlByPrepareCompile(statement, inParams, columns);
     }

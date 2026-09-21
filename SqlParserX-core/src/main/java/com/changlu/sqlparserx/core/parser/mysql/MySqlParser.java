@@ -1,9 +1,10 @@
 package com.changlu.sqlparserx.core.parser.mysql;
 
-import com.alibaba.druid.DbType;
 import com.changlu.sqlparserx.core.parser.IParseTableClient;
 import com.changlu.sqlparserx.core.parser.base.BaseSqlParser;
 import com.changlu.sqlparserx.core.parser.mysql.table.MysqlParseTablesClient;
+
+import com.alibaba.druid.DbType;
 
 /**
  * @description  MySqlParser 提供各类处理器

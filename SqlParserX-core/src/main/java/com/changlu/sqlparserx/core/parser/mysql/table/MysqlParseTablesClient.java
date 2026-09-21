@@ -1,10 +1,11 @@
 package com.changlu.sqlparserx.core.parser.mysql.table;
 
+import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
+import com.changlu.sqlparserx.core.parser.base.table.ParseTablesClient;
+import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
+
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement;
-import com.changlu.sqlparserx.core.parser.base.table.ParseTablesClient;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
-import com.changlu.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +27,8 @@ public class MysqlParseTablesClient extends ParseTablesClient {
 
     public void parseMySqlRenameTable(MySqlRenameTableStatement mySqlRenameTableStatement) {
         List<MySqlRenameTableStatement.Item> items = mySqlRenameTableStatement.getItems();
-        List<String> tableNames = items.stream().map(item -> item.getName().getSimpleName()).collect(Collectors.toList());
+        List<String> tableNames = items.stream().map(item -> item.getName().getSimpleName()).collect(Collectors
+                .toList());
         if (!tableNames.isEmpty()) {
             this.mainTable = Table.TableTransfer.parse(tableNames.get(0));
             this.allTables = tableNames.stream().map(Table.TableTransfer::parse).collect(Collectors.toSet());

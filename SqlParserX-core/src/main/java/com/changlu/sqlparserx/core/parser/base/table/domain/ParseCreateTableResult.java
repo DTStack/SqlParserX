@@ -121,15 +121,23 @@ public class ParseCreateTableResult {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         ParseCreateTableResult that = (ParseCreateTableResult) o;
-        return isNotExists == that.isNotExists && Objects.equals(db, that.db) && Objects.equals(tableName, that.tableName) && Objects.equals(tableComment, that.tableComment) && Objects.equals(tableElementList, that.tableElementList) && Objects.equals(partitionedByList, that.partitionedByList) && Objects.equals(tableKey, that.tableKey) && Objects.equals(tableDistributedBuckets, that.tableDistributedBuckets) && Objects.equals(tablePartition, that.tablePartition) && Objects.equals(properties, that.properties);
+        return isNotExists == that.isNotExists && Objects.equals(db, that.db) && Objects.equals(tableName,
+                that.tableName) && Objects.equals(tableComment, that.tableComment) && Objects.equals(tableElementList,
+                        that.tableElementList) && Objects.equals(partitionedByList, that.partitionedByList) && Objects
+                                .equals(tableKey, that.tableKey) && Objects.equals(tableDistributedBuckets,
+                                        that.tableDistributedBuckets) && Objects.equals(tablePartition,
+                                                that.tablePartition) && Objects.equals(properties, that.properties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isNotExists, db, tableName, tableComment, tableElementList, partitionedByList, tableKey, tableDistributedBuckets, tablePartition, properties);
+        return Objects.hash(isNotExists, db, tableName, tableComment, tableElementList, partitionedByList, tableKey,
+                tableDistributedBuckets, tablePartition, properties);
     }
 
     @Override

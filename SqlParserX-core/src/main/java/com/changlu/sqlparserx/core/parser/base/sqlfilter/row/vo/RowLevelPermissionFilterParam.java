@@ -82,7 +82,7 @@ public class RowLevelPermissionFilterParam {
     }
 
     public enum OperatorEnum {
-        IN(1," IN "),NOT_IN(2," NOT IN "),EQ(3," = "),NOT_EQ(4," != "),NULL(5," is null");
+        IN(1, " IN "), NOT_IN(2, " NOT IN "), EQ(3, " = "), NOT_EQ(4, " != "), NULL(5, " is null");
 
         final int code;
 
@@ -103,7 +103,7 @@ public class RowLevelPermissionFilterParam {
     }
 
     public enum LinkOperatorEnum {
-        AND(1," AND "),OR(2," OR ");
+        AND(1, " AND "), OR(2, " OR ");
 
         final int code;
 

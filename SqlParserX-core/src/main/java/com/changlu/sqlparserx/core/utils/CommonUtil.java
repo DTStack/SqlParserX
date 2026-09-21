@@ -6,7 +6,6 @@ import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @description 通用工具类 SQLParser解析器过程中使用
@@ -52,7 +51,8 @@ public class CommonUtil {
      * @return 字符串列表，如果输入为空则返回null
      */
     public static String sqlExpr2Value(SQLExpr sqlExpr) {
-        if (sqlExpr == null) return null;
+        if (sqlExpr == null)
+            return null;
         String value = sqlExpr.toString();
         if (sqlExpr instanceof SQLCharExpr) {
             SQLCharExpr sqlCharExpr = (SQLCharExpr) sqlExpr;

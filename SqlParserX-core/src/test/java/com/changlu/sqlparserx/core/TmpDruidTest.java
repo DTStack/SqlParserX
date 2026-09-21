@@ -1,20 +1,17 @@
 package com.changlu.sqlparser.core;
 
+import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
+
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.ast.expr.SQLAllColumnExpr;
 import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlSelectQueryBlock;
 import com.alibaba.druid.sql.parser.SQLParserFeature;
 import com.alibaba.druid.sql.parser.SQLParserUtils;
 import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.alibaba.druid.sql.parser.SQLType;
 import com.alibaba.druid.sql.visitor.SQLASTVisitor;
-import com.changlu.sqlparserx.core.parser.ISqlParser;
-import com.changlu.sqlparserx.core.parser.SqlParserFactory;
-import com.changlu.sqlparserx.core.parser.base.lineage.table.Table;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -68,7 +65,6 @@ public class TmpDruidTest {
         SQLSelectStatement stmt = (SQLSelectStatement) parser.parseStatement();
         System.out.println(stmt);
     }
-
 
     @Test
     public void tempTest_02_starrocks() {
@@ -196,15 +192,15 @@ public class TmpDruidTest {
 //                        tables.add(table);
                     }
                 },
-                e -> e instanceof SQLExprTableSource
-        );
+                e -> e instanceof SQLExprTableSource);
         System.out.println(tables);
     }
 
     @Test
     public void testParser() {
         String sql = "select name name1 from kano where id = %${id}%";
-        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql, SQLParserFeature.KeepSourceLocation);
+        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql,
+                SQLParserFeature.KeepSourceLocation);
 //        SQLStatementParser parser = SQLParserUtils.createSQLStatementParser(sql, DbType.mysql);
         SQLStatement sqlStatement = parser.parseStatement();
         System.out.println(sqlStatement);
