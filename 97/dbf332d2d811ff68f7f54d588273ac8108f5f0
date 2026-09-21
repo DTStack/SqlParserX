@@ -1,0 +1,433 @@
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/BaseSqlFilterClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-70
+pom.xml
+  s_732457d8366440::t_0a59a2c7d2a691 5
+  s_732457d8366440::t_928672caa44ebe 80
+  s_732457d8366440::t_57aabfc534cf01 75
+  s_732457d8366440::t_35259f3c8b1029 88
+  s_732457d8366440::t_c763993266a10a 72-74,76
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/table/Table.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-172
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/enums/TableNameMatchStrategy.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-23
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/utils/SQLSplitterUtil.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-174
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/ColumnLineageAnalyzer.java
+  s_732457d8366440::t_5da1d6e311bf82 18-58
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/BaseSuite.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-40
+SqlParserX-mcp-server-sse/config/eclipse-formatter.xml
+  s_732457d8366440::t_44a547870e1413 1-26
+SqlParserX-mcp-server-sse/config/license-header.txt
+  s_732457d8366440::t_fee409a9cb3f64 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/ISqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-157
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/sqlserver/SqlServerSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-31
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/vo/TableParseRequest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-31
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/trino/TrinoSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/ISqlFilterClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-62
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/domain/ParseCreateTableResult.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-175
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/config/Constant.java
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/mysql/MySqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-42
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/table/TableRelation.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-61
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/utils/CommonUtil.java
+  s_732457d8366440::t_5da1d6e311bf82 18-98
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/datasource/doris/DorisTableLineageTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-63
+README.en.md
+  s_732457d8366440::t_5da1d6e311bf82 89-93
+  s_732457d8366440::t_8d6f8f59ead507 5
+  s_732457d8366440::t_d45efa85ec579f 81
+  s_732457d8366440::t_0ff7d4d41f19f4 230
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/domain/ParseTableResult.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-72
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/DorisSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-62
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/starrocks/table/StarrocksParseCreateTableClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-78
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/config/LogbackComponent.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-86
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/domain/ResponseResult.java
+  s_732457d8366440::t_5da1d6e311bf82 18-128
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/column/BaseColumnLineageInsertSelectTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-121
+config/license-header.txt
+  s_732457d8366440::t_ba85578ff7bc88 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/table/BaseTableLineageWithAsInsertTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-130
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/utils/ColumnUtil.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-42
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/AllTestsSuite.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-42
+SqlParserX-web/src/main/resources/git.properties
+  s_732457d8366440::t_daf98cd605461e 2,5,11-17,23
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/vo/PrepareCompileResult.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-60
+SqlParserX-web/src/test/java/com/dtstack/sqlparserx/SqlParserXWebApplicationTests.java
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+  s_732457d8366440::t_57aabfc534cf01 1-17
+README.md
+  s_732457d8366440::t_3e214f95fa3e6b 5
+  s_732457d8366440::t_bceb1472a4e27b 89-90
+  s_732457d8366440::t_1979c554fb2b94 246
+  s_732457d8366440::t_d45efa85ec579f 97
+  s_732457d8366440::t_5da1d6e311bf82 105-109
+  s_732457d8366440::t_85683aeec72dd5 12-16,32,34,37-51,54-61,63,65-78
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/row/vo/RowLevelPermissionFilterParam.java
+  s_732457d8366440::t_5da1d6e311bf82 18-143
+  s_732457d8366440::t_57aabfc534cf01 1-17
+bin/base.sh
+  s_732457d8366440::t_5da1d6e311bf82 13,15
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/controller/LineageController.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-47
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/RowLevelPermissionHandler.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-46
+SqlParserX-mcp-server-sse/src/main/java/com/dtstack/sqlparserx/service/SqlParserToolService.java
+  s_732457d8366440::t_9ced858ece5377 25-29,32,73
+  s_732457d8366440::t_67e123007ae8a1 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-24,30-31,33-72,74-134
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/enums/DatasourceTypeEnum.java
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/component/ParseSelectTableService.java
+  s_732457d8366440::t_5da1d6e311bf82 18-69
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/tidb/TidbSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/oceanbase_oracle/OceanBaseOracleSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/column/ColumnLineageResult.java
+  s_732457d8366440::t_5da1d6e311bf82 18-98
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/domain/TableKey.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-45
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/util/SQLParseStrategySimpleTest.java
+  s_732457d8366440::t_5da1d6e311bf82 18-79
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/vo/ParseParameterResult.java
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-ui/src/components/Home.vue
+  s_732457d8366440::t_6c1b6ed9b06057 185
+  s_732457d8366440::t_7d4cc15314d644 215
+  s_732457d8366440::t_37f5abbd932450 39
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/controller/DataSourceController.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-127
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/row/BaseRowLevelPermissionHandler.java
+  s_732457d8366440::t_5da1d6e311bf82 18-260
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/tables/BaseParseTablesTest.java
+  s_732457d8366440::t_5da1d6e311bf82 18-163
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/enums/DataSourceType2DbType.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-237
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/select/column/SelectColumnSpecialLineageService.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-1072
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/table/DorisParseTableClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-31
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/starrocks/table/StarrocksParseTableClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-28
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/BaseSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-137
+SqlParserX-core/README.md
+  s_732457d8366440::t_5da1d6e311bf82 20-26,118
+  s_732457d8366440::t_7253a182f662d7 3,5,7-12,14
+  s_732457d8366440::t_50ebc08ff68a09 101-106,108-109,111,113,115-117,119,121
+  s_732457d8366440::t_d45efa85ec579f 17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/READMETest.java
+  s_732457d8366440::t_5da1d6e311bf82 19-94
+  s_732457d8366440::t_807c8fca04f84b 18
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/sqlfilter/BaseFilterSortSelectFieldTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-244
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/datasource/doris/DorisCreateTableTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-114
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/column/ColumnLineageClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-320
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/select/column/SelectColumnItem.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-95
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/table/TableLineageResult.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-96
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/domain/Pair.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-73
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/mysql/table/MysqlParseTablesClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-55
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/enums/TableKeyEnum.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-44
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/enums/DistributedByTypeEnum.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-41
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/oracle/OracleSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/spark/SparkSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/select/table/SelectTableSpecialLineageService.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-327
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/common/BaseColumnLineageAnalyzerTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-49
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/TmpDruidTest.java
+  s_732457d8366440::t_5da1d6e311bf82 19-235
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_807c8fca04f84b 18
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/domain/TableElement.java
+  s_732457d8366440::t_5da1d6e311bf82 18-67
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/service/LineageService.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-100
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/SqlParserXWebApplication.java
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/table/BaseTableLineageCreateTableAsSelectTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-164
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/utils/CollectionUtil.java
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/clickhouse/ClickHouseSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-mcp-server-sse/src/main/java/com/dtstack/sqlparserx/enums/DatasourceTypeEnum.java
+  s_732457d8366440::t_9ced858ece5377 22-26
+  s_732457d8366440::t_5da1d6e311bf82 18-21,27-37
+  s_732457d8366440::t_67e123007ae8a1 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/SqlParserFactory.java
+  s_732457d8366440::t_5da1d6e311bf82 18-128
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/ParseCreateTableClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-296
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/dm/DmSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/BaseLineageSuite.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-42
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/table/TableLineageClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-151
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/datasource/doris/DorisColumnLineageTest.java
+  s_732457d8366440::t_5da1d6e311bf82 18-249
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/env/SystemPropertyUtil.java
+  s_732457d8366440::t_5da1d6e311bf82 18-44
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/common/AbstractSqlParserTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-118
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/column/BaseColumnLineageWithAsInsertTest.java
+  s_732457d8366440::t_5da1d6e311bf82 18-161
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/row/builder/BaseExprBuilder.java
+  s_732457d8366440::t_5da1d6e311bf82 18-185
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/IColumnLineageClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-28
+SqlParserX-core/pom.xml
+  s_732457d8366440::t_0a59a2c7d2a691 6
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/enums/ColumnTypeEnum.java
+  s_732457d8366440::t_5da1d6e311bf82 18-38
+  s_732457d8366440::t_57aabfc534cf01 1-17
+assembly.xml
+  s_732457d8366440::t_0a59a2c7d2a691 18,21
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/function/BaseParseFunctionTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-55
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/hive/HiveSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-40
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-web/pom.xml
+  s_732457d8366440::t_0a59a2c7d2a691 6,46,119
+  s_732457d8366440::t_5da1d6e311bf82 175
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/enums/SQLParseStrategy.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-103
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/BaseParseTableClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-52
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/domain/ParamInfo.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-136
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/ParseTablesClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-279
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/IParseTableClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-35
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/datasource/DatasourceSuite.java
+  s_732457d8366440::t_5da1d6e311bf82 18-35
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/hive/HiveColumnLineageClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-23
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-mcp-server-sse/src/main/java/com/dtstack/sqlparserx/McpServerApplication.java
+  s_732457d8366440::t_5da1d6e311bf82 18-20,22-39
+  s_732457d8366440::t_9ced858ece5377 21
+  s_732457d8366440::t_67e123007ae8a1 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/domain/ColumnLineage.java
+  s_732457d8366440::t_5da1d6e311bf82 18-146
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/domain/TableLineage.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-113
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/column/Column.java
+  s_732457d8366440::t_5da1d6e311bf82 18-53
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/domain/TablePartitionElement.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-53
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/oceanbase/OceanBaseSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/select/table/SelectTable.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-48
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/domain/ApiParamSpan.java
+  s_732457d8366440::t_5da1d6e311bf82 18-153
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-mcp-server-sse/src/main/java/com/dtstack/sqlparserx/enums/DataSourceType2DbType.java
+  s_732457d8366440::t_9ced858ece5377 31-193
+  s_732457d8366440::t_5da1d6e311bf82 18-30,194-238
+  s_732457d8366440::t_67e123007ae8a1 1-17
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/controller/SQLSplitterController.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-41
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/starrocks/StarrocksSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/BaseParseParameterClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-44
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/table/BaseTableLineageInsertSelectTest.java
+  s_732457d8366440::t_5da1d6e311bf82 18-87
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/util/SqlSplictUtil.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-24
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/domain/DataTypeColumn.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-70
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/postgresql/PostgresqlSqlParser.java
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-mcp-server-sse/pom.xml
+  s_732457d8366440::t_9ced858ece5377 2,24-42,75-103,161
+  s_732457d8366440::t_31ec987bdc0898 107-112,117-122
+  s_732457d8366440::t_67e123007ae8a1 115
+  s_732457d8366440::t_65f897b3521cf4 113-114,116
+  s_732457d8366440::t_0a59a2c7d2a691 5,54
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/utils/TableSourceUtil.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-160
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/table/DorisParseCreateTableClient.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-41
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/select/column/SelectColumn.java
+  s_732457d8366440::t_5da1d6e311bf82 18-133
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/domain/TablePartition.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-64
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/row/vo/TableInfo.java
+  s_732457d8366440::t_5da1d6e311bf82 18-58
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/test/java/com/dtstack/sqlparserx/core/base/lineage/column/BaseColumnLineageCreateTableAsSelectTest.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-361
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/enums/TablePartitionEnum.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-44
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/IParseParameterClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-58
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/greenplum/GreenplumSqlParser.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-30
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/table/createtable/domain/TableDistributedBuckets.java
+  s_732457d8366440::t_5da1d6e311bf82 18-55
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/ITableLineageClient.java
+  s_732457d8366440::t_5da1d6e311bf82 18-34
+  s_732457d8366440::t_57aabfc534cf01 1-17
+SqlParserX-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/TableLineageAnalyzer.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-52
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/config/MyWebMvcConfig.java
+  s_732457d8366440::t_57aabfc534cf01 1-17
+  s_732457d8366440::t_5da1d6e311bf82 18-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "97dbf332d2d811ff68f7f54d588273ac8108f5f0",
+  "prompts": {},
+  "sessions": {
+    "s_732457d8366440": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3cb9339dffeDe4xpBvCPdr76m",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
