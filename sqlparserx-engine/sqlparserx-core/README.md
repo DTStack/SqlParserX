@@ -98,21 +98,21 @@ public class READMETest {
 
 # 关于分层能力扩展
 
-sqlparserx-core 采用分层设计，便于解耦与按数据源定制解析逻辑：
+SqlParserX 采用分层设计，便于解耦与按数据源定制解析逻辑：
 
-- **语法解析层**：位于 `druid-core` 模块内部，负责通用语法树解析。
-- **解析业务层**：位于本模块（`sqlparserx-core`），负责面向业务场景的解析能力。
+- **语法解析层**：位于 `sqlparserx-syntax` 模块，基于 Druid 负责 SQL 语法、Lexer/Parser 和 AST 解析扩展。
+- **解析业务层**：位于本模块（`sqlparserx-core`），基于语法层输出的 AST 负责面向业务场景的解析能力。
 
 分层的目的：
 
 1. 解耦：语法解析与业务解析职责分离。
 2. 可扩展：不同数据源可重写相应的解析实现。
 
-主要场景：当语法解析层基于 base 类进行了扩展时，对应的解析实现也应在相应数据源中扩展维护。
+主要场景：当 `sqlparserx-syntax` 语法层针对某个数据源扩展了 Lexer、Parser 或 AST 节点时，`sqlparserx-core` 中对应数据源的业务解析实现也应同步扩展维护。
 
 ## 扩展示范：解析表操作
 
-以 MySQL 为例，语法解析层在 `druid-core` 中自定义了 `MySqlRenameTableStatement`，而通用的 `ParseTableClient` 并未处理该节点。此时可在如下包目录下：
+以 MySQL 为例，语法解析层在 `sqlparserx-syntax` 中自定义了 `MySqlRenameTableStatement`，而通用的 `ParseTableClient` 并未处理该节点。此时可在如下包目录下：
 
 ```
 com.dtstack.sqlparserx.core.parser.base.table.client.mysql
