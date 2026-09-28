@@ -26,8 +26,6 @@ SqlParserX originated from practical work on multi-dialect SQL parsing, AST unif
 
 ![SqlParserX two-layer unified extension architecture](docs/架构设计/SqlParserX两层架构-en.png)
 
-> English editable source: [SqlParserX两层架构-en.drawio](docs/架构设计/SqlParserX两层架构-en.drawio). See the [architecture design](docs/架构设计/架构设计.md) for details.
-
 ```text
 Access: sqlparserx-web (REST) / sqlparserx-ui
                  │ unified ISqlParser contract
