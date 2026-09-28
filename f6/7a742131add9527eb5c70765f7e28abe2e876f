@@ -1,0 +1,192 @@
+sqlparserx-mcp-server-sse/pom.xml
+  s_c698168139133c::t_fbe0d2689487f4 10,55-57
+  s_c698168139133c::t_8fc3ad9921a42c 58-61
+docs/01、SQL语法层解析能力支撑情况/Druid版本与SQL语法支持情况.md
+  s_c698168139133c::t_70020a534c2395 1-5,8-29
+  s_c698168139133c::t_4424ccedf18791 6-7
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表血缘解析支持情况.md
+  s_13a2eb421f39cf::t_eb77c4d9c6bb76 5
+  s_13a2eb421f39cf::t_152b4e87dd8645 1-4,6-96
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/mysql/SQL语法解析支持情况.md
+  s_13a2eb421f39cf::t_53eeb6117dcbb4 1-4,6-33,43-47,54-74
+  s_13a2eb421f39cf::t_98d08ceab520a5 5
+  s_13a2eb421f39cf::t_c28727e6de5cd4 48-53
+  s_13a2eb421f39cf::t_6f4678c8500556 34-42
+sqlparserx-engine/sqlparserx-syntax/pom.xml
+  s_c698168139133c::t_80908016f94f10 1-35
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/starrocks/SQL语法解析支持情况.md
+  s_13a2eb421f39cf::t_4cf45fd724a4f6 34-43
+  s_13a2eb421f39cf::t_8ea0c1d84eb742 1-4,6-33,44-48,55-75
+  s_13a2eb421f39cf::t_e2b7fb979a8ea5 49-54
+  s_13a2eb421f39cf::t_9f8c07db4fef0d 5
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/controller/DataSourceController.java
+  s_c698168139133c::t_020fe58896b48e 26,64
+  s_c698168139133c::t_4a284f63a19831 49,51
+  s_c698168139133c::t_fbe0d2689487f4 135
+  s_c698168139133c::t_8403de3898ee05 59-61,79-82,100-103
+sqlparserx-web/pom.xml
+  s_c698168139133c::t_fbe0d2689487f4 11,47-49,51
+  s_c698168139133c::t_8fc3ad9921a42c 50,52-53,125
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/controller/SQLSplitterController.java
+  s_c698168139133c::t_8403de3898ee05 35-37,44
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/doris/SQL业务解析支持情况.md
+  s_13a2eb421f39cf::t_a263c26ed16336 50-55
+  s_13a2eb421f39cf::t_34aad5938ec0a8 56-57
+  s_13a2eb421f39cf::t_3957cd606db6e4 5
+  s_13a2eb421f39cf::t_1a62f1669c0739 1-4,6-49,58-82
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/SQL解析能力&数据源支撑适配情况.md
+  s_13a2eb421f39cf::t_acff9d7cc3e570 3
+  s_13a2eb421f39cf::t_08a0a8f305949b 58-65
+  s_c698168139133c::t_7eafe4e9b9f1be 102-104
+  s_13a2eb421f39cf::t_95771c20841615 24
+  s_13a2eb421f39cf::t_d8b553bce0f368 1-2
+  s_13a2eb421f39cf::t_521753798a9400 4-6,21-23
+  s_13a2eb421f39cf::t_edd0c40845fe73 25-27,55-57
+  s_c698168139133c::t_b5305502d9a5ad 105-107
+  s_c698168139133c::t_339786b8336a97 7-20,28-54,66-101,108-127
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/mysql/SQL业务解析支持情况.md
+  s_c698168139133c::t_262bdfa2aa498d 74,81
+  s_13a2eb421f39cf::t_bed0949802ca09 1-4,6-50,59-73,75-80
+  s_13a2eb421f39cf::t_4a67e7c2ee8f75 57-58
+  s_13a2eb421f39cf::t_b28533f8597812 51-56
+  s_13a2eb421f39cf::t_ea95019dac6111 5
+README.md
+  s_c698168139133c::t_166370ed929620 81
+  s_c698168139133c::t_8b263940c23faf 53
+  s_c698168139133c::t_04ccb9fef3f6fa 106,110,114,118
+  s_c698168139133c::t_34250aba616c8e 18
+  s_c698168139133c::t_abf4bd889b22a3 88,98
+  s_c698168139133c::t_b1b92eb46a0c3f 9,11,13,15,17,19-23,25,27,29,31-37,39,41-44,46,48,50,52,54-72,74-77,79,83,93,95,99-101,104,108,112,116,120
+  s_c698168139133c::t_d296e66a2edea1 3
+docs/02、SQL业务层解析能力支撑情况/标准迭代维护扩展文档/SqlParserX解析能力标准迭代维护扩展指南.md
+  s_13a2eb421f39cf::t_c2b57b45be49e1 1-11,13-50,52,54,59-64,66-76,78,83-84,86-87,90,92-93,96,98,100-110,112-143,145-148,159,161,164-167,169-179,181,183-198,200,202-208,210-221,223-230,232-251,253-261,263-266
+  s_13a2eb421f39cf::t_3879f2dd7b1ba0 12,51,53,55-58,65,77,79-82,85,88-89,91,94-95,97,99,111,144,149-158,160,162-163,168,180,182,199,201,209,222,231,252,262
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/controller/LineageController.java
+  s_c698168139133c::t_8403de3898ee05 21,43-45
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/doris/SQL语法解析支持情况.md
+  s_13a2eb421f39cf::t_28872ea4bf26d0 1-4,6-43,53-57,64-84
+  s_13a2eb421f39cf::t_676125bbc03d35 5
+  s_13a2eb421f39cf::t_a30b910edf0db0 44-52
+  s_13a2eb421f39cf::t_dc201b601f1783 58-63
+pom.xml
+  s_c698168139133c::t_80908016f94f10 10
+  s_c698168139133c::t_fbe0d2689487f4 11
+docs/架构设计/架构设计.md
+  s_13a2eb421f39cf::t_59db3c847a87c2 20
+  s_13a2eb421f39cf::t_ae41c0945945d1 48-63
+  s_13a2eb421f39cf::t_e8460b3139b245 44,68,84,91,131-150
+  s_13a2eb421f39cf::t_11750af2445b10 115-116
+  s_13a2eb421f39cf::t_b247c4e7b76896 124-130
+  s_13a2eb421f39cf::t_18b5418ca9e026 30-32
+  s_13a2eb421f39cf::t_149bdc8a284d97 3-8
+  s_c698168139133c::t_f964e931e06d07 12-14
+  s_13a2eb421f39cf::t_8435abdfc6ca87 1-2
+  s_13a2eb421f39cf::t_4436be52f767fa 21-23,27-29
+  s_13a2eb421f39cf::t_ffa30c4d05d8c1 33-35,41-43
+  s_13a2eb421f39cf::t_2fd5ae9495e2dd 45-47
+  s_13a2eb421f39cf::t_08248bfc1b7d2f 64-67
+  s_13a2eb421f39cf::t_44c402b002f032 69-71,81-83
+  s_13a2eb421f39cf::t_ed86dca0e792e2 85-90
+  s_13a2eb421f39cf::t_c52b0dde93b88a 92-94,112-114
+  s_13a2eb421f39cf::t_a6c5d7fcb524b1 117-119,121-123
+  s_c698168139133c::t_ac47a2f63f9eba 9-11,15-19,24-26,36-40,72-80,95-111,120
+docs/架构设计/SqlParserX两层架构.drawio
+  s_c698168139133c::t_0fd2121d80b11e 1-3,8-14,16-47,49-92,94-95,97-98,100-101,103-104,106-107,109-110,112-113,115-116,118-119,121
+  s_c698168139133c::t_3e3185ed289b6a 93,96,99,105,114
+  s_c698168139133c::t_1df76797087757 15,48
+  s_c698168139133c::t_a540ef3da96d9f 4
+  s_c698168139133c::t_685ff6829f9aa2 102,108,111,117,120
+  s_c698168139133c::t_a05771008340e8 5-7,122-125
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/enums/DatasourceTypeEnum.java
+  s_c698168139133c::t_4a284f63a19831 26-27
+README_zh-CN.md
+  s_c698168139133c::t_d296e66a2edea1 3
+  s_c698168139133c::t_b1b92eb46a0c3f 9,11,13,15-17,19,21,23-30,32,34,36,38,40-57,59,61-66,68,70,73-79,81,83,85,87-103,105,107,109,111-116,118,120-129,131,133,135,137-142,145,147,149-151,153-156,158,160,162,164-167,170-171,174,176,180-186,188-195,198-220,222,224,226,228,232
+sqlparserx-engine/pom.xml
+  s_c698168139133c::t_80908016f94f10 1-47
+sqlparserx-engine/sqlparserx-core/pom.xml
+  s_c698168139133c::t_80908016f94f10 7,11,23-25
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/字段血缘解析支持情况.md
+  s_13a2eb421f39cf::t_b9bbe665c7916e 1-4,6-112
+  s_13a2eb421f39cf::t_4a273776a12018 5
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/README.md
+  s_13a2eb421f39cf::t_6b8e7c4d3d5114 3,10-12,22,26,38
+  s_13a2eb421f39cf::t_2e7cecf78e70e0 9,13-19
+  s_13a2eb421f39cf::t_853dd25a20695b 1-2,4-8,20-21,23-25,27-37,39-57
+docs/02、SQL业务层解析能力支撑情况/模块依赖包引用结构设计.md
+  s_c698168139133c::t_2c70dfbde3d320 5,9,17-28,62,71-72,90-96,134-137,199,208-211
+  s_c698168139133c::t_92e8c98560a1bb 1-4,6-8,10-16,29-61,63-70,73-89,97-133,155-198,200-207,213-231
+  s_c698168139133c::t_77be6786dd7cd8 138-154
+  s_c698168139133c::t_e3ddd14dc2e3c4 212
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/datasource/starrocks/SQL业务解析支持情况.md
+  s_13a2eb421f39cf::t_deb735d38a6d19 5
+  s_13a2eb421f39cf::t_14841ee68c49b7 53-54
+  s_13a2eb421f39cf::t_2db0f4cc739630 1-4,6-46,55-77
+  s_13a2eb421f39cf::t_3df565885cc72e 47-52
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表解析支持情况.md
+  s_13a2eb421f39cf::t_2b8bb7785090b4 5
+  s_13a2eb421f39cf::t_c5ac2218d65b75 1-4,6-117
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/函数解析支持情况.md
+  s_13a2eb421f39cf::t_973014ffe15f79 1-4,6-74
+  s_13a2eb421f39cf::t_38b5944ddb7ede 5
+sqlparserx-engine/sqlparserx-core/README.md
+  s_c698168139133c::t_248ae24a1cc8ab 3,101,104
+sqlparserx-mcp-server-sse/config/eclipse-formatter.xml
+  s_732457d8366440::t_89cbb7a028f79a 1-26
+sqlparserx-mcp-server-sse/config/license-header.txt
+  s_732457d8366440::t_46e0baad51ad15 1-17
+docs/blogs/20260928：SqlParserX的诞生起源背景&内部改造.md
+  s_c698168139133c::t_516b76b90c53fa 1-444
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/BaseSqlParser.java
+  s_c698168139133c::t_f65efbfb927c12 31-32,44,48-52
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/ColumnLineageAnalyzer.java
+  s_c698168139133c::t_587ac1b6f85265 25,44,56
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/lineage/TableLineageAnalyzer.java
+  s_c698168139133c::t_06856db6be3e84 24,37,50
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqlfilter/BaseSqlFilterClient.java
+  s_c698168139133c::t_fd6893fb6cc2f4 23,47,68
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/utils/SQLSplitterUtil.java
+  s_c698168139133c::t_b1a090ac31a203 20-21,76,98,108,128
+sqlparserx-engine/sqlparserx-syntax/src/main/java/com/dtstack/sqlparserx/syntax/SqlSyntaxParser.java
+  s_c698168139133c::t_44f60341e9c81c 1-43
+sqlparserx-engine/sqlparserx-syntax/src/main/java/com/dtstack/sqlparserx/syntax/SqlSyntaxParserFactory.java
+  s_c698168139133c::t_3a3260d1152274 1-33
+sqlparserx-engine/sqlparserx-syntax/src/main/java/com/dtstack/sqlparserx/syntax/druid/DruidSqlSyntaxParser.java
+  s_c698168139133c::t_e6c0077d70e206 1-92
+sqlparserx-engine/sqlparserx-syntax/src/test/java/com/dtstack/sqlparserx/syntax/DruidSqlSyntaxParserTest.java
+  s_c698168139133c::t_af6d713e8fe863 1-44
+sqlparserx-web/src/main/resources/git.properties
+  s_c698168139133c::t_4c7a5c74c6f3bd 2,5,11-17,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f67a742131add9527eb5c70765f7e28abe2e876f",
+  "prompts": {},
+  "sessions": {
+    "s_13a2eb421f39cf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f198efccbffekXXVL2OOQVg2FY",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_732457d8366440": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3cb9339dffeDe4xpBvCPdr76m",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_c698168139133c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e612-cef5-7783-a15d-19c11afb4e43",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
