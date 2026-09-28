@@ -1,0 +1,19 @@
+sqlparserx-engine/sqlparserx-core/README.md
+  s_c698168139133c::t_fd4f3e2f86a516 101,103-104,111,115,121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3d7214f1dd3e4c7a382c25f3a9544708862a85a",
+  "prompts": {},
+  "sessions": {
+    "s_c698168139133c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e612-cef5-7783-a15d-19c11afb4e43",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
