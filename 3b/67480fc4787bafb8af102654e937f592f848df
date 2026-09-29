@@ -1,0 +1,243 @@
+website/docusaurus.config.js
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,3-12,15-24,29-34,36-39,42-61,63-74,76-83,85-114,116-121,123,125-127,129-132,134,137-141,143-155,158-165,167-168,170-174,177-179,181-191
+  s_c6474ea787f73b::t_d2654ebdbcdc3f 25-26
+  s_c6474ea787f73b::t_6d3ca9f230da4a 27,142,166,175
+  s_c6474ea787f73b::t_a7c076ee70c8ae 157
+  s_c6474ea787f73b::t_74bda05f36c0bf 62
+  s_c6474ea787f73b::t_43eef92a7e3397 28
+  s_c6474ea787f73b::t_2b2c2fbdd6f1d7 2,13,122,124,180
+  s_c6474ea787f73b::t_c634faadec5dd8 75
+  s_c6474ea787f73b::t_874d6ee43dbd40 84
+  s_c6474ea787f73b::t_9c196f62b20334 115,156,169,176
+  s_c6474ea787f73b::t_00afccefc9a264 35,40-41
+  s_c6474ea787f73b::t_5d1eb5671a73a0 128,133,135-136
+  s_c6474ea787f73b::t_4583b70f61db66 14
+website/docs/intro.md
+  s_c6474ea787f73b::t_c7146cae324db2 17
+  s_c6474ea787f73b::t_c087ac1cd4e8bd 1-16,18-30
+website/i18n/en/docusaurus-plugin-content-docs/current/core/function-parse.md
+  s_c6474ea787f73b::t_77b1a34ba3d8fc 1-9,65,67-69,71,73-74,76-78,82-83,85-90
+  s_c6474ea787f73b::t_85b7f7d2d1425f 10-64,66,70,72,75,79-81,84,91
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/function-parse.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,65,67-69,71,73-74,76-78,82-83,85-90
+  s_c6474ea787f73b::t_8923fe4f7a9946 10-64,66,70,72,75,79-81,84,91
+website/src/pages/index.js
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-4,6-7,9-16,18-19,21-23
+  s_c6474ea787f73b::t_92aefb78d14665 5,8,17,20,24
+website/src/css/custom.css
+  s_c6474ea787f73b::t_d86ae6cc9aec8e 27-50
+  s_c6474ea787f73b::t_c870465fa4a21b 73-96
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-26,51-72,97-131
+website/src/components/CTA/styles.module.css
+  s_c6474ea787f73b::t_e6904c9f8d5a19 1-89
+website/i18n/en/code.json
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-329,331-332,334-335,337-343,346,349-352,355-356,358,361,364,373,376,379,382,403,406,409,412,415,418,421,424,427,493
+  s_c6474ea787f73b::t_7b5cc8e21854d9 357,430-492
+  s_c6474ea787f73b::t_d86d9baa2b2cce 330,333,336,344-345,347-348,353-354,359-360,362-363,365-372,374-375,377-378,380-381,383-402,404-405,407-408,410-411,413-414,416-417,419-420,422-423,425-426,428-429,494
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/intro.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-15,17-29
+  s_c6474ea787f73b::t_c7146cae324db2 16
+website/docs/about/introduction.md
+  s_c6474ea787f73b::t_95b5682f9cf28a 1-44
+  s_c6474ea787f73b::t_c7146cae324db2 45
+website/src/components/CTA/index.jsx
+  s_c6474ea787f73b::t_2baaa28c325bb2 1-35
+website/docs/core/table-parse.md
+  s_c6474ea787f73b::t_f03922d567a2af 10-71,77,79,82,86,88,91,97
+  s_c6474ea787f73b::t_83de8da36bcc96 1-9,72-76,78,80-81,83-85,87,89-90,92-96,98-101
+website/i18n/en/docusaurus-plugin-content-docs/current/quickstart/setup.md
+  s_c6474ea787f73b::t_eba2802ad21d34 3-116
+  s_c6474ea787f73b::t_ea798d3f59b825 1-2
+  s_c6474ea787f73b::t_4d505920ece71f 117-119
+website/static/img/social-card.svg
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-11
+website/i18n/en/docusaurus-theme-classic/navbar.json
+  s_c6474ea787f73b::t_d1f5c9b77d6fe0 10-13,15,21-24,26
+  s_c6474ea787f73b::t_2b2c2fbdd6f1d7 3,7
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-2,4-6,8-9,14,16-20,25
+website/src/components/Case/styles.module.css
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,3,5-9,12-21,32,36-42,75-77,79-82,85,87-88,90-92,98-99
+  s_c6474ea787f73b::t_352641398288bc 2,4,10-11,22-31,33-35,43-74,78,83-84,86,89,93-97
+website/i18n/en/docusaurus-plugin-content-docs/current/core/table-lineage.md
+  s_c6474ea787f73b::t_309c30b82accc3 1-9,76-85,87-91,93-94,96-102
+  s_c6474ea787f73b::t_5a9ffcafd476a8 10-75,86,92,95,103
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0.json
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-30
+website/docs/core/table-lineage.md
+  s_c6474ea787f73b::t_401a00b2e7fe37 10-52,54-76,86,92,95
+  s_c6474ea787f73b::t_ab873e55f6b53c 1-9,53,77-85,87-91,93-94,96-105
+website/versioned_docs/version-1.0/about/architecture.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-69
+website/i18n/en/docusaurus-plugin-content-docs/current/about/introduction.md
+  s_c6474ea787f73b::t_ba8655eab16226 1-43
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/contributing.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-35
+website/blog/tags.yml
+  s_c6474ea787f73b::t_948480eccd3846 1-4
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/table-lineage.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,76-85,87-91,93-94,96-102
+  s_c6474ea787f73b::t_8923fe4f7a9946 10-75,86,92,95,103
+website/README.md
+  s_c6474ea787f73b::t_a15218fefa9a9b 1,3,8,11,21,24,28,35-36,38,41,45-51,53,55-57,60,63,69,71-76,78,80,83-84,87,89,92-93,96,98,100,102,104,106,128,133,137,139
+  s_c6474ea787f73b::t_cde5d5ef9f99d7 32
+  s_c6474ea787f73b::t_4f3480e8586cab 22
+  s_c6474ea787f73b::t_2e019d141eec12 108-111,113-119
+  s_c6474ea787f73b::t_ee5e5728ee1f47 2,4-7,9-10,12-20,23,25-27,29-31,33-34,37,39-40,42-44,52,54,58-59,61-62,64-68,70,77,79,81-82,85-86,88,90-91,94-95,97,99,101,103,105,107,120-127,129-132,134-136,138
+  s_c6474ea787f73b::t_3ebe09fa70adbd 112
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/table-parse.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,70,73-76,78,80-81,83-85,87,89-90,92-96,98
+  s_c6474ea787f73b::t_8923fe4f7a9946 10-69,71-72,77,79,82,86,88,91,97,99
+website/versioned_docs/version-1.0/contributing.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-36
+website/versioned_docs/version-1.0/core/function-parse.md
+  s_c6474ea787f73b::t_fb0b184116650c 10-47,49-50,52-67,70,72,75,79-81,84
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,48,51,68-69,71,73-74,76-78,82-83,85-93
+website/versioned_docs/version-1.0/core/table-lineage.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,53,77-85,87-91,93-94,96-105
+  s_c6474ea787f73b::t_fb0b184116650c 10-52,54-76,86,92,95
+website/i18n/en/docusaurus-plugin-content-docs/current.json
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-30
+website/docs/quickstart/setup.md
+  s_c6474ea787f73b::t_97849d37415655 3-46,50,52-53,58-61,66,76-78,100-106,115-117
+  s_c6474ea787f73b::t_35948de456b6b6 48-49,51,54-57,62-65,67-74,79-99,107-114,119
+  s_c6474ea787f73b::t_ffbe1990c3b494 1-2
+  s_c6474ea787f73b::t_d18e035e1d10d7 47
+  s_c6474ea787f73b::t_b71b42f42fa5cb 75
+  s_c6474ea787f73b::t_048fce9db42b17 118
+  s_c6474ea787f73b::t_cab73d95bb94f5 120-122
+website/static/img/case/navigation.svg
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-22
+website/static/img/case/version.svg
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-17
+website/i18n/en/docusaurus-plugin-content-docs/current/intro.md
+  s_c6474ea787f73b::t_480326f3b5b09e 1-15,17-29
+  s_c6474ea787f73b::t_c7146cae324db2 16
+website/static/img/favicon.svg
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-2
+  s_c6474ea787f73b::t_c2bcded68af9bd 3-6
+website/src/pages/community.js
+  s_c6474ea787f73b::t_e540c6f4c5912d 1-72
+website/versioned_docs/version-1.0/core/field-lineage.md
+  s_c6474ea787f73b::t_fb0b184116650c 10-79,81-82,95,101,105
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,80,83-94,96-100,102-104,106-116
+website/i18n/en/docusaurus-plugin-content-docs/current/core/field-lineage.md
+  s_c6474ea787f73b::t_f24a1dee83ea49 1-9,82-94,96-100,102-104,106-111
+  s_c6474ea787f73b::t_25d82bd29352ce 10-81,95,101,105,112
+website/docs/about/architecture.md
+  s_c6474ea787f73b::t_ee21bb46666baf 1-69
+website/src/pages/index.module.css
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-3
+website/i18n/en/docusaurus-plugin-content-docs/current/contributing.md
+  s_c6474ea787f73b::t_7cdf0a626e9916 1-35
+website/src/components/Features/index.jsx
+  s_c6474ea787f73b::t_4e81216d513605 5-54,59-74,76-88
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-4,55-58,75,89-91
+  s_c6474ea787f73b::t_a42b925386e5a4 92
+website/static/img/logo.svg
+  s_c6474ea787f73b::t_80ecefac745c07 3-6
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-2
+website/docs/core/field-lineage.md
+  s_c6474ea787f73b::t_ab4082117512f9 1-9,80,83-94,96-100,102-104,106-116
+  s_c6474ea787f73b::t_99386d28d9e0a2 10-79,81-82,95,101,105
+website/versions.json
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 2
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,3
+website/docs/contributing.md
+  s_c6474ea787f73b::t_f25bb900dddfb8 1-36
+website/src/pages/community.module.css
+  s_c6474ea787f73b::t_ab4499350a0311 1-49
+website/docs/core/function-parse.md
+  s_c6474ea787f73b::t_048b26b9616440 10-47,49-50,52-67,70,72,75,79-81,84
+  s_c6474ea787f73b::t_0054d145988b02 1-9,48,51,68-69,71,73-74,76-78,82-83,85-93
+website/src/components/Intro/index.jsx
+  s_c6474ea787f73b::t_b8a9cc997b351b 158
+  s_c6474ea787f73b::t_3f104533bb4c3f 9-12,14-18,20-28,30-153
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-8,13,19,29,154-157
+website/blog/2026-09-28-origin-of-sqlparserx.md
+  s_c6474ea787f73b::t_37120a9a4596f7 451
+  s_c6474ea787f73b::t_a3ba110d5e0e58 425-429
+  s_c6474ea787f73b::t_d09700a2930e91 415
+  s_c6474ea787f73b::t_56a81468f1e410 1-8,13,15
+  s_c6474ea787f73b::t_6fe6ac5d42c502 9-12,14,16-414,416-424,430-450
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/about/introduction.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-43
+website/versioned_sidebars/version-1.0-sidebars.json
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-17,19-41
+  s_c6474ea787f73b::t_c7146cae324db2 18
+website/i18n/en/docusaurus-plugin-content-docs/current/about/architecture.md
+  s_c6474ea787f73b::t_7d9f28ee20fea8 1-59
+.github/workflows/deploy.yml
+  s_c6474ea787f73b::t_b8a159553f062c 1-50
+website/versioned_docs/version-1.0/about/introduction.md
+  s_c6474ea787f73b::t_c0fc4df28425ce 45
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-44
+website/blog/authors.yml
+  s_c6474ea787f73b::t_ee5e5728ee1f47 5-7
+  s_c6474ea787f73b::t_e7dce256d772b1 1-4,8
+website/i18n/en/docusaurus-plugin-content-blog/options.json
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-14
+website/.gitignore
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-20
+website/src/components/Case/index.jsx
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-5,25-31,35,39-40,45-46,55-57,60-63,65-66,70,74-75,78-91
+  s_c6474ea787f73b::t_452c9439f3f705 6-24,32-34,36-38,47-54,64,67-69,71-73
+  s_c6474ea787f73b::t_c6f4ce0984a038 41-44,58-59,76-77,92
+website/src/components/Features/styles.module.css
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,3,5-6,8,34-42,47,51-52,63,82-84,87-90,93-97,99-108,115-118
+  s_c6474ea787f73b::t_effe184feba81c 2,4,7,9-33,43-46,48-50,53-62,64-81,85-86,91-92,98,109-114
+website/versioned_docs/version-1.0/intro.md
+  s_c6474ea787f73b::t_c7146cae324db2 17
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-16,18-30
+website/sidebars.js
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-3,5-13,15,17-21,23-25,27-28,33-36,38-43
+  s_c6474ea787f73b::t_46b76a9116f61e 4,14,16,26,29-32,37,44
+  s_c6474ea787f73b::t_c7146cae324db2 22
+website/src/components/Intro/styles.module.css
+  s_c6474ea787f73b::t_cfd9fc2810916b 2-18,20-45,49-51,53-61,65-72,74-88,92-104,108-111,115-116,118-119,124-125,127-172,175,177-324,326-330,332-357,361-362,364-368,371-389
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,19,46-48,52,62-64,73,89-91,105-107,112-114,117,120-123,126,173-174,176,325,331,358-360,363,369-370,390-391
+website/src/components/Datasource/styles.module.css
+  s_c6474ea787f73b::t_b8b2ede4dccc19 1-66
+website/i18n/en/docusaurus-theme-classic/footer.json
+  s_c6474ea787f73b::t_2b2c2fbdd6f1d7 47
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1-15,17-19,21-23,25-27,29-31,33,38-39,41,45-46,48-49
+  s_c6474ea787f73b::t_946f756f949a0e 16,20,24,28,32,34-37,40,42-44,50
+website/versioned_docs/version-1.0/core/table-parse.md
+  s_c6474ea787f73b::t_fb0b184116650c 10-71,77,79,82,86,88,91,97
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,72-76,78,80-81,83-85,87,89-90,92-96,98-101
+website/src/components/Datasource/index.jsx
+  s_c6474ea787f73b::t_4560a121115a8e 1-45
+website/i18n/en/docusaurus-plugin-content-docs/current/core/table-parse.md
+  s_c6474ea787f73b::t_f80832c26360cc 10-69,71-72,77,79,82,86,88,91,97,99
+  s_c6474ea787f73b::t_f82ff5d46ea18f 1-9,70,73-76,78,80-81,83-85,87,89-90,92-96,98
+website/versioned_docs/version-1.0/quickstart/setup.md
+  s_c6474ea787f73b::t_fb0b184116650c 1-124
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/about/architecture.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-59
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/field-lineage.md
+  s_c6474ea787f73b::t_a7ecd1e63ad1b9 1-9,82-94,96-100,102-104,106-111
+  s_c6474ea787f73b::t_8923fe4f7a9946 10-81,95,101,105,112
+website/package.json
+  s_c6474ea787f73b::t_ee5e5728ee1f47 1,3-24,26-51
+  s_c6474ea787f73b::t_2b2c2fbdd6f1d7 2
+  s_c6474ea787f73b::t_f8be6701ae9f02 25
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/quickstart/setup.md
+  s_c6474ea787f73b::t_8923fe4f7a9946 1-121
+website/package-lock.json
+  s_c6474ea787f73b::t_96be843346441a 1-20691
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b67480fc4787bafb8af102654e937f592f848df",
+  "prompts": {},
+  "sessions": {
+    "s_c6474ea787f73b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1443750bffeMxe4LXgCa6ImLj",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
