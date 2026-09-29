@@ -1,0 +1,26 @@
+{
+  "title": {
+    "message": "SqlParserX",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "SqlParserX Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.首页": {
+    "message": "Home",
+    "description": "Navbar item with label 首页"
+  },
+  "item.label.文档": {
+    "message": "Document",
+    "description": "Navbar item with label 文档"
+  },
+  "item.label.博客": {
+    "message": "Blog",
+    "description": "Navbar item with label 博客"
+  },
+  "item.label.社区": {
+    "message": "Community",
+    "description": "Navbar item with label 社区"
+  }
+}
