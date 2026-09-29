@@ -1,0 +1,19 @@
+.github/workflows/deploy.yml
+  s_c6474ea787f73b::t_423ea39615e81e 4,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e83abb23b64735cfca23460a22339714c6d76705",
+  "prompts": {},
+  "sessions": {
+    "s_c6474ea787f73b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f1443750bffeMxe4LXgCa6ImLj",
+        "model": "deepseek-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
