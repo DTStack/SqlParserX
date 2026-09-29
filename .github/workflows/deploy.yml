@@ -1,11 +1,11 @@
 name: Deploy Website to GitHub Pages
 
 # 触发条件：
-#   1) 推送到 main 分支，且改动命中 website/**（只改后端 Java 代码不会触发）
+#   1) 推送到 main / master 分支，且改动命中 website/**（只改后端 Java 代码不会触发）
 #   2) Actions 页面手动触发（改配置后重发很方便）
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - 'website/**'
       - '.github/workflows/deploy.yml'
