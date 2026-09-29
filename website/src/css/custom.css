@@ -1,0 +1,131 @@
+/**
+ * 全局样式：基于 Infima CSS 变量实现「深浅色双主题」。
+ * 修改品牌色只需改下面的 --ifm-color-primary-* 系列。
+ */
+
+:root {
+  /* 品牌主色（靛蓝） */
+  --ifm-color-primary: #4f46e5;
+  --ifm-color-primary-dark: #4338ca;
+  --ifm-color-primary-darker: #3f35c0;
+  --ifm-color-primary-darkest: #342ca0;
+  --ifm-color-primary-light: #635bec;
+  --ifm-color-primary-lighter: #6e67ee;
+  --ifm-color-primary-lightest: #8f89f2;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  --ifm-navbar-background-color: rgba(255, 255, 255, 0.85);
+  --ifm-background-surface-color: #ffffff;
+  --ifm-color-content: #1f2430;
+  --ifm-color-content-secondary: #6b7280;
+
+  /* 首页 Hero 渐变（浅色） */
+  --banner-gradient-from: #f8faff;
+  --banner-gradient-to: #eef1ff;
+
+  /* -------- 首页设计变量（浅色） -------- */
+  --home-border: rgba(15, 23, 42, 0.08);
+  --home-border-strong: rgba(15, 23, 42, 0.16);
+  --home-hero-bg: linear-gradient(180deg, #f7f9ff 0%, #ffffff 100%);
+  --home-grid-image: linear-gradient(rgba(79, 70, 229, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 70, 229, 0.06) 1px, transparent 1px);
+  --home-glow-a: rgba(99, 102, 241, 0.32);
+  --home-glow-b: rgba(192, 38, 211, 0.2);
+  --home-brand-gradient: linear-gradient(120deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+  --home-primary-glow: rgba(99, 102, 241, 0.45);
+  --home-badge-bg: rgba(79, 70, 229, 0.08);
+  --home-badge-border: rgba(79, 70, 229, 0.18);
+  --home-badge-text-dark: #4338ca;
+  --home-window-bg: #ffffff;
+  --home-window-bar: #f8fafc;
+  --home-window-shadow: 0 30px 60px -20px rgba(15, 23, 42, 0.25);
+  --home-code-kw: #7c3aed;
+  --home-code-tbl: #0284c7;
+  --home-tag-bg: rgba(79, 70, 229, 0.1);
+  --home-tag-warm-bg: rgba(245, 158, 11, 0.14);
+  --home-tag-warm-text: #b45309;
+  --home-soft-bg: #f8fafc;
+  --home-cta-bg: linear-gradient(120deg, #4f46e5 0%, #7c3aed 55%, #c026d3 100%);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #8f89f2;
+  --ifm-color-primary-dark: #6e67ee;
+  --ifm-color-primary-darker: #635bec;
+  --ifm-color-primary-darkest: #4f46e5;
+  --ifm-color-primary-light: #a6a1f5;
+  --ifm-color-primary-lighter: #b0acf6;
+  --ifm-color-primary-lightest: #d2cffa;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
+
+  --ifm-background-color: #0f1220;
+  --ifm-background-surface-color: #171a2b;
+  --ifm-navbar-background-color: rgba(15, 18, 32, 0.85);
+  --ifm-color-content: #e7e9f3;
+  --ifm-color-content-secondary: #9aa0b5;
+
+  /* 首页 Hero 渐变（暗色） */
+  --banner-gradient-from: #12162a;
+  --banner-gradient-to: #0f1220;
+
+  /* -------- 首页设计变量（暗色） -------- */
+  --home-border: rgba(255, 255, 255, 0.08);
+  --home-border-strong: rgba(255, 255, 255, 0.16);
+  --home-hero-bg: linear-gradient(180deg, #0c0f1d 0%, #0f1220 100%);
+  --home-grid-image: linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  --home-glow-a: rgba(99, 102, 241, 0.36);
+  --home-glow-b: rgba(192, 38, 211, 0.24);
+  --home-brand-gradient: linear-gradient(120deg, #818cf8 0%, #a78bfa 50%, #e879f9 100%);
+  --home-primary-glow: rgba(124, 58, 237, 0.55);
+  --home-badge-bg: rgba(129, 140, 248, 0.12);
+  --home-badge-border: rgba(129, 140, 248, 0.28);
+  --home-badge-text-dark: #c7d2fe;
+  --home-window-bg: #12162a;
+  --home-window-bar: #0d101d;
+  --home-window-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  --home-code-kw: #a78bfa;
+  --home-code-tbl: #38bdf8;
+  --home-tag-bg: rgba(129, 140, 248, 0.16);
+  --home-tag-warm-bg: rgba(245, 158, 11, 0.18);
+  --home-tag-warm-text: #fbbf24;
+  --home-soft-bg: #10131f;
+  --home-cta-bg: linear-gradient(120deg, #4f46e5 0%, #7c3aed 55%, #c026d3 100%);
+}
+
+/* 表格：更宽的展示与斑马纹 */
+table {
+  display: table;
+  width: 100%;
+}
+
+table thead tr {
+  border-bottom: none;
+}
+
+/* 导航栏毛玻璃效果 */
+.navbar {
+  backdrop-filter: saturate(180%) blur(8px);
+}
+
+/* GitHub 图标（内联 SVG，深浅色自适应） */
+.header-github-link:hover {
+  opacity: 0.6;
+}
+
+.header-github-link::before {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: flex;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
+
+[data-theme='dark'] .header-github-link::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12'/%3E%3C/svg%3E")
+    no-repeat;
+}
