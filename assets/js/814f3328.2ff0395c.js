@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksqlparserx=self.webpackChunksqlparserx||[]).push([["1833"],{5513(e){e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"SqlParserX \u7684\u8BDE\u751F\u8D77\u6E90\u80CC\u666F\u4E0E\u5185\u90E8\u6539\u9020","permalink":"/SqlParserX/blog/origin-of-sqlparserx","unlisted":false,"date":"2026-09-28T00:00:00.000Z"}]}')}}]);

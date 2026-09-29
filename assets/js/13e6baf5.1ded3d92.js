@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksqlparserx=self.webpackChunksqlparserx||[]).push([["7599"],{3118(e){e.exports=JSON.parse('{"metadata":{"permalink":"/SqlParserX/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksqlparserx=self.webpackChunksqlparserx||[]).push([["7864"],{5864(s){s.exports=JSON.parse('{"tags":[{"label":"\u8D77\u6E90\u4E0E\u80CC\u666F","permalink":"/SqlParserX/blog/tags/origin","description":"SqlParserX \u7684\u8BDE\u751F\u8D77\u6E90\u4E0E\u5185\u90E8\u6539\u9020\u5386\u7A0B","count":1}]}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksqlparserx=self.webpackChunksqlparserx||[]).push([["3220"],{1912(s){s.exports=JSON.parse('{"blogBasePath":"/SqlParserX/blog","blogTitle":"Blog","authorsListPath":"/SqlParserX/blog/authors"}')}}]);

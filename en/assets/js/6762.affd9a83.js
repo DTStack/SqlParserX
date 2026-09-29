@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunksqlparserx=self.webpackChunksqlparserx||[]).push([["6762"],{7089(e,r,s){s.d(r,{createArchitectureServices:()=>c.S});var c=s(5796);s(4954)}}]);
