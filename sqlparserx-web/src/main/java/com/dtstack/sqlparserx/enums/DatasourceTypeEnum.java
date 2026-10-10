@@ -17,22 +17,35 @@
  */
 package com.dtstack.sqlparserx.enums;
 
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
+
 public enum DatasourceTypeEnum {
 
-    ORACLE(1), OCEANBASE_ORACLE(2), MYSQL(3), TIDB(4), MARIADB(5), GOLDENDB(6), OCEANBASE(7), DRDS(8), POLARDBX(
-            9), ELASTIC_SEARCH(10), POSTGRESQL(11), GREENPLUM(12), EDB(13), GAUSSDB(14), HOLOGRES(15), REDSHIFT(
-                    16), SQLSERVER(17), JTDS(18), H2(19), LEALONE(20), BLINK(21), DB2(22), ODPS(23), PHOENIX(24), HIVE(
-                            25), PRESTO(26), TRINO(27), ATHENA(28), BIGQUERY(29), SNOWFLAKE(30), SPARK(31), CLICKHOUSE(
-                                    32), STARROCKS(33), INFORMIX(34), IMPALA(35), DORIS(36), OSCAR(37), TERADATA(
-                                            38), DM(39);
+    ORACLE(1, SqlParserDataSourceType.ORACLE), OCEANBASE_ORACLE(2, SqlParserDataSourceType.OCEANBASE_ORACLE), MYSQL(3,
+            SqlParserDataSourceType.MYSQL), TIDB(4, SqlParserDataSourceType.TIDB), OCEANBASE(7,
+                    SqlParserDataSourceType.OCEANBASE), POSTGRESQL(11, SqlParserDataSourceType.POSTGRESQL), GREENPLUM(
+                            12, SqlParserDataSourceType.GREENPLUM), SQLSERVER(17,
+                                    SqlParserDataSourceType.SQLSERVER), HIVE(25, SqlParserDataSourceType.HIVE), TRINO(
+                                            27, SqlParserDataSourceType.TRINO), SPARK(31,
+                                                    SqlParserDataSourceType.SPARK), CLICKHOUSE(32,
+                                                            SqlParserDataSourceType.CLICKHOUSE), STARROCKS(33,
+                                                                    SqlParserDataSourceType.STARROCKS), DORIS(36,
+                                                                            SqlParserDataSourceType.DORIS), DM(39,
+                                                                                    SqlParserDataSourceType.DM);
 
     private final int code;
+    private final SqlParserDataSourceType sqlParserDataSourceType;
 
-    DatasourceTypeEnum(int code) {
+    DatasourceTypeEnum(int code, SqlParserDataSourceType sqlParserDataSourceType) {
         this.code = code;
+        this.sqlParserDataSourceType = sqlParserDataSourceType;
     }
 
     public int getCode() {
         return code;
+    }
+
+    public SqlParserDataSourceType getSqlParserDataSourceType() {
+        return sqlParserDataSourceType;
     }
 }
