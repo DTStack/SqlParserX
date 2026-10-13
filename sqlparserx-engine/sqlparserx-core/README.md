@@ -16,7 +16,7 @@ sqlparserx-core 是 SqlParserX 的核心解析模块。它在 Druid 语法树的
 ```java
 package com.dtstack.sqlparserx.core;
 
-import com.alibaba.druid.DbType;
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
 import com.dtstack.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
@@ -35,7 +35,7 @@ public class READMETest {
         String sql = getSql();
         // 1、获取到sqlparser解析器
         // 方式一：工厂方式获取
-        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(SqlParserDataSourceType.MYSQL);
         // 方式二：直接new
 //        MySqlParser mySqlParser = new MySqlParser();
 

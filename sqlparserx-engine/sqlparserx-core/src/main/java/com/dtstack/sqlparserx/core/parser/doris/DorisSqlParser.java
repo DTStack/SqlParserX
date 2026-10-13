@@ -19,12 +19,14 @@ package com.dtstack.sqlparserx.core.parser.doris;
 
 import com.dtstack.sqlparserx.core.enums.SQLParseStrategy;
 import com.dtstack.sqlparserx.core.parser.IColumnLineageClient;
+import com.dtstack.sqlparserx.core.parser.IParseParameterClient;
 import com.dtstack.sqlparserx.core.parser.IParseTableClient;
 import com.dtstack.sqlparserx.core.parser.ITableLineageClient;
 import com.dtstack.sqlparserx.core.parser.base.BaseSqlParser;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageClient;
 import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageClient;
+import com.dtstack.sqlparserx.core.parser.doris.parameter.DorisParseParameterClient;
 import com.dtstack.sqlparserx.core.parser.doris.table.DorisParseTableClient;
 
 import com.alibaba.druid.DbType;
@@ -33,6 +35,11 @@ import java.util.List;
 import java.util.Map;
 
 public class DorisSqlParser extends BaseSqlParser {
+
+    @Override
+    public IParseParameterClient getParseParameterClient() {
+        return new DorisParseParameterClient();
+    }
 
     @Override
     public DbType getDbType() {

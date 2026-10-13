@@ -21,7 +21,8 @@ public class DataTypeColumn {
 
     // 表字段真实名称
     private String name;
-    // 表字段类型
+    // 表字段类型：数据源方言的原始类型字符串（如 BIGINT / VARCHAR / array<int> / NUMBER(10,2)），
+    // 由调用方按「表名+字段名」查元数据后原样注入，不做归一化，不使用固定枚举
     private String type;
     // 表注释
     private String comment;

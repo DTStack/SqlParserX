@@ -17,6 +17,7 @@
  */
 package com.dtstack.sqlparserx.core.parser.base;
 
+import com.dtstack.sqlparserx.core.enums.SqlType;
 import com.dtstack.sqlparserx.core.parser.*;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
@@ -115,6 +116,16 @@ public class BaseSqlParser implements ISqlParser {
             });
         }
         return res;
+    }
+
+    @Override
+    public SqlType parseSqlType(String sql) {
+        return this.parseSqlType(this.createStatement(sql));
+    }
+
+    @Override
+    public SqlType parseSqlType(SQLStatement sqlStatement) {
+        return getParseSqlTypeClient().parseSqlType(sqlStatement);
     }
 
     @Override

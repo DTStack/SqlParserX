@@ -18,6 +18,7 @@
 package com.dtstack.sqlparserx.controller;
 
 import com.dtstack.sqlparserx.core.parser.ISqlParser;
+import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.dtstack.sqlparserx.core.utils.TableSourceUtil;
 import com.dtstack.sqlparserx.domain.ResponseResult;
@@ -46,7 +47,7 @@ public class DataSourceController {
 
     @GetMapping("/types")
     public ResponseResult getDataSourceTypes() {
-        // 仅返回 sqlparserx-core 有独立解析器实现的正式方言，避免兼容映射冒充独立支持。
+        // 前端选项与 SqlParserDataSourceType 一一对应。
         List<DataSourceOption> dataSourceOptions = Arrays.stream(DatasourceTypeEnum.values())
                 .filter(type -> DataSourceType2DbType.isCoreSupported(type.getCode()))
                 .map(type -> new DataSourceOption(type.getCode(), type.name()))
@@ -80,9 +81,9 @@ public class DataSourceController {
                 || !DataSourceType2DbType.isCoreSupported(request.getDatasourceType())) {
             return ResponseResult.error("暂不支持该数据源方言");
         }
-        DbType dbType = DataSourceType2DbType.getDbType(request.getDatasourceType());
         try {
-            ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+            ISqlParser sqlParser = SqlParserFactory
+                    .getSqlParser(DataSourceType2DbType.getSqlParserDataSourceType(request.getDatasourceType()));
             ParseCreateTableResult result = sqlParser.parseCreateTable(request.getSql());
             return ResponseResult.success(result);
         } catch (Exception e) {

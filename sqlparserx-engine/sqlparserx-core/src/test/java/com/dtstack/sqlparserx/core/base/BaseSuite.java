@@ -19,7 +19,9 @@ package com.dtstack.sqlparserx.core.base;
 
 import com.dtstack.sqlparserx.core.base.function.BaseParseFunctionTest;
 import com.dtstack.sqlparserx.core.base.lineage.BaseLineageSuite;
+import com.dtstack.sqlparserx.core.base.parameter.BaseParseParameterClientTest;
 import com.dtstack.sqlparserx.core.base.sqlfilter.BaseFilterSortSelectFieldTest;
+import com.dtstack.sqlparserx.core.base.sqltype.BaseParseSqlTypeClientTest;
 import com.dtstack.sqlparserx.core.base.tables.BaseParseTablesTest;
 
 import org.junit.runner.RunWith;
@@ -33,7 +35,11 @@ import org.junit.runners.Suite;
         BaseParseTablesTest.class,
         // 解析函数单测
         BaseParseFunctionTest.class,
-        // 解析函数单测
+        // 变量参数解析与预编译单测
+        BaseParseParameterClientTest.class,
+        // SQL 语句类型解析单测
+        BaseParseSqlTypeClientTest.class,
+        // SELECT 字段排序单测
         BaseFilterSortSelectFieldTest.class
 })
 public class BaseSuite {

@@ -22,6 +22,11 @@ public class Constant {
     public static final String ALL = "*";
 
     /**
+     * JDBC 预编译占位符：变量参数改写为 ? 后统一使用该符号
+     */
+    public static final String PREPARED_PLACEHOLDER = "?";
+
+    /**
      * 若是某个字段无来自某个表，此时该字段的table则为" "，最终血缘会完成过滤
      * 举例：create table new_table select id, '0' as num from table
      */
