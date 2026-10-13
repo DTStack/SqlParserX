@@ -10,24 +10,124 @@
 
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Java Module、Web 服务与可视化前端。
 
-SqlParserX 是一套「**Druid 语法解析层 + SqlParserX 业务解析层**」的 SQL 解析中间件：
-
-- `sqlparserx-syntax` 负责多数据源 SQL→AST、语法校验和 SQL 切分。
-- `sqlparserx-core` 基于统一 AST 提供表、建表、血缘、函数和 SQL 改写等业务结果。
-- `sqlparserx-web` 和 `sqlparserx-ui` 提供 REST 与可视化使用方式。
+SqlParserX 是一套「**Druid 语法解析层 + SqlParserX 业务解析层**」的 SQL 解析中间件。
 
 SqlParserX 起源于对多数据源 SQL 解析、AST 统一和业务解析复用问题的持续实践，项目在内部解析能力改造的基础上逐步沉淀为独立的双层 SQL 解析引擎。关于项目为什么诞生、内部改造过程及设计思考，可阅读技术博客：[SqlParserX 的诞生起源背景 & 内部改造](docs/blogs/20260928：SqlParserX的诞生起源背景%26内部改造.md)。
 
-### 能力解决的问题
+## 核心提供能力
 
 | 使用问题 | SqlParserX 解决方式 |
 |---|---|
 | 不同数据库 SQL 方言不一致 | 通过 Druid 方言解析和 `DbType` 路由统一生成 AST |
-| 只拿到 SQL 文本，难以识别真实表和建表结构 | 提供主表、真实表、CTE、CREATE TABLE、分区和属性解析 |
-| 数据加工链路无法追溯 | 提供表血缘和字段血缘，覆盖 JOIN、UNION、子查询、聚合和 CTE |
-| 多条 SQL 脚本难以逐条处理 | 提供多语句解析、SQL 切分和语法校验 |
-| 权限条件需要手工拼接且容易出错 | 支持向查询、写入和更新 SQL 注入行级权限条件 |
+| 只拿到 SQL 文本，难以识别真实表和建表结构 | 提供**表解析**（主表、真实表、CTE、子查询）和**建表解析**（字段、注释、分区、分桶、Key、properties） |
+| 数据加工链路无法追溯 | 提供**表血缘**和**字段血缘**，覆盖 JOIN、UNION、子查询、聚合、CASE、窗口函数和 CTE |
+| 想了解 SQL 用到了哪些函数 | 提供**函数解析**，提取 SQL 中使用的函数名称 |
+| 多条 SQL 脚本难以逐条处理 | 提供**多语句解析**、**SQL 切分**和**语法校验** |
+| 权限条件需要手工拼接且容易出错 | 提供**行级权限改写**，向查询、写入和更新 SQL 注入行级权限条件 |
+| SQL 中的动态变量难以参数化 | 提供**参数提取与预编译改写**，解析 `${变量}` 并改写为 JDBC `?` 占位符 |
 | 解析能力难以接入现有系统或工具 | 提供 Java Module、Web 服务和可视化前端 |
+
+SqlParserX 的通用解析能力围绕以下核心场景构建，各能力的详细支持情况见 [通用解析能力文档](docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表解析支持情况.md)：
+
+## 快速示例
+
+### 引入pom依赖
+
+```xml
+<dependency>
+    <groupId>com.dtstack</groupId>
+    <artifactId>sqlparserx-core</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
+### 1. 表血缘
+
+```java
+ISqlParser parser = SqlParserFactory.getSqlParser(SqlParserDataSourceType.MYSQL);
+
+TableLineageResult result = parser.parseTableLineages(
+        "INSERT INTO db1.table1 " +
+        "SELECT a.id, b.name FROM db2.table2 a JOIN db3.table3 b ON a.id = b.id");
+result.getTableLineages().forEach(System.out::println);
+```
+
+输出：
+
+```text
+Target Tables:
+    db1.table1
+Source Tables:
+    db2.table2
+    db3.table3
+```
+
+### 2. 字段血缘
+
+```java
+ColumnLineageResult result = parser.parseColumnLineages(
+        "CREATE TABLE db1.summary AS " +
+        "SELECT u.id AS user_id, SUM(o.amount) AS total_amount " +
+        "FROM db1.users u JOIN db1.orders o ON u.id = o.user_id " +
+        "GROUP BY u.id",
+        tableColumnsMap /* 可选：传入真实表字段信息，用于 `SELECT *` 展开 */);
+
+result.printColumnLineage();
+```
+
+输出：
+
+```text
+db1.users.id          -> db1.summary.user_id
+db1.users.id, db1.orders.amount -> db1.summary.total_amount
+```
+
+字段血缘将每个目标字段追溯到其来源字段，覆盖表达式、聚合、`CASE`、窗口函数、`*` 展开和 CTE。
+
+### 3. SQL 参数提取与预编译
+
+SQL 脚本中常包含 `${bizdate}` 这类动态变量。SqlParserX 提供两个核心入口：**参数提取**（`parseParameterSql`，解析脚本中的变量及其位置、类型信息）与**预编译改写**（`buildSqlByPrepareCompile`，将 `${var}` 替换为预编译占位符并生成参数值列表）：
+
+```java
+ISqlParser parser = SqlParserFactory.getSqlParser(SqlParserDataSourceType.MYSQL);
+
+String sql = "SELECT * FROM db1.table1 WHERE dt = '${bizdate}' AND region = '${region}'";
+
+// 1、参数提取：解析 SQL 中的动态变量（名称、是否必填、默认值、绑定的表字段等）
+ParseParameterResult paramResult = parser.parseParameterSql(sql, false, null);
+paramResult.getInputParams().forEach(p ->
+        System.out.println(p.getName() + " / " + p.getDataType() + " / " + p.getSqlPart()));
+
+// 2、预编译：传入参数值，得到 ? 占位符 SQL 与按序参数列表
+Map<String, Object> inParams = new HashMap<>();
+inParams.put("bizdate", "20240101");
+inParams.put("region", "hangzhou");
+
+PrepareCompileResult compileResult = parser.buildSqlByPrepareCompile(sql, inParams, columns);
+compileResult.getBeautifulSql();   // SELECT * FROM db1.table1 WHERE dt = ? AND region = ?
+compileResult.getInputFields();    // [20240101, hangzhou]
+```
+
+输出：
+
+```text
+bizdate / ... / dt = '${bizdate}'
+region  / ... / region = '${region}'
+
+SELECT * FROM db1.table1 WHERE dt = ? AND region = ?
+[20240101, hangzhou]
+```
+
+完整可运行示例见 [`sqlparserx-core/README.md`](sqlparserx-engine/sqlparserx-core/README.md)。
+
+### 其他能力
+
+| 能力 | 说明 |
+|---|---|
+| SQL 类型解析 | 识别 SQL 语句类型，支撑路由与校验场景 |
+| SQL 切分 | 支持多语句脚本切分及 Druid 原生切分策略 |
+
+各能力在各数据源下的详细支持情况，见 [通用解析能力文档](docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表解析支持情况.md) 系列与 [数据源支持](#support-datasource数据源支持) 章节。
 
 ## 架构
 
@@ -56,7 +156,7 @@ SqlParserX 采用分层解耦设计，各层职责清晰、可独立演进：
 └──────────────────────────────────────────────────────────┘
 ```
 
-**业务层内部分层**：`SqlParserFactory`（按 Druid `DbType` 选择方言）→ `ISqlParser`（统一契约）→ `BaseSqlParser`（AST 分发到各 Client）→ 各方言实现（按需重写表/血缘解析）。
+**业务层内部分层**：`SqlParserFactory`（按 Druid `DbType` 选择方言）→ `ISqlParser`（统一契约）→ `BaseSqlParser`（AST 分发到各 Client）→ 各方言实现（按需重写表/血缘解析）。各能力的快速使用示例见上方 [核心能力](#核心能力) 章节。
 
 | 模块 | 层次 | 说明 | 技术栈 |
 |---|---|---|---|
@@ -76,6 +176,10 @@ ColumnLineageResult parseColumnLineages(String sql, Map<String,List<Column>> met
 TableLineageResult parseTableLineages(String sql);                                   // 表血缘
 Set<String>        parseFunction(String sql);                                        // 函数解析
 String             getRowLevelPermissionSql(String sql, List<...> permissionParams); // 行级权限过滤
+ParseParameterResult parseParameterSql(String sql, Boolean isIgnoreSyntaxCheck,
+        Map<String, List<DataTypeColumn>> tableColumnsMap);                          // 变量参数解析（配置期）
+PrepareCompileResult buildSqlByPrepareCompile(String sql, Map<String, Object> inParams,
+        Map<String, ParamInfo> columns);                                             // 预编译改写（运行期）
 ```
 
 ### 分层扩展模式
@@ -126,53 +230,6 @@ SqlParserX 的能力支持需要同时检查“语法层能否生成正确 AST�
 | 函数解析 | 提取 SQL 中使用的函数名称 |
 | SQL 切分 | 支持多语句脚本切分及 Druid 原生切分策略 |
 | SQL 改写 | 支持行级权限条件注入及相关 SQL 过滤策略 |
-## Quick Start
-
-两种使用方式：作为 Maven 依赖嵌入 Java 项目、部署 Web 服务。
-
-### 1. 作为 Maven 依赖使用核心库
-
-`sqlparserx-core` 提供面向多数据源的表解析、函数解析、字段血缘和表血缘能力。依赖引入：
-
-```xml
-<dependency>
-    <groupId>com.dtstack</groupId>
-    <artifactId>sqlparserx-core</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</dependency>
-```
-
-完整 Java 使用案例、输出示例和分层扩展说明请直接参考 [sqlparserx-core/README.md](sqlparserx-engine/sqlparserx-core/README.md)。
-
-### 2. 部署 Web 服务
-
-```bash
-# 编译打包（core 的测试默认跳过，需执行测试时加 -DskipTests=false）
-mvn -pl sqlparserx-engine/sqlparserx-core,sqlparserx-web -am clean package -DskipTests
-
-bin/centos-sqlparserx.sh start     # 启动，默认端口 8888
-bin/centos-sqlparserx.sh stop      # 停止
-bin/centos-sqlparserx.sh status    # 查看状态
-```
-
-启动后浏览器访问 `http://localhost:8888` 即可使用前端工具集（血缘可视化、表解析、建表解析、SQL 切分、语法校验）。
-
-### 测试
-
-`sqlparserx-core` 内置约 78 个单元测试用例，覆盖：
-
-- 表血缘：`CREATE TABLE AS SELECT` / `INSERT SELECT` / `WITH AS INSERT` 三类场景
-- 字段血缘：同上三类场景，覆盖聚合、子查询、JOIN、UNION、CASE、OVER 等
-- 表解析、函数解析、SQL 过滤（行级权限注入）
-- Doris 专项：字段血缘、表血缘、建表解析
-
-```bash
-# 执行 core 模块全部测试（默认 surefire skipTests=true，需显式开启）
-mvn -f sqlparserx-engine/pom.xml test -DskipTests=false
-```
-
-测试入口：`sqlparserx-engine/sqlparserx-core/src/test/java/com/dtstack/sqlparserx/core/AllTestsSuite.java`（`BaseSuite` + `DatasourceSuite` + 策略单测）。
-
 ## 目录结构
 
 ```
