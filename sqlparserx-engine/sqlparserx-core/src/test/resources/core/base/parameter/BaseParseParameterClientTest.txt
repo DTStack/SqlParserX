@@ -1,0 +1,191 @@
+--------------------1--------------------
+select u.id, u.name
+from user_info u
+where u.tenant_id = ${tenantId}
+  and u.status in (${states})
+--------------------2--------------------
+select id
+from metric
+where score > ${gt}
+  and score >= ${gte}
+  and score < ${lt}
+  and score <= ${lte}
+  and score <> ${ne}
+  and name like ${kw}
+--------------------3--------------------
+select id as user_id, ${dynamicColumn} as dyn_col, name
+from user_info
+where tenant_id = ${tenantId}
+--------------------4--------------------
+select id
+from user_info
+where name = '${name}'
+--------------------5--------------------
+select department_id, count(*) as cnt
+from user_info
+where tenant_id = ${tenantId}
+group by ${groupColumn}
+having count(*) > ${minCount}
+order by ${sortColumn} desc
+limit ${offset}, ${rows}
+--------------------6--------------------
+with tenant_users as (
+    select id
+    from user_info
+    where tenant_id = ${cteTenant}
+)
+select u.id
+from (
+    select id, status
+    from user_info
+    where created_at >= ${startTime}
+) u
+join tenant_users tu on tu.id = u.id
+where u.status in (${states})
+  and exists (
+      select 1
+      from orders o
+      where o.user_id = u.id
+        and o.amount > ${minAmount}
+  )
+order by ${sortColumn} desc
+limit ${offset}, ${rows}
+--------------------7--------------------
+select t.id as rid,
+       (select max(o.amount) from orders o where o.user_id = t.id and o.amount > ${minAmount}) as max_amount
+from (
+    select id, status
+    from user_info
+    where tenant_id = ${tenantId}
+) t
+where t.status in (${states})
+--------------------8--------------------
+select id, name from user_info where tenant_id = ${tenantIdA}
+union all
+select id, name from user_info where tenant_id = ${tenantIdB}
+order by id
+limit ${rows}
+--------------------9--------------------
+select t.id
+from (
+    select id from user_info where tenant_id = ${tenantIdA}
+    union all
+    select id from user_info where tenant_id = ${tenantIdB}
+) t
+where t.id > ${minId}
+--------------------10--------------------
+select id
+from user_info u
+where exists (
+    select 1
+    from orders o
+    where o.user_id = u.id
+      and o.status in (
+          select status from order_status where flag = ${flag}
+      )
+      and exists (
+          select 1 from pay p where p.order_id = o.id and p.amount > ${minPay}
+      )
+)
+--------------------11--------------------
+select id
+from user_info
+where tenant_id = ${tenantId} or backup_tenant_id = ${tenantId}
+--------------------12--------------------
+select id
+from type_table
+where enabled = ${enabled}
+  and birthday = ${birthday}
+  and created_at = ${createdAt}
+--------------------13--------------------
+select id, score, aged
+from user_info
+where score between ${minScore} and ${maxScore}
+  and aged not between ${minAged} and ${maxAged}
+--------------------14--------------------
+select *
+from user_info
+where tenant_id = ${tenantId}
+--------------------15--------------------
+select t.id,
+       (select max(a.amount) from orders a where a.user_id = t.id and a.amount > ${minAmount}) as max_amt,
+       (select count(*) from pay p where p.order_id = t.id and p.status = ${payStatus}) as cnt
+from (
+    select id from user_info where tenant_id = ${tenantId}
+) t
+where t.id > ${minId}
+--------------------16--------------------
+with base as (
+    select id from user_info where tenant_id = ${tenantId}
+)
+select b.id
+from base b
+where b.id in (
+    select o.user_id from orders o where o.amount > ${minAmount}
+)
+union all
+select p.id from pay p where p.status = ${payStatus}
+order by id
+limit ${rows}
+--------------------17--------------------
+select id, ${dupParam} as dup_col
+from user_info
+where tenant_id = ${dupParam}
+--------------------18--------------------
+with t1 as (
+    select id, name, age
+    from digua_ceshi.demo_table_digua
+    where age >= ${t1MinAge}
+),
+t2 as (
+    select sub.id, sub.name
+    from (
+        select id, name
+        from digua_ceshi.demo_table_digua
+        where name like ${t2Name}
+    ) sub
+),
+t3 as (
+    select id, name, age
+    from digua_ceshi.new_table
+    where age > ${t3AgeA}
+    union all
+    select id, name, age
+    from digua_ceshi.new_table2
+    where age <= ${t3AgeB}
+),
+t4 as (
+    select t.id, t.name, nt.age as new_table_age
+    from digua_ceshi.demo_table_digua t
+    left join digua_ceshi.new_table nt
+      on t.id = nt.id and nt.age > ${t4MinAge}
+)
+select t1.id,
+       t1.name,
+       t2.name as t2_name,
+       t3.name as t3_name,
+       t4.new_table_age as t4_age,
+       dt.department,
+       (select count(*)
+        from digua_ceshi.demo_table_digua d
+        where d.id = t1.id and d.age > ${olderAge}) as older_count
+from t1
+join t2 on t1.id = t2.id
+left join t3 on t1.id = t3.id
+left join t4 on t1.id = t4.id
+join digua_ceshi.departments dt on t1.id = dt.employee_id
+where dt.department = ${department}
+union all
+select t1.id,
+       t1.name,
+       t2.name as t2_name,
+       t3.name as t3_name,
+       t4.new_table_age as t4_age,
+       dt.department,
+       0 as older_count
+from t1
+join t2 on t1.id = t2.id
+left join t3 on t1.id = t3.id
+left join t4 on t1.id = t4.id
+join digua_ceshi.departments dt on t1.id = dt.employee_id
+where dt.department = ${backupDepartment}

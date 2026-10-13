@@ -17,6 +17,8 @@
  */
 package com.dtstack.sqlparserx.core.parser;
 
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
+import com.dtstack.sqlparserx.core.enums.SqlType;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageClient;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
@@ -29,6 +31,7 @@ import com.dtstack.sqlparserx.core.parser.base.parameter.vo.ParseParameterResult
 import com.dtstack.sqlparserx.core.parser.base.parameter.vo.PrepareCompileResult;
 import com.dtstack.sqlparserx.core.parser.base.sqlfilter.BaseSqlFilterClient;
 import com.dtstack.sqlparserx.core.parser.base.sqlfilter.row.vo.RowLevelPermissionFilterParam;
+import com.dtstack.sqlparserx.core.parser.base.sqltype.BaseParseSqlTypeClient;
 import com.dtstack.sqlparserx.core.parser.base.table.BaseParseTableClient;
 import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseTableResult;
@@ -101,6 +104,20 @@ public interface ISqlParser {
     Set<String> parseFunction(String sql);
 
     /**
+     * 根据 SQL 文本解析 SQL 类型
+     * @param sql String sql
+     * @return SqlType 业务SQL类型
+     */
+    SqlType parseSqlType(String sql);
+
+    /**
+     * 根据 Druid 语法树解析 SQL 类型
+     * @param sqlStatement druid语法树
+     * @return SqlType 业务SQL类型
+     */
+    SqlType parseSqlType(SQLStatement sqlStatement);
+
+    /**
      * 解析带变量的sql场景
      * @param sql sql语法树
      * @param isIgnoreSyntaxCheck Boolean
@@ -133,6 +150,10 @@ public interface ISqlParser {
         return new BaseParseTableClient();
     }
 
+    default IParseSqlTypeClient getParseSqlTypeClient() {
+        return new BaseParseSqlTypeClient();
+    }
+
     default IColumnLineageClient getColumnLineageClient(Map<String, List<Column>> tableColumnsMap) {
         return new ColumnLineageClient(tableColumnsMap);
     }
@@ -146,7 +167,7 @@ public interface ISqlParser {
     }
 
     default IParseParameterClient getParseParameterClient() {
-        return new BaseParseParameterClient();
+        return new BaseParseParameterClient(SqlParserDataSourceType.fromDbType(getDbType()));
     }
 
     default DbType getDbType() {

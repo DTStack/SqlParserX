@@ -34,4 +34,32 @@ public class ParseParameterResult {
     // 表集合
     private List<Table> tables;
 
+    public ParseParameterResult() {
+    }
+
+    public ParseParameterResult(List<ParamInfo> inputParams, List<ApiParamSpan> outputParams, List<Table> tables) {
+        this.inputParams = inputParams;
+        this.outputParams = outputParams;
+        this.tables = tables;
+    }
+
+    public List<ApiParamSpan> getOutputParams() {
+        return outputParams;
+    }
+    public void setOutputParams(List<ApiParamSpan> outputParams) {
+        this.outputParams = outputParams;
+    }
+    public List<ParamInfo> getInputParams() {
+        return inputParams;
+    }
+    public void setInputParams(List<ParamInfo> inputParams) {
+        this.inputParams = inputParams;
+    }
+    public List<Table> getTables() {
+        return tables;
+    }
+    public void setTables(List<Table> tables) {
+        this.tables = tables;
+    }
+
 }

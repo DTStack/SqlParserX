@@ -17,8 +17,10 @@
  */
 package com.dtstack.sqlparserx.core.parser.mysql;
 
+import com.dtstack.sqlparserx.core.parser.IParseParameterClient;
 import com.dtstack.sqlparserx.core.parser.IParseTableClient;
 import com.dtstack.sqlparserx.core.parser.base.BaseSqlParser;
+import com.dtstack.sqlparserx.core.parser.mysql.parameter.MysqlParseParameterClient;
 import com.dtstack.sqlparserx.core.parser.mysql.table.MysqlParseTablesClient;
 
 import com.alibaba.druid.DbType;
@@ -29,6 +31,11 @@ import com.alibaba.druid.DbType;
  * @date 2025/4/27 12:07
  */
 public class MySqlParser extends BaseSqlParser {
+
+    @Override
+    public IParseParameterClient getParseParameterClient() {
+        return new MysqlParseParameterClient();
+    }
 
     @Override
     public IParseTableClient getParseTableClient() {
