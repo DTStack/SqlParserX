@@ -1,0 +1,298 @@
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/config/Constant.java
+  s_5bda27f7af525e::t_7edd6e3ed32025 25-28
+  s_5bda27f7af525e::t_38aea79bc788b2 24
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/mysql/MySqlParser.java
+  s_86a026c05f9183::t_b88ef1362784e4 20,23,35-38
+  s_86a026c05f9183::t_ba71354fe4399e 39
+sqlparserx-engine/sqlparserx-core/src/test/java/com/dtstack/sqlparserx/core/base/sqltype/BaseParseSqlTypeClientTest.java
+  s_5bda27f7af525e::t_9780ddf094de92 24
+  s_bc93d3c82d5044::t_fba124e3358aec 36
+  s_5bda27f7af525e::t_e17b58c6ebf7e0 42
+  s_bc93d3c82d5044::t_3786d9153efa06 32-35,37
+  s_5bda27f7af525e::t_9d802238dc710f 72-75,82-83
+  s_5bda27f7af525e::t_fcfe935f998d42 1-23,25,28-31,38-41,43-62,64-71,76-78,80,84-86,90-96
+  s_5bda27f7af525e::t_a235149ac5432a 26-27,63,79,81,87-89
+sqlparserx-engine/sqlparserx-core/src/test/resources/core/base/parameter/BaseParseParameterClientTest.txt
+  s_bc93d3c82d5044::t_d0f2c1f6ee2323 135-191
+  s_86a026c05f9183::t_694f868415ca41 43
+  s_5bda27f7af525e::t_79e3ce249097a4 2-5,7-14,16,20-21,24-31,53-75,77-95,100-108
+  s_86a026c05f9183::t_419224a0ae41b0 1,6,15,17-19,22-23
+  s_86a026c05f9183::t_d6dcc23ab8b4f0 76,96-99
+  s_bc93d3c82d5044::t_ce046b8893c6ce 134
+  s_86a026c05f9183::t_8e0489116fc1b7 32-42,44-52
+  s_5bda27f7af525e::t_06f0c76290d13c 109-133
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/domain/ApiParamSpan.java
+  s_bc93d3c82d5044::t_224885c98d51e9 25,49
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/transfer/BaseParamDataTypeTransfer.java
+  s_86a026c05f9183::t_cf40d7c04d9eaf 1-17,30-33,36-37,42-49
+  s_86a026c05f9183::t_51cdeb8f341564 18-23,29,34-35,38-41,50-55
+  s_86a026c05f9183::t_49cdb0e3e24179 24-28
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/DorisSqlParser.java
+  s_86a026c05f9183::t_b88ef1362784e4 22,29,39-42
+  s_86a026c05f9183::t_a6c1568bb92968 43
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/resolve/ResolvedParameterColumn.java
+  s_bc93d3c82d5044::t_27805b9a443b20 1-39
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/mysql/parameter/MysqlParamDataTypeTransfer.java
+  s_86a026c05f9183::t_6a5cb2f3c6a71c 1-17,21,32-35,42-48
+  s_86a026c05f9183::t_e7961e43b5fd9a 18-20,22-31,36-41,49-51
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/解析sql类型支持情况.md
+  s_bc93d3c82d5044::t_e3a2b4118e3d97 179
+  s_bc93d3c82d5044::t_5945a17c84697c 1-178,180-187
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/parameter/DorisParamDataTypeTransfer.java
+  s_86a026c05f9183::t_6a5cb2f3c6a71c 1-17,21,32-35,38-48
+  s_86a026c05f9183::t_e7961e43b5fd9a 18-20,22-31,36-37,49-51
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/doris/parameter/DorisParseParameterClient.java
+  s_86a026c05f9183::t_e7961e43b5fd9a 18-21,23,26-32,39-40
+  s_5bda27f7af525e::t_0be1ce402b0195 22,24-25,37-38
+  s_5bda27f7af525e::t_f51c25fc47a6dd 33-36
+  s_86a026c05f9183::t_6a5cb2f3c6a71c 1-17
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/service/ParamParseService.java
+  s_86a026c05f9183::t_712c0126856d81 42-43,51,61-62
+  s_5bda27f7af525e::t_b469b2bcdcb86c 202,207,212,219,225
+  s_bc93d3c82d5044::t_224885c98d51e9 120,124,239,241,245,248,251-252,256-258,268-269,273-275,284-286,290-304
+  s_86a026c05f9183::t_89a2520f608df8 1-17,26,31,45-46,49,55,63-66,69-70,73,77-81,105-107,109-115,118-119,121-123,125-133,136,138-143,145-150,154-165,167-182,203-206,220-224,226-228,238,240,242-244,249-250,264,306-309,319,321,323-324
+  s_5bda27f7af525e::t_91748c2e11b29c 272
+  s_5bda27f7af525e::t_c954d4a197a30e 48,52
+  s_86a026c05f9183::t_8e0489116fc1b7 208-211,213-218
+  s_bc93d3c82d5044::t_2855ed09831ec6 67-68,71,84-88,134-135,137,144
+  s_bc93d3c82d5044::t_eb285ea6c49d72 151-153,246-247,310
+  s_5bda27f7af525e::t_9a8c13b91c337b 44,47,53-54
+  s_bc93d3c82d5044::t_27805b9a443b20 22-23,40-41,317-318,320,322
+  s_5bda27f7af525e::t_5781d684dc4b2f 74-76,82-83,89-104
+  s_86a026c05f9183::t_49cdb0e3e24179 34-38
+  s_5bda27f7af525e::t_078c21d34e8a83 166
+  s_5bda27f7af525e::t_b1f6e5ae8e835d 183-201
+  s_bc93d3c82d5044::t_835e0fb89f4d15 311-316
+  s_86a026c05f9183::t_e9b7dcdf8e69e4 50,56-60
+  s_86a026c05f9183::t_35eb88505793ce 30,229-237
+  s_5bda27f7af525e::t_3ef8ce81cadc2b 72,108
+  s_5bda27f7af525e::t_66e1725fabc3ce 253-255,259-263,265-267,270-271,276-283,287-289,305
+  s_86a026c05f9183::t_c5ca8a3298eed2 18-21,24-25,27-29,32-33,39,325
+  s_86a026c05f9183::t_fc392124d522ad 116-117
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/IParseSqlTypeClient.java
+  s_5bda27f7af525e::t_3d26a461fc875c 1-37
+sqlparserx-engine/sqlparserx-core/src/test/java/com/dtstack/sqlparserx/core/base/BaseSuite.java
+  s_bc93d3c82d5044::t_0cc8a702fed095 22,38-39,42
+  s_bc93d3c82d5044::t_45d2ffd75892a7 24,40-41
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/BaseSqlParser.java
+  s_5bda27f7af525e::t_c2366934bd3ff9 20
+  s_5bda27f7af525e::t_e43c3fb786bf05 121-130
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/enums/ParamOperatorEnum.java
+  s_86a026c05f9183::t_49cdb0e3e24179 17,22-26
+  s_86a026c05f9183::t_19cbb153dacff5 18-21,27-55
+  s_2d76576125b409::t_a761ee15655e13 1-16
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/vo/ParseParameterResult.java
+  s_86a026c05f9183::t_19cbb153dacff5 37-64
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/sqltype/BaseParseSqlTypeClient.java
+  s_5bda27f7af525e::t_19b5df75d4ab9c 1-231
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/rewrite/SqlConditionPruner.java
+  s_86a026c05f9183::t_49cdb0e3e24179 32-36
+  s_86a026c05f9183::t_e3571a0dd651c5 18-21,23-26,28-31,37-38,41-45,53,61-66,71-76
+  s_86a026c05f9183::t_cf40d7c04d9eaf 1-17,22,27,39-40,46-52,54-60,67-70
+sqlparserx-engine/sqlparserx-core/src/test/java/com/dtstack/sqlparserx/core/base/parameter/BaseParseParameterClientTest.java
+  s_86a026c05f9183::t_d6dcc23ab8b4f0 467-468,470-473,476-479,754-755
+  s_bc93d3c82d5044::t_3a751e7ab06cac 33,700
+  s_bc93d3c82d5044::t_e08e98c6b292f7 203,237,262,287,299,365,389,391-392,666-667,738-744
+  s_5bda27f7af525e::t_fa84b3acb78ee2 789-792
+  s_86a026c05f9183::t_d4b414c6cdf817 27,482-486,488-490,498,746
+  s_86a026c05f9183::t_97cef75a365a81 147,155-156,168-170,190-191
+  s_bc93d3c82d5044::t_9ccdce725b65c5 499-506,508-519,526-536,540-545,696-698,701-709,723,745
+  s_86a026c05f9183::t_d359eae887b2d8 28
+  s_5bda27f7af525e::t_4899f4ce316dbe 309-310
+  s_bc93d3c82d5044::t_b98ed9dde9a572 546-550,554-566,570-582,586-596,600-609,611-619,699
+  s_bc93d3c82d5044::t_26756fe7f95c87 621-646
+  s_bc93d3c82d5044::t_ce046b8893c6ce 620,648,650,654,663,669,678-680,683-684
+  s_5bda27f7af525e::t_6e9a2126212268 357-361,363-364,366-388,393-417,419-439
+  s_86a026c05f9183::t_939bef1be860da 2-16,795-797
+  s_bc93d3c82d5044::t_4c2ac027600a80 72,117,127,145,151,163,199,235,260,285,297,307,331,362,390,418,446,507,520-525,537-539,551-553,567-569,583-585,597-599,610,651,686-695
+  s_bc93d3c82d5044::t_d0f2c1f6ee2323 647,649,652-653,655-662,670-677,681-682,710-722,724-737
+  s_5bda27f7af525e::t_af9b2d4c7633fe 146,148
+  s_bc93d3c82d5044::t_3786d9153efa06 48-55
+  s_bc93d3c82d5044::t_b445746012abcd 664-665,668
+  s_5bda27f7af525e::t_05c61eab384ec6 22,32,40,44-45,66,68-70,73-82,86-92,94-109,113-115,118-120,124-126,128-133,135-138,142,149-150,152-154,157-162,164-167,171-189,192-193,196-197,201,216-222,224,226-234,236,238-259,261,263-284,286,288-296,298,300-306,308,311-330,332-354,356,440,443-444,447,453,460-461,465-466,469,474-475,480-481,487,491-497,685,747-753,758-761,763-766,769,773-786
+  s_86a026c05f9183::t_419224a0ae41b0 20,56,59-64,143
+  s_5bda27f7af525e::t_b73d9ada367a19 93
+  s_5bda27f7af525e::t_fa86d2ae1629e4 83-85
+  s_86a026c05f9183::t_8e0489116fc1b7 194-195,198,200,202,204-215,223,225,355,441,756-757,762,767-768
+  s_86a026c05f9183::t_05ce7f258608f8 1,17-19,21,23-26,29-31,34-39,41-43,46-47,57-58,65,67,71,110-112,116,121-123,134,139-141,144,770-772,787-788,793-794,798-800
+  s_86a026c05f9183::t_694f868415ca41 442,445,448-452,454-459,462-464
+docs/02、SQL业务层解析能力支撑情况/底层原理设计/变量参数解析/变量参数解析与预编译（纯Druid）实现方案.md
+  s_13d16d0a89a675::t_410dbbd6241880 848
+  s_5bda27f7af525e::t_f8dc83f943922e 853
+  s_5bda27f7af525e::t_4a867089706893 748,752
+  s_13d16d0a89a675::t_bde863b0186b23 271-279,282,284,286-288,297,299,465-466,541-542,657,821
+  s_5bda27f7af525e::t_5fbb30b6180cda 804-806,811-812
+  s_bc93d3c82d5044::t_9ba4a430efc0df 204,207,538,667,862
+  s_13d16d0a89a675::t_eefc3fa3526723 86,89,114
+  s_5bda27f7af525e::t_2986d0a457d41d 3,27,50,54,56,67,69,84,118,135,169-171,217-219,248,259,268-270,280,294,464,468-469,471,536,543,581,583-585,588,596,599,605-606,609-610,612-613,618,628,630-631,634,644-645,649-653,659,661,683,696,724,730-732,734,756-758,762-773,778-781,788,800,829-832,835-839,842,856-857
+  s_5bda27f7af525e::t_0083bdf6191b9c 551,554-572,575,577-579
+  s_bc93d3c82d5044::t_38c8a0d21058d0 82,301,303-307,312-318,320,322-327,329-332,334,337,339,349-351,353,355-361,367-370,379,387-391,393-394,431-437,439-441,445-446,449,461,463,642
+  s_13d16d0a89a675::t_f23bc9aaa63341 7,33,846
+  s_5bda27f7af525e::t_a3719f2b900084 91,96,98-111,115-116
+  s_13d16d0a89a675::t_5e115213ed5054 93,95,97
+  s_5bda27f7af525e::t_75b4a619c745a5 231-232,240
+  s_bc93d3c82d5044::t_7ddc42b5850166 336,338,340-348,352,354,364,371-378,382,384-386,392,395-415,418,420-430,444,450-458,460,476
+  s_bc93d3c82d5044::t_ac2f2dfa9be3fc 71,478-480,483-510,513,515,517-531,534
+  s_13d16d0a89a675::t_fd2ecf1bab0589 47,49,58-60,63,157,160-161,220-221,223-225,233-239,241,245-247,251,256,263,285,467,591,594,603,646,685,701,708,719,736,738-739,824
+  s_5bda27f7af525e::t_bac463260746e6 179,182-203,205-206,208-210,213-216
+  s_86a026c05f9183::t_4eb1639b283c2a 615-616,619-620,622-623,632
+  s_5bda27f7af525e::t_705db6aec5119f 737
+  s_bc93d3c82d5044::t_4d6395ebb4a1e2 290,292-293,295,298,302,310
+  s_5bda27f7af525e::t_a2ab9e329c4b07 807-808
+  s_5bda27f7af525e::t_59ad7fe7b0cae7 266
+  s_5bda27f7af525e::t_0bbbeda3d5390b 586
+  s_bc93d3c82d5044::t_c95c5bb739c75d 448
+  s_86a026c05f9183::t_78000142f3153d 636,638-640,647,655
+  s_5bda27f7af525e::t_a21a568eb5d155 777
+  s_13d16d0a89a675::t_0db2fe21f3d5a1 850
+  s_5bda27f7af525e::t_e228bdbf689046 854
+  s_5bda27f7af525e::t_c6192994cc17e8 775-776
+  s_13d16d0a89a675::t_4794e91f31cccb 138-143,145-156,158-159,162-164,592,595,598,600-601,614,617,621,641,727-729,825
+  s_86a026c05f9183::t_38a57e1681ab97 222,226-230,242-244,265
+  s_bc93d3c82d5044::t_d5dddc90dc3daf 300,438
+  s_bc93d3c82d5044::t_e3a2b4118e3d97 802,813,816,861
+  s_86a026c05f9183::t_b9b3ce32a1c834 62,64,144
+  s_bc93d3c82d5044::t_7d4192603de24e 814,859
+  s_5bda27f7af525e::t_2fe5dc8ce77891 851-852
+  s_5bda27f7af525e::t_483202eecd10ff 855
+  s_bc93d3c82d5044::t_71fdb201ded874 858
+  s_5bda27f7af525e::t_6089e3b38599f7 261-262
+  s_13d16d0a89a675::t_33cf174781dd70 470,472,477,847
+  s_5bda27f7af525e::t_3548032f010849 796
+  s_5bda27f7af525e::t_2df1e47c38d594 626
+  s_86a026c05f9183::t_3dadc7086c18e7 75-79,81,94
+  s_bc93d3c82d5044::t_26756fe7f95c87 131-132,137,165
+  s_bc93d3c82d5044::t_b70e0485895f3b 473-475,860
+  s_86a026c05f9183::t_af7b958218e0a9 29,65,88,264,281,668-669
+  s_86a026c05f9183::t_73868a020fbb63 694,702,704-707,713,715-718,735,741-747,749-751,753,787,789-794,798,818
+  s_bc93d3c82d5044::t_681f8801edb64d 833-834
+  s_13d16d0a89a675::t_10265741e081cb 291
+  s_bc93d3c82d5044::t_bbae7ebc8a8735 459,462,809-810
+  s_86a026c05f9183::t_39901aecd982b1 296,539
+  s_5bda27f7af525e::t_43b1a2fd66328e 593
+  s_5bda27f7af525e::t_ec565665deea97 849
+  s_5bda27f7af525e::t_8cd13025b9100a 23
+  s_5bda27f7af525e::t_17f760a7074dc6 267
+  s_5bda27f7af525e::t_a4c8495f8393f6 587
+  s_5bda27f7af525e::t_d1991b94459457 774
+  s_bc93d3c82d5044::t_a51edff40fbecd 72-74,136,546-548,597,604
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/ISqlParser.java
+  s_5bda27f7af525e::t_f4f7072134a7cd 153-156
+  s_86a026c05f9183::t_19cbb153dacff5 170
+  s_5bda27f7af525e::t_06f7752cc381c9 106-119
+  s_5bda27f7af525e::t_0a90fdcd3284ec 34
+  s_5bda27f7af525e::t_bf7dec4153a763 21
+  s_5bda27f7af525e::t_53b2d32cda9699 20
+docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/变量参数解析与预编译支持情况.md
+  s_bc93d3c82d5044::t_26756fe7f95c87 150,152,421
+  s_bc93d3c82d5044::t_46e176d4031454 43,131,196-244,258-260,391-394,401-404,406-408,418-420
+  s_5bda27f7af525e::t_1c4c042fa2b5fa 148
+  s_bc93d3c82d5044::t_e3a2b4118e3d97 400,405,409
+  s_bc93d3c82d5044::t_fba124e3358aec 32-36,42
+  s_5bda27f7af525e::t_20f66306cb0f7d 73-74
+  s_5bda27f7af525e::t_00b950a4d02209 369-371,377-380
+  s_5bda27f7af525e::t_a5342e0e669041 44
+  s_bc93d3c82d5044::t_b9e0a702600e28 171,173-174,179,181-182,194-195
+  s_5bda27f7af525e::t_b3fe844b094b69 416
+  s_5bda27f7af525e::t_8c06b1b9114966 417
+  s_bc93d3c82d5044::t_9ba4a430efc0df 41,122,134,176,184
+  s_5bda27f7af525e::t_046f26a9d27820 386
+sqlparserx-web/src/main/resources/git.properties
+  s_5bda27f7af525e::t_a17ff5e3944de0 2,5,11-17,23
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/BaseParseParameterClient.java
+  s_5bda27f7af525e::t_727e539990a8f5 50-51,55-62,64
+  s_86a026c05f9183::t_49cdb0e3e24179 36-40
+  s_5bda27f7af525e::t_82e1b25bac17b2 52,63,65-66
+  s_86a026c05f9183::t_d4a6c242e7217f 20,24-25,30,42-49,67,70,76,78
+  s_86a026c05f9183::t_712c0126856d81 72
+  s_86a026c05f9183::t_e7961e43b5fd9a 26,53-54
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/support/ParameterAstUtils.java
+  s_86a026c05f9183::t_51cdeb8f341564 18-20,22-24,26-31,37,40-41,44-57,60,63-66,69-70,73,78-80
+  s_86a026c05f9183::t_49cdb0e3e24179 32-36
+  s_86a026c05f9183::t_cf40d7c04d9eaf 1-17,21,25,38-39,42-43,58-59,61-62,67-68,71-72,74-77
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/resolve/ParameterColumnResolver.java
+  s_bc93d3c82d5044::t_27805b9a443b20 1-45,58,60-63,66-68,71-98,100-116,121-127,129-229
+  s_bc93d3c82d5044::t_835e0fb89f4d15 46-57,59,64-65,69-70,99,117-120,128
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/mysql/parameter/MysqlParseParameterClient.java
+  s_86a026c05f9183::t_e7961e43b5fd9a 18-21,23,26-32,39-40
+  s_5bda27f7af525e::t_37b606009b0d75 22,24-25,37-38
+  s_5bda27f7af525e::t_895191f1e10144 33-36
+  s_86a026c05f9183::t_6a5cb2f3c6a71c 1-17
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/enums/SqlType.java
+  s_5bda27f7af525e::t_0cc7fc7cb44da0 49-51
+  s_5bda27f7af525e::t_244493eaaba7c0 1-21,24-28,31-32,35-36,66-97,99-110
+  s_5bda27f7af525e::t_b0e2910ea1e3f2 22-23,29-30,33-34,37-48,52-65,98
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/domain/ParamInfo.java
+  s_5bda27f7af525e::t_1c31ba32050b99 150-154
+  s_5bda27f7af525e::t_144fb4d573b61c 69,71
+  s_86a026c05f9183::t_19cbb153dacff5 126-149,155
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/transfer/ParamDataTypeTransfer.java
+  s_86a026c05f9183::t_cf40d7c04d9eaf 1-17
+  s_86a026c05f9183::t_49cdb0e3e24179 20,38-40
+  s_5bda27f7af525e::t_895d9f6fab2a12 21,23-30,32-34,36
+  s_86a026c05f9183::t_51cdeb8f341564 18-19,41,49-50
+  s_5bda27f7af525e::t_9ec23a5ce2ff9f 22,31,35,37,42-48
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/parser/base/parameter/rewrite/PrepareSqlRewriter.java
+  s_5bda27f7af525e::t_a0c839f03c39cd 89
+  s_5bda27f7af525e::t_4f2d180c9dcafc 97,104
+  s_5bda27f7af525e::t_9c900a7b299a28 116,128-129,139-140
+  s_5bda27f7af525e::t_a2787989581399 134
+  s_86a026c05f9183::t_49cdb0e3e24179 36-40
+  s_5bda27f7af525e::t_e654537dd51147 58,62-63,74-75,78
+  s_86a026c05f9183::t_cf40d7c04d9eaf 1-17,25,33,47-49,60-61,65-66,68-70,76,79-80,83-86,90-91,94-95,98-101,105-109,117-118,132-133,135
+  s_5bda27f7af525e::t_2506b38afc1f7c 123
+  s_5bda27f7af525e::t_7012d770694edd 20
+  s_5bda27f7af525e::t_a68e6bd4a67273 54-57
+  s_86a026c05f9183::t_e3571a0dd651c5 18-19,21-24,26-32,34-35,41-46,50-53,59,64,67,71-73,77,81-82,87-88,92-93,96,102-103,110-115,119-122,124-127,130-131,136-138,141-149
+docs/02、SQL业务层解析能力支撑情况/底层原理设计/解析sql类型/解析sql类型实现方案.md
+  s_5bda27f7af525e::t_747d7e226af200 3-4,6,12,14-16,30,32,36-38,40,47,51,57-59,65-67,70,74-76,80-82,85,89,94-99,101,105,107,109-112,114,116,118,120-163,167,172,175,194,201-233,237,239,241,243,245-247,253-254,271,275,278-281,284,288-289,292-310,312-313
+  s_5bda27f7af525e::t_1c0bbe19200c00 1-2,5,7-11,13,17-29,31,33-35,39,41-46,48-50,52-56,60-64,68-69,71-73,77-79,83-84,86-88,90-93,100,102-104,106,108,113,115,117,119,164-166,168-171,173-174,176-193,195-200,234-236,238,240,242,244,248-252,255-270,272-274,276-277,282-283,285-287,290-291,311
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7504209bcf3174b6d63e04a58b1eab0433b600ac",
+  "prompts": {},
+  "sessions": {
+    "s_13d16d0a89a675": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_edb56ef34ffe7w6qSocK4KR307",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_2d76576125b409": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed130577effenonuO1GxFdKvkN",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_5bda27f7af525e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed0c160dfffet5nZ7Z0JpTZ1R2",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_86a026c05f9183": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12efd-e9a1-7072-b45d-8aca38b290cd",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_bc93d3c82d5044": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13451-697a-7f03-9b3c-69dfbdb9018f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
