@@ -23,7 +23,6 @@ import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResul
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult.ColumnRelation;
 import com.dtstack.sqlparserx.enums.DataSourceType2DbType;
 
-import com.alibaba.druid.DbType;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,9 +31,8 @@ import java.util.*;
 public class LineageService {
 
     public Map<String, Object> getLineage(String sql, Integer datasourceType) {
-        // 无匹配的数据源则走
-        DbType dbType = DataSourceType2DbType.getDbType(datasourceType);
-        ISqlParser sqlParser = SqlParserFactory.getSqlParser(dbType);
+        ISqlParser sqlParser = SqlParserFactory
+                .getSqlParser(DataSourceType2DbType.getSqlParserDataSourceType(datasourceType));
         ColumnLineageResult columnLineageResult = sqlParser.parseColumnLineages(sql, new HashMap<>());
 
         Set<String> allTables = new HashSet<>();

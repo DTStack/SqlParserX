@@ -16,7 +16,8 @@
     ├── 函数解析支持情况.md
     ├── 字段血缘解析支持情况.md
     ├── 表血缘解析支持情况.md
-    └── 表解析支持情况.md
+    ├── 表解析支持情况.md
+    └── 变量参数解析与预编译支持情况.md
 ```
 
 ## 一、数据源总表与索引
@@ -47,6 +48,7 @@
 | [字段血缘解析支持情况](通用解析能力/字段血缘解析支持情况.md) | `ISqlParser.parseColumnLineages` | `ColumnLineageClient` |
 | [表血缘解析支持情况](通用解析能力/表血缘解析支持情况.md) | `ISqlParser.parseTableLineages` | `TableLineageClient` |
 | [表解析支持情况](通用解析能力/表解析支持情况.md) | `ISqlParser.parseTables` / `parseCreateTable` | `ParseTablesClient` / `ParseCreateTableClient` |
+| [变量参数解析与预编译支持情况](通用解析能力/变量参数解析与预编译支持情况.md) | `ISqlParser.parseParameterSql` / `buildSqlByPrepareCompile` | `IParseParameterClient` / `BaseParseParameterClient` |
 
 ## 维护约定
 

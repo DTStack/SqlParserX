@@ -17,6 +17,7 @@
  */
 package com.dtstack.sqlparserx.core;
 
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
 import com.dtstack.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.Column;
@@ -25,7 +26,6 @@ import com.dtstack.sqlparserx.core.parser.base.lineage.domain.TableLineage;
 import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
 import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseTableResult;
 
-import com.alibaba.druid.DbType;
 import org.junit.Test;
 
 import java.util.*;
@@ -37,7 +37,7 @@ public class READMETest {
         String sql = getSql();
         // 1、获取到sqlparser解析器
         // 方式一：工厂方式获取
-        ISqlParser sqlParser = SqlParserFactory.getSqlParser(DbType.mysql);
+        ISqlParser sqlParser = SqlParserFactory.getSqlParser(SqlParserDataSourceType.MYSQL);
         // 方式二：直接new
 //        MySqlParser mySqlParser = new MySqlParser();
 

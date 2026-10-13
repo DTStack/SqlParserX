@@ -17,29 +17,17 @@
  */
 package com.dtstack.sqlparserx.core.parser;
 
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
 import com.dtstack.sqlparserx.core.parser.base.BaseSqlParser;
-import com.dtstack.sqlparserx.core.parser.clickhouse.ClickHouseSqlParser;
-import com.dtstack.sqlparserx.core.parser.dm.DmSqlParser;
-import com.dtstack.sqlparserx.core.parser.doris.DorisSqlParser;
-import com.dtstack.sqlparserx.core.parser.greenplum.GreenplumSqlParser;
-import com.dtstack.sqlparserx.core.parser.hive.HiveSqlParser;
-import com.dtstack.sqlparserx.core.parser.mysql.MySqlParser;
-import com.dtstack.sqlparserx.core.parser.oceanbase.OceanBaseSqlParser;
-import com.dtstack.sqlparserx.core.parser.oceanbase_oracle.OceanBaseOracleSqlParser;
-import com.dtstack.sqlparserx.core.parser.oracle.OracleSqlParser;
-import com.dtstack.sqlparserx.core.parser.postgresql.PostgresqlSqlParser;
-import com.dtstack.sqlparserx.core.parser.spark.SparkSqlParser;
-import com.dtstack.sqlparserx.core.parser.sqlserver.SqlServerSqlParser;
-import com.dtstack.sqlparserx.core.parser.starrocks.StarrocksSqlParser;
-import com.dtstack.sqlparserx.core.parser.tidb.TidbSqlParser;
-import com.dtstack.sqlparserx.core.parser.trino.TrinoSqlParser;
 
 import com.alibaba.druid.DbType;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 可根据不同数据源类型来完成不同组件的使用
@@ -47,80 +35,75 @@ import java.util.Set;
 public class SqlParserFactory {
 
     /**
-     * 当前核心库实际实现了解析器的方言集合（与 {@link #getSqlParser(DbType)} 保持一致）
+     * 当前核心库实际支持的数据源集合。
      */
-    private static final Set<DbType> SUPPORTED_DB_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            DbType.mysql,
-            DbType.hive,
-            DbType.trino,
-            DbType.oracle,
-            DbType.greenplum,
-            DbType.tidb,
-            DbType.postgresql,
-            DbType.sqlserver,
-            DbType.starrocks,
-            DbType.doris,
-            DbType.oceanbase,
-            DbType.oceanbase_oracle,
-            DbType.dm,
-            DbType.clickhouse,
-            DbType.spark)));
+    private static final Set<SqlParserDataSourceType> SUPPORTED_DATA_SOURCE_TYPES = Collections.unmodifiableSet(EnumSet
+            .allOf(SqlParserDataSourceType.class));
+
+    private static final Set<DbType> SUPPORTED_DB_TYPES = buildSupportedDbTypes();
+
+    /** 每种数据源对应一个解析器实例，首次获取时再创建。 */
+    private static final Map<SqlParserDataSourceType, ISqlParser> SQL_PARSER_CACHE = new ConcurrentHashMap<>();
+
+    private static Set<DbType> buildSupportedDbTypes() {
+        Set<DbType> dbTypes = new HashSet<>();
+        for (SqlParserDataSourceType dataSourceType : SUPPORTED_DATA_SOURCE_TYPES) {
+            dbTypes.add(dataSourceType.getDbType());
+        }
+        return Collections.unmodifiableSet(dbTypes);
+    }
+
+    /**
+     * 根据 SqlParserX Core 自有的数据源类型创建业务解析器。
+     *
+     * @param dataSourceType SqlParserX 支持的数据源类型
+     * @return 对应数据源的业务解析器
+     * @throws IllegalArgumentException 数据源类型为空时抛出
+     */
+    public static ISqlParser getSqlParser(SqlParserDataSourceType dataSourceType) {
+        if (dataSourceType == null) {
+            throw new IllegalArgumentException("SqlParser data source type must not be null");
+        }
+        return SQL_PARSER_CACHE.computeIfAbsent(dataSourceType, SqlParserDataSourceType::createSqlParser);
+    }
+
+    public static boolean supports(SqlParserDataSourceType dataSourceType) {
+        return dataSourceType != null && SUPPORTED_DATA_SOURCE_TYPES.contains(dataSourceType);
+    }
+
+    public static Set<SqlParserDataSourceType> getSupportedDataSourceTypes() {
+        return SUPPORTED_DATA_SOURCE_TYPES;
+    }
 
     /**
      * 判断指定的 Druid DbType 是否为核心库实际支持的方言（有独立解析器实现，非回退默认解析器）
      * @param dbType DbType
      * @return true=支持
      */
+    @Deprecated
     public static boolean supports(DbType dbType) {
-        return dbType != null && SUPPORTED_DB_TYPES.contains(dbType);
+        return SqlParserDataSourceType.fromDbType(dbType) != null;
     }
 
     /**
      * 获取核心库实际支持的方言集合（不可变）
      * @return Set<DbType>
      */
+    @Deprecated
     public static Set<DbType> getSupportedDbTypes() {
         return SUPPORTED_DB_TYPES;
     }
 
     /**
-     * 基于Druid的dbType来实现
+     * 基于 Druid DbType 的兼容入口。新代码请使用
+     * {@link #getSqlParser(SqlParserDataSourceType)}。
      * @param dbType DbType
      * @return ISqlParser
      */
+    @Deprecated
     public static ISqlParser getSqlParser(DbType dbType) {
-        if (dbType == DbType.mysql) {
-            return new MySqlParser();
-        } else if (dbType == DbType.hive) {
-            return new HiveSqlParser();
-        } else if (dbType == DbType.trino) {
-            return new TrinoSqlParser();
-        } else if (dbType == DbType.oracle) {
-            return new OracleSqlParser();
-        } else if (dbType == DbType.greenplum) {
-            return new GreenplumSqlParser();
-        } else if (dbType == DbType.tidb) {
-            return new TidbSqlParser();
-        } else if (dbType == DbType.postgresql) {
-            return new PostgresqlSqlParser();
-        } else if (dbType == DbType.sqlserver) {
-            return new SqlServerSqlParser();
-        } else if (dbType == DbType.starrocks) {
-            return new StarrocksSqlParser();
-        } else if (dbType == DbType.doris) {
-            return new DorisSqlParser();
-        } else if (dbType == DbType.oceanbase) {
-            return new OceanBaseSqlParser();
-        } else if (dbType == DbType.oceanbase_oracle) {
-            return new OceanBaseOracleSqlParser();
-        } else if (dbType == DbType.dm) {
-            return new DmSqlParser();
-        } else if (dbType == DbType.clickhouse) {
-            return new ClickHouseSqlParser();
-        } else if (dbType == DbType.spark) {
-            return new SparkSqlParser();
-        }
-        return new BaseSqlParser();
+        SqlParserDataSourceType dataSourceType = SqlParserDataSourceType.fromDbType(dbType);
+        return dataSourceType == null ? new BaseSqlParser() : getSqlParser(dataSourceType);
     }
 
     // 根据可接入不同场景去自行提供转换

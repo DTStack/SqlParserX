@@ -46,7 +46,7 @@ public interface IParseParameterClient {
             Map<String, List<DataTypeColumn>> tableColumnsMap);
 
     /**
-     * 预编译场景处理带变量sql
+     * 生成预编译场景处理带变量sql
      * @param stmt sql语法树
      * @param inParams Map<Object> 客户输入参数值map
      * @param columns Map<String,ParamInfo> 参数信息

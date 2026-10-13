@@ -51,16 +51,6 @@ public class ParamInfo {
     private String defaultValue;
 
     /**
-     * 是否是常量
-     */
-    private boolean constant;
-
-    /**
-     * 是否必须要
-     */
-    private boolean required;
-
-    /**
      * 字段描述
      */
     private String desc;
@@ -76,9 +66,9 @@ public class ParamInfo {
     private String operator;
 
     /**
-     * 组id
+     * 参数块对应的 SQL 片段（标明该参数来自源 SQL 的哪一部分）
      */
-    private Integer groupId;
+    private String sqlPart;
 
     public ParamInfo() {
     }
@@ -133,4 +123,34 @@ public class ParamInfo {
         this.dataType = dataType;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+    public String getDesc() {
+        return desc;
+    }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+    public String getFieldName() {
+        return fieldName;
+    }
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+    public String getOperator() {
+        return operator;
+    }
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+    public String getSqlPart() {
+        return sqlPart;
+    }
+    public void setSqlPart(String sqlPart) {
+        this.sqlPart = sqlPart;
+    }
 }
