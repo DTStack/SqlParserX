@@ -1,0 +1,119 @@
+sqlparserx-engine/sqlparserx-core/src/main/java/com/dtstack/sqlparserx/core/enums/SqlParserDataSourceType.java
+  s_1d268e65229aea::t_97a77e5d9821a5 49-63
+  s_1d268e65229aea::t_449974159e0b08 65,69-70,75-78,103-114,117,119
+  s_1d268e65229aea::t_611850ac8e9a3e 115-116,118
+sqlparserx-ui/src/components/SyntaxValidator.vue
+  s_1d268e65229aea::t_4f908e1e3814c7 5,14-15,33,69-70,74,78-80,112-114,117-121,404
+  s_1d268e65229aea::t_62c522d4178083 175,185-203,208-215
+sqlparserx-ui/src/components/CreateTableParser.vue
+  s_1d268e65229aea::t_3b2d0ef5ba61c8 316,326-344,349-356
+  s_1d268e65229aea::t_3a2e71455b1cb9 5,14-15,32,190-191,195,211,213,254-256,259-263
+sqlparserx-ui/src/components/ToolCapabilityTip.vue
+  s_1d268e65229aea::t_9738709ba9542e 1-52
+sqlparserx-ui/src/components/NavDropdown.vue
+  s_1d268e65229aea::t_a7cf28308da7b5 10-11
+README_zh-CN.md
+  s_1d268e65229aea::t_785e13a49df3d9 3-4
+sqlparserx-ui/src/api/DatasourceApi.js
+  s_1d268e65229aea::t_a927f138ed6e32 47-64,67
+  s_1d268e65229aea::t_59a20172e8f166 15-30,66
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/controller/LineageController.java
+  s_1d268e65229aea::t_787a7d65a2ac52 41,51-57
+  s_1d268e65229aea::t_ed0d5da1260288 58-59
+sqlparserx-ui/src/utils/request.js
+  s_1d268e65229aea::t_52a67c18739ff1 25-27,37
+sqlparserx-ui/src/components/ParameterWorkbench.vue
+  s_1d268e65229aea::t_52a67c18739ff1 36,316,333
+  s_1d268e65229aea::t_a3f49bf1e56d38 155,488-489,504
+  s_1d268e65229aea::t_73123eab37bb53 443
+  s_1d268e65229aea::t_7919994087c413 65,162,183,249-253,402-407
+  s_1d268e65229aea::t_6e2304e662b6a0 147,156-160,353-357
+  s_1d268e65229aea::t_6d04a3468e9c87 425,439-440,450,464-465,467,473-474
+  s_1d268e65229aea::t_447b1fe0768c97 174,426,444,480-482,487,490,493,500-502,505,507
+  s_1d268e65229aea::t_c1f0d5a5dc3807 484,491,494-495,508
+  s_1d268e65229aea::t_bf757f5be7b10c 74-95,97-113,115,395-398
+  s_1d268e65229aea::t_eed6b03752bb90 424,427,433,435,437-438,445-448,452-453,456,460-461,522,526,529,531,538-539,542-547,550,552,554,559
+  s_1d268e65229aea::t_900d3ec94590f0 224-227,245-248,254,297,305-315,317-325,327-328,330,332,334,336,341-345,349-352,358-370
+  s_1d268e65229aea::t_226cbb1c397bdd 7,11-12,207,214,216,259-261,264-265
+  s_1d268e65229aea::t_bd3880d639ca89 1-6,8-10,13-25,27-34,37-64,66-73,96,114,116-118,120-131,133-139,144,167,171-173,176-182,184-206,208-213,215,217-223,228-244,255-258,262-263,266-296,298-304,326,329,331,335,337-340,346-348,371-394,408-422,429,434,436,441,449,451,454-455,457-459,463,466,468-470,476-477,509-520,523-525,527-528,530,532-537,540-541,551,553,555-558,560-561
+  s_1d268e65229aea::t_b25760952c7a68 462,549
+  s_1d268e65229aea::t_3ac432db1385ef 503
+  s_1d268e65229aea::t_83746617276a78 442,471-472,475,479,483,485-486,492,496-499,521
+  s_1d268e65229aea::t_4c2b3c3d7f5497 506
+  s_1d268e65229aea::t_6c6d5f6459f8ad 152,399-401
+  s_1d268e65229aea::t_b9f625c35c4d23 428,430-432,548
+  s_1d268e65229aea::t_73cf9ea7681af4 478
+  s_1d268e65229aea::t_51618e43153a33 26,35,119,132,140-143,145-146,148-151,153-154,161,163-166,168-170,175
+  s_1d268e65229aea::t_fc66e5b3b23866 423
+sqlparserx-ui/src/components/TableParser.vue
+  s_1d268e65229aea::t_aae9735fba5357 274,284-302,307-314
+  s_1d268e65229aea::t_91e6415c0ce23b 5,14-15,32,58-59,63,173-175,212-214,217-221
+sqlparserx-ui/index.html
+  s_1d268e65229aea::t_ca5dd5991403c6 11
+sqlparserx-ui/src/components/LineageVisualizer.vue
+  s_1d268e65229aea::t_78215719f45cae 841-842
+  s_1d268e65229aea::t_787a7d65a2ac52 14,35,47-48,54-55,102,120,269-275,277,284,289-290,292-293,297,328-329,391-392,483,522,697,1027
+  s_1d268e65229aea::t_7fbe026379b33b 815,825-840,843,848-855
+  s_1d268e65229aea::t_59ac8752ad3a41 5,15,103-104,108,129,131,147-151,339-341,344-348
+  s_1d268e65229aea::t_b967eaea078a69 1028
+sqlparserx-ui/src/components/SQLSplitterTester.vue
+  s_1d268e65229aea::t_77607c6c79b99a 184,194-212,217-224
+  s_1d268e65229aea::t_85ee7c8ed48eb6 5,14-15,34,57-58,62,74-76,108-110,113-117,367
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/controller/DataSourceController.java
+  s_1d268e65229aea::t_31dd2ba6a8882c 50-53
+  s_1d268e65229aea::t_105e23a5616d90 20
+README.md
+  s_1d268e65229aea::t_785e13a49df3d9 3-4
+sqlparserx-ui/src/api/LineageApi.js
+  s_1d268e65229aea::t_787a7d65a2ac52 3,5,7,9,13-26
+sqlparserx-ui/src/components/Home.vue
+  s_1d268e65229aea::t_51585901cbc21c 37-38,48,485
+  s_1d268e65229aea::t_9756f3d0e647a2 453
+  s_1d268e65229aea::t_785e13a49df3d9 7,252,297,318,433
+  s_1d268e65229aea::t_38326c75d4841a 6,11-14,18,97,238,261-263,268,273-275,286-294
+  s_1d268e65229aea::t_cc46efff2309e0 28,33,54-67,93,96,98,101,127-130,138,155-156,158-163,172,215,239,256,269,295-296,298,305-306
+  s_1d268e65229aea::t_9bf2cb2cc70ac9 314,316-317,319,321-322,324-326,331-335,337,339-340,344-346,348-349,351,359,364,366-367,369-370,374,377-379,381,383-386,390-391,394-398,401-404,412-414,416-419,421,431-432,435-439,441-451,454-455,457-459,461-468,470-484
+  s_1d268e65229aea::t_881f0ec30dbc97 8
+  s_1d268e65229aea::t_2f4c6af76d67f9 90,94-95,99-100,131
+  s_1d268e65229aea::t_4a71c67ca73ec6 47,218,222
+  s_1d268e65229aea::t_19322330f82758 139-140,210,226-227
+  s_1d268e65229aea::t_787a7d65a2ac52 253,341
+  s_1d268e65229aea::t_f54f4ffe3a77d2 86
+  s_1d268e65229aea::t_fbdc61701560af 104-116,119-122,299-304,392-393
+  s_1d268e65229aea::t_20d1133e544445 17,43,146,157,168,179,190,201,242,267,312-313,315,320,327-330,336,338,342-343,350,352-358,360-363,365,368,371-373,375-376,380,382,387-389,399-400,405-411,415,420,422-424,426-430
+  s_1d268e65229aea::t_12389552ed8c8a 102-103,117-118,123-126
+  s_1d268e65229aea::t_a3a1f090987370 91-92
+  s_1d268e65229aea::t_be445dace72963 164-165
+sqlparserx-ui/src/router/index.js
+  s_1d268e65229aea::t_a927f138ed6e32 9,51-55,60
+sqlparserx-ui/src/layouts/MainLayout.vue
+  s_1d268e65229aea::t_2bd2a89d61e4e9 10,71-72,74-77,81-82
+  s_1d268e65229aea::t_787a7d65a2ac52 83-88
+  s_1d268e65229aea::t_c8dd9663b817c7 89-90
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/service/LineageService.java
+  s_1d268e65229aea::t_787a7d65a2ac52 24-25,100-134
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/controller/ParameterController.java
+  s_1d268e65229aea::t_b1efe4e7ff1b40 1-92
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/enums/DataSourceType2DbType.java
+  s_1d268e65229aea::t_6d0a7ab10921cd 30,36-42,47-49
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/vo/ParameterParseRequest.java
+  s_1d268e65229aea::t_ef4b8d9e4cce9e 1-34
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/vo/PrepareCompileRequest.java
+  s_1d268e65229aea::t_287b96311ba3e1 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "96efec99759e44d081d04a8386f3ca2046b13e30",
+  "prompts": {},
+  "sessions": {
+    "s_1d268e65229aea": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13924-5951-7063-a140-61f279cb680f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
