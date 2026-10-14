@@ -50,7 +50,8 @@ public class ParameterController {
             ISqlParser parser = getParser(request.getDatasourceType());
             ParseParameterResult result = parser.parseParameterSql(request.getSql(),
                     request.getIgnoreSyntaxCheck(), request.getTableColumnsMap() == null
-                            ? Collections.emptyMap() : request.getTableColumnsMap());
+                            ? Collections.emptyMap()
+                            : request.getTableColumnsMap());
             return ResponseResult.success(result);
         } catch (Exception e) {
             log.error("parseParameters error", e);

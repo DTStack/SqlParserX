@@ -33,13 +33,18 @@ import java.util.stream.Collectors;
  * 数据源类型派生，不作为前端支持范围的判断依据。</p>
  */
 public enum DataSourceType2DbType {
-    MYSQL(SqlParserDataSourceType.MYSQL), HIVE(SqlParserDataSourceType.HIVE), TRINO(SqlParserDataSourceType.TRINO),
-    ORACLE(SqlParserDataSourceType.ORACLE), GREENPLUM(SqlParserDataSourceType.GREENPLUM),
-    TIDB(SqlParserDataSourceType.TIDB), POSTGRESQL(SqlParserDataSourceType.POSTGRESQL),
-    SQLSERVER(SqlParserDataSourceType.SQLSERVER), STARROCKS(SqlParserDataSourceType.STARROCKS),
-    DORIS(SqlParserDataSourceType.DORIS), OCEANBASE(SqlParserDataSourceType.OCEANBASE),
-    OCEANBASE_ORACLE(SqlParserDataSourceType.OCEANBASE_ORACLE), DM(SqlParserDataSourceType.DM),
-    CLICKHOUSE(SqlParserDataSourceType.CLICKHOUSE), SPARK(SqlParserDataSourceType.SPARK);
+    MYSQL(SqlParserDataSourceType.MYSQL), HIVE(SqlParserDataSourceType.HIVE), TRINO(
+            SqlParserDataSourceType.TRINO), ORACLE(SqlParserDataSourceType.ORACLE), GREENPLUM(
+                    SqlParserDataSourceType.GREENPLUM), TIDB(SqlParserDataSourceType.TIDB), POSTGRESQL(
+                            SqlParserDataSourceType.POSTGRESQL), SQLSERVER(
+                                    SqlParserDataSourceType.SQLSERVER), STARROCKS(
+                                            SqlParserDataSourceType.STARROCKS), DORIS(
+                                                    SqlParserDataSourceType.DORIS), OCEANBASE(
+                                                            SqlParserDataSourceType.OCEANBASE), OCEANBASE_ORACLE(
+                                                                    SqlParserDataSourceType.OCEANBASE_ORACLE), DM(
+                                                                            SqlParserDataSourceType.DM), CLICKHOUSE(
+                                                                                    SqlParserDataSourceType.CLICKHOUSE), SPARK(
+                                                                                            SqlParserDataSourceType.SPARK);
 
     private final Set<Integer> codes;
     private final SqlParserDataSourceType sqlParserDataSourceType;
