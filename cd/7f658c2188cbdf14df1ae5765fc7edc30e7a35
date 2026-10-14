@@ -1,0 +1,76 @@
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/intro.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,24,29
+website/docs/intro.md
+  s_1d268e65229aea::t_88a67ce3c6403d 11,25,30
+website/versioned_docs/version-1.0/intro.md
+  s_1d268e65229aea::t_88a67ce3c6403d 11,25,30
+website/docs/about/introduction.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,45
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/about/introduction.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,43
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/parameter-compile.md
+  s_1d268e65229aea::t_666e73bdf91396 1-35
+website/i18n/en/docusaurus-plugin-content-docs/current/about/introduction.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,43
+website/src/components/Features/index.jsx
+  s_1d268e65229aea::t_ae0229455cd05e 5-23,26-27,30-31,34-35,38-39,42-43,46-47,74,87
+website/versioned_sidebars/version-1.0-sidebars.json
+  s_1d268e65229aea::t_ee3ef82b4da3fb 26,30-31
+website/i18n/en/docusaurus-plugin-content-docs/current/core/sql-type.md
+  s_1d268e65229aea::t_ee3ef82b4da3fb 1-23
+website/i18n/en/docusaurus-plugin-content-docs/current/core/parameter-compile.md
+  s_1d268e65229aea::t_ee3ef82b4da3fb 1-35
+website/src/components/Datasource/index.jsx
+  s_1d268e65229aea::t_c0fb4e0a5ef43a 7-12,28,30,32,39
+website/src/components/Intro/index.jsx
+  s_1d268e65229aea::t_ae0229455cd05e 4,8-9,26-27,38,66,72,162
+website/versioned_docs/version-1.0/about/introduction.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,45
+website/versioned_docs/version-1.0/core/sql-type.md
+  s_1d268e65229aea::t_666e73bdf91396 1-38
+website/src/components/CTA/index.jsx
+  s_1d268e65229aea::t_ae0229455cd05e 17,35
+website/src/components/Case/index.jsx
+  s_1d268e65229aea::t_ae0229455cd05e 21,92
+website/src/css/custom.css
+  s_1d268e65229aea::t_18d9903fc0cefa 7-14,25-26,31-40,44-46,50,54-60,78-86,90,92,96,112-129
+website/i18n/en/docusaurus-plugin-content-docs/current/intro.md
+  s_1d268e65229aea::t_88a67ce3c6403d 10,24,29
+website/i18n/en/code.json
+  s_1d268e65229aea::t_c0fb4e0a5ef43a 336,359-364,381-393,399-405,504,510
+website/src/components/Features/styles.module.css
+  s_1d268e65229aea::t_ae0229455cd05e 84-91
+website/i18n/en/docusaurus-plugin-content-docs/version-1.0/core/sql-type.md
+  s_1d268e65229aea::t_666e73bdf91396 1-23
+website/src/components/Intro/styles.module.css
+  s_1d268e65229aea::t_ae0229455cd05e 92-94,102-108,117-127
+  s_1d268e65229aea::t_e2ffbec76967bb 128
+website/src/components/Datasource/styles.module.css
+  s_1d268e65229aea::t_c0fb4e0a5ef43a 54-63
+website/docs/core/parameter-compile.md
+  s_1d268e65229aea::t_ee3ef82b4da3fb 1-58
+website/docs/core/sql-type.md
+  s_1d268e65229aea::t_ee3ef82b4da3fb 1-38
+website/docusaurus.config.js
+  s_1d268e65229aea::t_ae0229455cd05e 15,125,180
+website/versioned_docs/version-1.0/core/parameter-compile.md
+  s_1d268e65229aea::t_666e73bdf91396 1-58
+website/sidebars.js
+  s_1d268e65229aea::t_ee3ef82b4da3fb 29,34,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cd7f658c2188cbdf14df1ae5765fc7edc30e7a35",
+  "prompts": {},
+  "sessions": {
+    "s_1d268e65229aea": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13924-5951-7063-a140-61f279cb680f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
