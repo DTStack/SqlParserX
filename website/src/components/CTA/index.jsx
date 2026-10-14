@@ -14,7 +14,7 @@ export default function CTA() {
         </h2>
         <p className={styles.desc}>
           <Translate id="homepage.cta.desc">
-            几分钟完成接入，体验多方言表解析、血缘与函数提取能力。
+            几分钟完成接入，体验多方言解析、血缘追溯与参数预编译能力。
           </Translate>
         </p>
         <div className={styles.actions}>

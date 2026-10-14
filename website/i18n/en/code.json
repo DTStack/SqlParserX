@@ -333,7 +333,7 @@
     "message": "A multi-dialect SQL parsing engine and toolkit"
   },
   "homepage.hero.desc": {
-    "message": "Table & column lineage · Table/DDL parsing · Function extraction · SQL splitting and row-level permission rewriting"
+    "message": "SQL type detection · Table & column lineage · Table/DDL parsing · Function extraction · Parameter extraction and prepared SQL"
   },
   "homepage.hero.cta.primary": {
     "message": "Quick Start"
@@ -356,6 +356,12 @@
   "homepage.features.heading": {
     "message": "One engine for the full SQL parsing pipeline"
   },
+  "homepage.feature.type.title": {
+    "message": "SQL type detection"
+  },
+  "homepage.feature.type.desc": {
+    "message": "Detect query, DML, DDL, SHOW and EXPLAIN statement types."
+  },
   "homepage.feature.dialect.title": {
     "message": "Multi-dialect parsing"
   },
@@ -372,13 +378,31 @@
     "message": "Table & DDL parsing"
   },
   "homepage.feature.table.desc": {
-    "message": "Identify real tables, CTEs, CREATE TABLE, partitions and table properties."
+    "message": "Resolve real tables through JOINs, CTEs and subqueries, then parse fields, keys, partitions and buckets."
+  },
+  "homepage.feature.tableLineage.title": {
+    "message": "Table lineage"
+  },
+  "homepage.feature.tableLineage.desc": {
+    "message": "Trace data flow from source tables to targets in INSERT and CTAS statements."
+  },
+  "homepage.feature.columnLineage.title": {
+    "message": "Column lineage"
+  },
+  "homepage.feature.columnLineage.desc": {
+    "message": "Map source columns to targets across expressions, functions and CASE clauses."
   },
   "homepage.feature.function.title": {
     "message": "Function parsing"
   },
   "homepage.feature.function.desc": {
-    "message": "Extract regular, aggregate, window and nested functions with their arguments."
+    "message": "Extract and deduplicate regular, aggregate and window function names across multiple statements."
+  },
+  "homepage.feature.parameter.title": {
+    "message": "Parameter extraction & prepared SQL"
+  },
+  "homepage.feature.parameter.desc": {
+    "message": "Extract dynamic SELECT parameters and produce JDBC placeholder SQL with ordered bindings."
   },
   "homepage.feature.split.title": {
     "message": "SQL splitting & validation"
@@ -477,13 +501,13 @@
     "message": "Business layer unified parsing"
   },
   "homepage.case.step4": {
-    "message": "Table / lineage / function / rewrite results"
+    "message": "Table / lineage / function / parameter results"
   },
   "homepage.cta.title": {
     "message": "Ready to parse your SQL?"
   },
   "homepage.cta.desc": {
-    "message": "Get started in minutes with multi-dialect table parsing, lineage and function extraction."
+    "message": "Get started in minutes with multi-dialect parsing, lineage tracing and prepared SQL."
   },
   "homepage.cta.primary": {
     "message": "Quick Start"

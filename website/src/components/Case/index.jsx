@@ -18,7 +18,7 @@ const STEPS = [
   },
   {
     id: 'homepage.case.step4',
-    label: '表 / 血缘 / 函数 / 改写结果',
+    label: '表 / 血缘 / 函数 / 参数解析结果',
   },
 ];
 

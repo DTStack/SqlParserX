@@ -7,7 +7,7 @@ sidebar_position: 1
 
 # Welcome to SqlParserX
 
-SqlParserX is a **multi-dialect SQL parsing engine and toolkit** for table/DDL parsing, table and column lineage, function extraction, SQL splitting and row-level permission rewriting.
+SqlParserX is a **multi-dialect SQL parsing engine and toolkit** for SQL type detection, table/DDL parsing, table and column lineage, function extraction, parameter extraction, and prepared SQL generation.
 
 It is built around two layers: `sqlparserx-syntax` parses SQL into Druid ASTs and owns syntax extensions; `sqlparserx-core` consumes those ASTs through the unified `ISqlParser` contract and produces business parsing results. `sqlparserx-web` and `sqlparserx-ui` provide service and visualization access.
 
@@ -21,7 +21,7 @@ It is built around two layers: `sqlparserx-syntax` parses SQL into Druid ASTs an
 
 - **About SqlParserX**: project introduction and two-layer architecture
 - **Quick Start**: environment setup, build and run
-- **Core Parsing Capabilities**: field lineage, table lineage, table parsing, function parsing
+- **Core Parsing Capabilities**: SQL type detection, field lineage, table lineage, table parsing, function extraction, and parameter extraction
 - **Contributing**: how to contribute
 
 :::tip Tip

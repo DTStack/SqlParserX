@@ -81,9 +81,14 @@
   border: 1px solid var(--home-badge-border);
 }
 
-.icon {
-  font-size: 1.5rem;
-  line-height: 1;
+.iconWrap svg {
+  width: 27px;
+  height: 27px;
+  color: var(--ifm-color-primary);
+}
+
+.iconAccent {
+  stroke-width: 2.15;
 }
 
 .cardTitle {

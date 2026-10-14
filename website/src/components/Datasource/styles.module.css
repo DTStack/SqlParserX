@@ -51,6 +51,16 @@
   transition: filter 0.18s ease, opacity 0.18s ease;
 }
 
+.fallbackIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--ifm-color-primary);
+  font-size: 0.65rem;
+  opacity: 0.72;
+}
+
 .item:hover img {
   filter: grayscale(0%);
   opacity: 1;

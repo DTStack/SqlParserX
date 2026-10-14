@@ -4,18 +4,12 @@ import Translate from '@docusaurus/Translate';
 import styles from './styles.module.css';
 
 const DATASOURCES = [
-  ['mysql', 'MySQL'],
-  ['doris', 'Doris'],
-  ['starrocks', 'StarRocks'],
-  ['hive', 'Hive'],
-  ['clickhouse', 'ClickHouse'],
-  ['postgresql', 'PostgreSQL'],
-  ['oracle', 'Oracle'],
-  ['sqlserver', 'SQL Server'],
-  ['spark', 'Spark'],
-  ['tidb', 'TiDB'],
-  ['oceanbase', 'OceanBase'],
-  ['greenplum', 'Greenplum'],
+  ['mysql', 'MySQL'], ['hive', 'Hive'], ['doris', 'Doris'],
+  ['starrocks', 'StarRocks'], ['clickhouse', 'ClickHouse'],
+  ['oracle', 'Oracle'], ['postgresql', 'PostgreSQL'], ['spark', 'Spark'],
+  [null, 'Trino'], [null, 'DM'], ['oceanbase', 'OceanBase'],
+  [null, 'OceanBase Oracle'], ['sqlserver', 'SQL Server'],
+  ['greenplum', 'Greenplum'], ['tidb', 'TiDB'],
 ];
 
 export default function Datasource() {
@@ -31,11 +25,11 @@ export default function Datasource() {
       <div className={styles.row}>
         {DATASOURCES.map(([file, name]) => (
           <div key={file} className={styles.item} title={name}>
-            <img
+            {file ? <img
               src={`${baseUrl}img/datasource/${file}.png`}
-              alt={name}
+              alt=""
               loading="lazy"
-            />
+            /> : <span className={styles.fallbackIcon} aria-hidden="true">◆</span>}
             <span>{name}</span>
           </div>
         ))}

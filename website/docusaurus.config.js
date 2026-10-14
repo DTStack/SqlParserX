@@ -12,7 +12,7 @@ const config = {
   // -------- 品牌信息（改这里即可换品牌） --------
   title: 'SqlParserX',
   tagline: '多方言 SQL 解析引擎与工具包',
-  favicon: 'img/favicon.svg',
+  favicon: 'img/logo.png',
 
   // 兼容未来的 Docusaurus v4
   future: {
@@ -122,7 +122,7 @@ const config = {
         title: 'SqlParserX',
         logo: {
           alt: 'SqlParserX Logo',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
           {to: '/', label: '首页', position: 'left'},
@@ -177,7 +177,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} SqlParserX. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} dtstack · SqlParserX`,
       },
 
       prism: {

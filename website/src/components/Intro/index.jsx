@@ -1,9 +1,12 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Translate from '@docusaurus/Translate';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
 export default function Intro() {
+  const logoUrl = useBaseUrl('/img/logo.png');
+
   return (
     <header className={styles.hero}>
       <div className={styles.gridBg} aria-hidden="true" />
@@ -20,7 +23,8 @@ export default function Intro() {
           </div>
 
           <h1 className={styles.title}>
-            <span className={styles.titleGrad}>SqlParserX</span>
+            <img className={styles.brandLogo} src={logoUrl} alt="" />
+            <span>SqlParser</span><span className={styles.titleGrad}>X</span>
           </h1>
 
           <p className={styles.tagline}>
@@ -31,7 +35,7 @@ export default function Intro() {
 
           <p className={styles.desc}>
             <Translate id="homepage.hero.desc">
-              表与字段血缘 · 表/DDL 解析 · 函数提取 · SQL 拆分与行级权限改写
+              SQL 类型识别 · 表与字段血缘 · 表/DDL 解析 · 函数提取 · 参数提取与预编译
             </Translate>
           </p>
 
@@ -59,13 +63,13 @@ export default function Intro() {
 
           <ul className={styles.stats}>
             <li>
-              <strong>15+</strong>
+              <strong>15</strong>
               <span>
                 <Translate id="homepage.hero.stat.datasource">数据源方言</Translate>
               </span>
             </li>
             <li>
-              <strong>4</strong>
+              <strong>6</strong>
               <span>
                 <Translate id="homepage.hero.stat.capability">核心解析能力</Translate>
               </span>

@@ -26,10 +26,12 @@ const sidebars = {
       label: '核心解析能力使用',
       collapsed: false,
       items: [
+        'core/sql-type',
         'core/field-lineage',
         'core/table-lineage',
         'core/table-parse',
         'core/function-parse',
+        'core/parameter-compile',
       ],
     },
     {

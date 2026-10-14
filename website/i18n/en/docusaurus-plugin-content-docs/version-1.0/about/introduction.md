@@ -7,7 +7,7 @@ sidebar_position: 1
 
 # Introduction to SqlParserX
 
-SqlParserX is a **multi-dialect SQL parsing engine and toolkit** offering table/DDL parsing, table and column lineage, function extraction, SQL splitting and row-level permission rewriting.
+SqlParserX is a **multi-dialect SQL parsing engine and toolkit** offering SQL type detection, table/DDL parsing, table and column lineage, function extraction, parameter extraction, and prepared SQL generation.
 
 ## Problems It Solves
 

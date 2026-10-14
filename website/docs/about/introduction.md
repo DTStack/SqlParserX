@@ -7,7 +7,7 @@ sidebar_position: 1
 
 # SqlParserX 介绍
 
-SqlParserX 是一个**多方言 SQL 解析引擎与工具包**，提供表/DDL 解析、表与字段血缘、函数提取、SQL 拆分以及行级权限改写能力。
+SqlParserX 是一个**多方言 SQL 解析引擎与工具包**，提供 SQL 类型识别、表/DDL 解析、表与字段血缘、函数提取以及参数提取与预编译能力。
 
 ## 解决的典型问题
 

@@ -89,11 +89,21 @@
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: 0;
   font-size: 4.25rem;
   line-height: 1.02;
   font-weight: 900;
   letter-spacing: -0.035em;
   margin: 0 0 0.5rem;
+}
+
+.brandLogo {
+  width: 74px;
+  height: 74px;
+  margin-right: 0.7rem;
+  object-fit: contain;
 }
 
 .titleGrad {
@@ -102,6 +112,18 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 3rem;
+  }
+
+  .brandLogo {
+    width: 56px;
+    height: 56px;
+    margin-right: 0.45rem;
+  }
 }
 
 .tagline {
