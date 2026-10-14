@@ -1,0 +1,21 @@
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/controller/ParameterController.java
+  s_1d268e65229aea::t_33ab86bbb8f018 53-54
+SqlParserX-web/src/main/java/com/dtstack/sqlparserx/enums/DataSourceType2DbType.java
+  s_1d268e65229aea::t_f230382109fa18 36-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c52a5848db7392bae19123f243ab1c4706b47e4b",
+  "prompts": {},
+  "sessions": {
+    "s_1d268e65229aea": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13924-5951-7063-a140-61f279cb680f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
