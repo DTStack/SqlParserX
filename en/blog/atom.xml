@@ -6,7 +6,7 @@
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://dtstack.github.io/SqlParserX/en/blog"/>
     <subtitle>SqlParserX Blog</subtitle>
-    <icon>https://dtstack.github.io/SqlParserX/en/img/favicon.svg</icon>
+    <icon>https://dtstack.github.io/SqlParserX/en/img/logo.png</icon>
     <entry>
         <title type="html"><![CDATA[SqlParserX 的诞生起源背景与内部改造]]></title>
         <id>https://dtstack.github.io/SqlParserX/en/blog/origin-of-sqlparserx</id>
