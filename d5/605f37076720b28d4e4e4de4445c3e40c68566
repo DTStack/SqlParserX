@@ -1,0 +1,21 @@
+website/blog/2026-09-28-origin-of-sqlparserx.md
+  s_1d268e65229aea::t_2d0d21808f36ee 415,426-429
+website/docusaurus.config.js
+  s_1d268e65229aea::t_b188b3ae4c5511 62,84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d5605f37076720b28d4e4e4de4445c3e40c68566",
+  "prompts": {},
+  "sessions": {
+    "s_1d268e65229aea": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13924-5951-7063-a140-61f279cb680f",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
