@@ -46,24 +46,34 @@ import java.util.function.Supplier;
  */
 public enum SqlParserDataSourceType {
 
-    MYSQL(DbType.mysql, MySqlParser::new), HIVE(DbType.hive, HiveSqlParser::new), TRINO(DbType.trino,
-            TrinoSqlParser::new), ORACLE(DbType.oracle, OracleSqlParser::new), GREENPLUM(DbType.greenplum,
-                    GreenplumSqlParser::new), TIDB(DbType.tidb, TidbSqlParser::new), POSTGRESQL(DbType.postgresql,
-                            PostgresqlSqlParser::new), SQLSERVER(DbType.sqlserver, SqlServerSqlParser::new), STARROCKS(
-                                    DbType.starrocks, StarrocksSqlParser::new), DORIS(DbType.doris,
-                                            DorisSqlParser::new), OCEANBASE(DbType.oceanbase,
-                                                    OceanBaseSqlParser::new), OCEANBASE_ORACLE(DbType.oceanbase_oracle,
-                                                            OceanBaseOracleSqlParser::new), DM(DbType.dm,
-                                                                    DmSqlParser::new), CLICKHOUSE(DbType.clickhouse,
-                                                                            ClickHouseSqlParser::new), SPARK(
-                                                                                    DbType.spark, SparkSqlParser::new);
+    MYSQL(1, DbType.mysql, MySqlParser::new), HIVE(2, DbType.hive, HiveSqlParser::new), TRINO(3, DbType.trino,
+            TrinoSqlParser::new), ORACLE(4, DbType.oracle, OracleSqlParser::new), GREENPLUM(5, DbType.greenplum,
+                    GreenplumSqlParser::new), TIDB(6, DbType.tidb, TidbSqlParser::new), POSTGRESQL(7, DbType.postgresql,
+                            PostgresqlSqlParser::new), SQLSERVER(8, DbType.sqlserver,
+                                    SqlServerSqlParser::new), STARROCKS(9, DbType.starrocks,
+                                            StarrocksSqlParser::new), DORIS(10, DbType.doris,
+                                                    DorisSqlParser::new), OCEANBASE(11, DbType.oceanbase,
+                                                            OceanBaseSqlParser::new), OCEANBASE_ORACLE(12,
+                                                                    DbType.oceanbase_oracle,
+                                                                    OceanBaseOracleSqlParser::new), DM(13, DbType.dm,
+                                                                            DmSqlParser::new), CLICKHOUSE(14,
+                                                                                    DbType.clickhouse,
+                                                                                    ClickHouseSqlParser::new), SPARK(15,
+                                                                                            DbType.spark,
+                                                                                            SparkSqlParser::new);
 
+    private final int value;
     private final DbType dbType;
     private final Supplier<ISqlParser> parserSupplier;
 
-    SqlParserDataSourceType(DbType dbType, Supplier<ISqlParser> parserSupplier) {
+    SqlParserDataSourceType(int value, DbType dbType, Supplier<ISqlParser> parserSupplier) {
+        this.value = value;
         this.dbType = dbType;
         this.parserSupplier = parserSupplier;
+    }
+
+    public int getValue() {
+        return value;
     }
 
     public DbType getDbType() {
@@ -85,6 +95,23 @@ public enum SqlParserDataSourceType {
         }
         for (SqlParserDataSourceType dataSourceType : values()) {
             if (dataSourceType.dbType == dbType) {
+                return dataSourceType;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find the core data source type by its stable numeric value.
+     *
+     * @return matching data source type; {@code null} when the value is unknown
+     */
+    public static SqlParserDataSourceType fromValue(Integer value) {
+        if (value == null) {
+            return null;
+        }
+        for (SqlParserDataSourceType dataSourceType : values()) {
+            if (dataSourceType.value == value) {
                 return dataSourceType;
             }
         }

@@ -6,6 +6,7 @@ import SQLSplitterTester from '@/components/SQLSplitterTester.vue'
 import SyntaxValidator from '@/components/SyntaxValidator.vue'  // Add this import
 import TableParser from '@/components/TableParser.vue'  // 添加导入
 import CreateTableParser from '@/components/CreateTableParser.vue'  // 新增导入
+import ParameterWorkbench from '@/components/ParameterWorkbench.vue'
 import MainLayout from '@/layouts/MainLayout.vue';
 
 Vue.use(Router)
@@ -47,6 +48,11 @@ export default new Router({
                     path: '/create-table-parser',
                     name: 'CreateTableParser',
                     component: CreateTableParser
+                },
+                {
+                    path: '/parameter-workbench',
+                    name: 'ParameterWorkbench',
+                    component: ParameterWorkbench
                 }
             ]
         },

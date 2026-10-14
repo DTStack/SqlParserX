@@ -2,6 +2,7 @@
   <div class="table-parser">
     <div class="header">
       <h2>SQL 表解析工具</h2>
+      <tool-capability-tip>提取主表及全部真实表，支持 JOIN、子查询、UNION 和 CTE；本操作不依赖字段元数据。</tool-capability-tip>
     </div>
 
     <div class="main-container">
@@ -10,7 +11,8 @@
           <div class="panel-title">SQL输入</div>
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
-            <select id="data-source" v-model="selectedDataSource">
+            <select id="data-source" v-model.number="selectedDataSource" :disabled="loadingDataSources || !dataSources.length">
+              <option v-if="!dataSources.length" disabled value="">{{ loadingDataSources ? '正在加载…' : '暂无可用数据源' }}</option>
               <option v-for="source in dataSources"
                       :key="source.value"
                       :value="source.value">
@@ -27,7 +29,7 @@
           ></textarea>
         </div>
         <div class="sql-actions">
-          <button id="parse-btn" @click="parseTables">解析表</button>
+          <button id="parse-btn" :disabled="loadingDataSources || !dataSources.length" @click="parseTables">解析表</button>
         </div>
       </div>
 
@@ -53,10 +55,12 @@
 </template>
 
 <script>
-import { fetchDataSourceTypes, parseTables } from '@/api/DatasourceApi'
+import { loadDataSourceOptions, parseTables } from '@/api/DatasourceApi'
+import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
 
 export default {
   name: 'TableParser',
+  components: { ToolCapabilityTip },
   data() {
     return {
       sqlInput: `-- 完整查询（包含WITH AS、JOIN、子查询、UNION等）
@@ -166,8 +170,9 @@ LEFT JOIN t4 ON t1.id = t4.id
 LEFT JOIN t5 ON t1.id = t5.id
 JOIN digua_ceshi.departments dt ON t1.id = dt.employee_id
 WHERE t1.age <= 20;`,
-      selectedDataSource: 36, // 默认选中ORACLE
-      dataSources: [], // 初始化为空数组
+      selectedDataSource: null,
+      dataSources: [],
+      loadingDataSources: true,
       parsedTables: [],
       API_BASE_URL: import.meta.env.VITE_API_URL,
     };
@@ -204,18 +209,16 @@ WHERE t1.age <= 20;`,
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetchDataSourceTypes()
-        this.dataSources = response.data
+        const { options, selectedValue } = await loadDataSourceOptions('DORIS')
+        this.dataSources = options
+        this.selectedDataSource = selectedValue
       } catch (error) {
         console.error('Error fetching data source types:', error)
-        // 设置默认值作为回退
-        this.dataSources = [
-          { value: 3, label: 'MYSQL' },
-          { value: 1, label: 'ORACLE' },
-          { value: 11, label: 'POSTGRESQL' },
-          { value: 17, label: 'SQLSERVER' },
-          { value: 25, label: 'HIVE' }
-        ]
+        this.dataSources = []
+        this.selectedDataSource = null
+        this.$message.error('数据源列表加载失败，请检查服务连接')
+      } finally {
+        this.loadingDataSources = false
       }
     },
   }
@@ -268,6 +271,7 @@ WHERE t1.age <= 20;`,
 .data-source-selector {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 8px;
 }
 
@@ -277,18 +281,37 @@ WHERE t1.age <= 20;`,
 }
 
 .data-source-selector select {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #4b5563;
-  background-color: #ffffff;
-  transition: border-color 0.3s;
+  width: 154px;
+  max-width: 46vw;
+  min-width: 0;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 30px 0 10px;
+  color: #35465b;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, transparent 50%, #526b87 50%), linear-gradient(135deg, #526b87 50%, transparent 50%);
+  background-position: calc(100% - 12px) 14px, calc(100% - 8px) 14px;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  border: 1px solid #c7d0db;
+  border-radius: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #496e93;
+  box-shadow: 0 0 0 2px rgba(73, 110, 147, .12);
+}
+
+.data-source-selector select:disabled {
+  color: #8994a2;
+  background-color: #f0f2f5;
+  cursor: wait;
 }
 
 .sql-input-wrapper {

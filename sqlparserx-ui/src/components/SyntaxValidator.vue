@@ -2,6 +2,7 @@
   <div class="syntax-validator">
     <div class="header">
       <h2>在线语法解析验证工具</h2>
+      <tool-capability-tip>按所选数据源的语法规则解析 SQL，返回验证结果和错误信息；可识别范围随方言而异。</tool-capability-tip>
     </div>
 
     <div class="main-container">
@@ -10,7 +11,8 @@
           <div class="panel-title">SQL输入</div>
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
-            <select id="data-source" v-model="selectedDataSource">
+            <select id="data-source" v-model.number="selectedDataSource" :disabled="loadingDataSources || !dataSources.length">
+              <option v-if="!dataSources.length" disabled value="">{{ loadingDataSources ? '正在加载…' : '暂无可用数据源' }}</option>
               <option v-for="source in dataSources"
                       :key="source.value"
                       :value="source.value">
@@ -28,7 +30,7 @@
         </div>
 
         <div class="sql-actions">
-          <button id="validate-btn" @click="validateSQL">验证语法</button>
+          <button id="validate-btn" :disabled="loadingDataSources || !dataSources.length" @click="validateSQL">验证语法</button>
         </div>
       </div>
 
@@ -64,15 +66,18 @@
 
 <script>
 import { validateSQL } from '@/api/sqlparser'
-import { fetchDataSourceTypes } from '@/api/DatasourceApi'
+import { loadDataSourceOptions } from '@/api/DatasourceApi'
+import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
 
 export default {
   name: 'SyntaxValidator',
+  components: { ToolCapabilityTip },
   data() {
     return {
       sqlInput: '',
-      selectedDataSource: 1, // 默认选中ORACLE
-      dataSources: [], // 初始化为空数组
+      selectedDataSource: null,
+      dataSources: [],
+      loadingDataSources: true,
       validationResult: null,
       API_BASE_URL: import.meta.env.VITE_API_URL,
     };
@@ -104,18 +109,16 @@ export default {
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetchDataSourceTypes()
-        this.dataSources = response.data
+        const { options, selectedValue } = await loadDataSourceOptions('ORACLE')
+        this.dataSources = options
+        this.selectedDataSource = selectedValue
       } catch (error) {
         console.error('Error fetching data source types:', error)
-        // 设置默认值作为回退
-        this.dataSources = [
-          { value: 3, label: 'MYSQL' },
-          { value: 1, label: 'ORACLE' },
-          { value: 11, label: 'POSTGRESQL' },
-          { value: 17, label: 'SQLSERVER' },
-          { value: 25, label: 'HIVE' }
-        ]
+        this.dataSources = []
+        this.selectedDataSource = null
+        this.$message.error('数据源列表加载失败，请检查服务连接')
+      } finally {
+        this.loadingDataSources = false
       }
     },
   }
@@ -169,6 +172,7 @@ export default {
 .data-source-selector {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 8px;
 }
 
@@ -178,18 +182,37 @@ export default {
 }
 
 .data-source-selector select {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #4b5563;
-  background-color: #ffffff;
-  transition: border-color 0.3s;
+  width: 154px;
+  max-width: 46vw;
+  min-width: 0;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 30px 0 10px;
+  color: #35465b;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, transparent 50%, #526b87 50%), linear-gradient(135deg, #526b87 50%, transparent 50%);
+  background-position: calc(100% - 12px) 14px, calc(100% - 8px) 14px;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  border: 1px solid #c7d0db;
+  border-radius: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #496e93;
+  box-shadow: 0 0 0 2px rgba(73, 110, 147, .12);
+}
+
+.data-source-selector select:disabled {
+  color: #8994a2;
+  background-color: #f0f2f5;
+  cursor: wait;
 }
 
 .sql-input-wrapper {

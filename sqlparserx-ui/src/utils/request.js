@@ -22,8 +22,9 @@ service.interceptors.response.use(
     response => {
         // 在这里处理返回数据const { data } = response
         if (response.data.code !== 200) {
-            console.error('Error:', data.message)
-            return Promise.reject(newError(data.message || 'Error'))
+            const message = response.data.msg || '请求失败'
+            console.error('Error:', message)
+            return Promise.reject(new Error(message))
         } else {
             return response.data
         }

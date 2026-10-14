@@ -6,8 +6,9 @@
         <i class="el-icon-arrow-down caret"></i>
       </span>
       <el-dropdown-menu slot="dropdown" class="px-dropdown-menu">
-        <el-dropdown-item command="/syntax-validator">在线语法解析验证工具</el-dropdown-item>
         <el-dropdown-item command="/lineage">血缘解析可视化工具</el-dropdown-item>
+        <el-dropdown-item command="/parameter-workbench">SQL 参数提取与预编译</el-dropdown-item>
+        <el-dropdown-item command="/syntax-validator">在线语法解析验证工具</el-dropdown-item>
         <el-dropdown-item command="/sql-splitter">SQL切分测试工具</el-dropdown-item>
         <el-dropdown-item command="/table-parser">SQL表解析工具</el-dropdown-item>
         <el-dropdown-item command="/create-table-parser">建表SQL解析工具</el-dropdown-item>

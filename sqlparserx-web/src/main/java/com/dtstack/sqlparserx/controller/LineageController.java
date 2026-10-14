@@ -38,7 +38,7 @@ public class LineageController {
      * @param sql 要分析的SQL语句（通过请求参数传入）
      * @return 字段血缘分析结果
      */
-    @PostMapping("/query")
+    @PostMapping({"/query", "/column/query"})
     public ResponseResult query(@RequestParam Integer datasourceType, @RequestBody String sql) {
         if (datasourceType == null || !DataSourceType2DbType.isCoreSupported(datasourceType)) {
             return ResponseResult.error("暂不支持该数据源方言");
@@ -46,6 +46,15 @@ public class LineageController {
         // 调用服务层方法并返回结果
         Map<String, Object> lineage = lineageService.getLineage(sql, datasourceType);
         return ResponseResult.success(lineage);
+    }
+
+    /** 查询 SQL 表级血缘关系。 */
+    @PostMapping("/table/query")
+    public ResponseResult queryTable(@RequestParam Integer datasourceType, @RequestBody String sql) {
+        if (datasourceType == null || !DataSourceType2DbType.isCoreSupported(datasourceType)) {
+            return ResponseResult.error("暂不支持该数据源方言");
+        }
+        return ResponseResult.success(lineageService.getTableLineage(sql, datasourceType));
     }
 
 }

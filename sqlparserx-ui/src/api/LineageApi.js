@@ -1,25 +1,26 @@
 import request from '@/utils/request'
 
-/**
- * 解析SQL血缘关系
- * @param {string} sql SQL语句
- * @param {number} dataSourceType 数据源类型ID
- * @returns {Promise<{tableData: Array, relationData: Array}>} 血缘关系数据
- */
-export function analyzeSQL(sql, dataSourceType) {
+function queryLineage(url, sql, dataSourceType) {
     return request({
-        url: '/api/lineage/query',
+        url,
         method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
+        headers: { 'Content-Type': 'text/plain' },
         data: sql,
-        params: {
-            datasourceType: dataSourceType
-        }
+        params: { datasourceType: dataSourceType }
     })
 }
 
-export default {
-    analyzeSQL
+/** 调用字段血缘解析接口。 */
+export function analyzeColumnLineage(sql, dataSourceType) {
+    return queryLineage('/api/lineage/column/query', sql, dataSourceType)
 }
+
+/** 调用表血缘解析接口。 */
+export function analyzeTableLineage(sql, dataSourceType) {
+    return queryLineage('/api/lineage/table/query', sql, dataSourceType)
+}
+
+// 保留原有调用名称，默认解析字段血缘。
+export const analyzeSQL = analyzeColumnLineage
+
+export default { analyzeSQL, analyzeColumnLineage, analyzeTableLineage }

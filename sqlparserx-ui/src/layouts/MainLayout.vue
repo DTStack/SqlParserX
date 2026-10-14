@@ -7,7 +7,7 @@
           <i class="el-icon-s-home"></i>
           <span>返回首页</span>
         </router-link>
-        <div class="header-brand">SqlParserX</div>
+        <div class="header-brand"><span>SqlParser</span><span class="header-brand-x">X</span></div>
         <nav-dropdown></nav-dropdown>
       </div>
     </header>
@@ -68,11 +68,24 @@ export default {
 
 /* 品牌标识 */
 .header-brand {
+  display: flex;
+  align-items: center;
   font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #111827;
+  font-weight: 800;
+  letter-spacing: -0.55px;
+  color: #172b44;
+  -webkit-text-stroke: 0.25px currentColor;
   padding: 0 6px;
+}
+
+.header-brand-x {
+  margin-left: 1px;
+  background: linear-gradient(180deg, #11c9e8 0%, #1684ff 55%, #073de1 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0;
 }
 
 /* 返回首页按钮样式 */

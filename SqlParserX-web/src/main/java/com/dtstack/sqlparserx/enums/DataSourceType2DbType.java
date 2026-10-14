@@ -27,29 +27,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 将前端数据源枚举映射到 SqlParserX Core 数据源类型。
+ * 将前端传入的数字值映射到 SqlParserX Core 数据源类型。
  *
  * <p>这里只注册 Core 已有独立解析器实现的数据源，Druid DbType 仅由 Core
  * 数据源类型派生，不作为前端支持范围的判断依据。</p>
  */
 public enum DataSourceType2DbType {
-    ORACLE(DatasourceTypeEnum.ORACLE), OCEANBASE_ORACLE(DatasourceTypeEnum.OCEANBASE_ORACLE), MYSQL(
-            DatasourceTypeEnum.MYSQL), TIDB(DatasourceTypeEnum.TIDB), OCEANBASE(
-                    DatasourceTypeEnum.OCEANBASE), POSTGRESQL(DatasourceTypeEnum.POSTGRESQL), GREENPLUM(
-                            DatasourceTypeEnum.GREENPLUM), SQLSERVER(DatasourceTypeEnum.SQLSERVER), HIVE(
-                                    DatasourceTypeEnum.HIVE), TRINO(DatasourceTypeEnum.TRINO), SPARK(
-                                            DatasourceTypeEnum.SPARK), CLICKHOUSE(
-                                                    DatasourceTypeEnum.CLICKHOUSE), STARROCKS(
-                                                            DatasourceTypeEnum.STARROCKS), DORIS(
-                                                                    DatasourceTypeEnum.DORIS), DM(
-                                                                            DatasourceTypeEnum.DM);
+    MYSQL(SqlParserDataSourceType.MYSQL), HIVE(SqlParserDataSourceType.HIVE), TRINO(SqlParserDataSourceType.TRINO),
+    ORACLE(SqlParserDataSourceType.ORACLE), GREENPLUM(SqlParserDataSourceType.GREENPLUM),
+    TIDB(SqlParserDataSourceType.TIDB), POSTGRESQL(SqlParserDataSourceType.POSTGRESQL),
+    SQLSERVER(SqlParserDataSourceType.SQLSERVER), STARROCKS(SqlParserDataSourceType.STARROCKS),
+    DORIS(SqlParserDataSourceType.DORIS), OCEANBASE(SqlParserDataSourceType.OCEANBASE),
+    OCEANBASE_ORACLE(SqlParserDataSourceType.OCEANBASE_ORACLE), DM(SqlParserDataSourceType.DM),
+    CLICKHOUSE(SqlParserDataSourceType.CLICKHOUSE), SPARK(SqlParserDataSourceType.SPARK);
 
     private final Set<Integer> codes;
     private final SqlParserDataSourceType sqlParserDataSourceType;
 
-    DataSourceType2DbType(DatasourceTypeEnum dataSourceType) {
-        this.sqlParserDataSourceType = dataSourceType.getSqlParserDataSourceType();
-        this.codes = Collections.singleton(dataSourceType.getCode());
+    DataSourceType2DbType(SqlParserDataSourceType dataSourceType) {
+        this.sqlParserDataSourceType = dataSourceType;
+        this.codes = Collections.singleton(dataSourceType.getValue());
     }
 
     public Set<Integer> getCodes() {

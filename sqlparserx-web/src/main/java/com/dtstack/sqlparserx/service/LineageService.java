@@ -21,6 +21,8 @@ import com.dtstack.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult;
 import com.dtstack.sqlparserx.core.parser.base.lineage.column.ColumnLineageResult.ColumnRelation;
+import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableLineageResult;
+import com.dtstack.sqlparserx.core.parser.base.lineage.table.TableRelation;
 import com.dtstack.sqlparserx.enums.DataSourceType2DbType;
 
 import org.springframework.stereotype.Service;
@@ -95,4 +97,39 @@ public class LineageService {
         result.put("relationData", relationData);
         return result;
     }
+    public Map<String, Object> getTableLineage(String sql, Integer datasourceType) {
+        ISqlParser sqlParser = SqlParserFactory
+                .getSqlParser(DataSourceType2DbType.getSqlParserDataSourceType(datasourceType));
+        TableLineageResult lineage = sqlParser.parseTableLineages(sql);
+        Set<String> tableNames = new TreeSet<>();
+        List<Map<String, String>> relationData = new ArrayList<>();
+        if (lineage.getSourceTables() != null) {
+            tableNames.addAll(lineage.getSourceTables());
+        }
+        if (lineage.getTargetTable() != null && !lineage.getTargetTable().isEmpty()) {
+            tableNames.add(lineage.getTargetTable());
+        }
+        if (lineage.getRelations() != null) {
+            for (TableRelation relation : lineage.getRelations()) {
+                tableNames.add(relation.getSourceTable());
+                tableNames.add(relation.getTargetTable());
+                Map<String, String> relationMap = new LinkedHashMap<>();
+                relationMap.put("from", relation.getSourceTable());
+                relationMap.put("to", relation.getTargetTable());
+                relationData.add(relationMap);
+            }
+        }
+        List<Map<String, Object>> tableData = new ArrayList<>();
+        for (String tableName : tableNames) {
+            Map<String, Object> tableInfo = new LinkedHashMap<>();
+            tableInfo.put("tableName", tableName);
+            tableInfo.put("fields", Collections.emptyList());
+            tableData.add(tableInfo);
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("tableData", tableData);
+        result.put("relationData", relationData);
+        return result;
+    }
+
 }

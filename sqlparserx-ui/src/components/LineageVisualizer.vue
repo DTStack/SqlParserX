@@ -2,6 +2,7 @@
   <div class="lineage-visualizer">
     <div class="header">
       <h2>血缘解析可视化工具</h2>
+      <tool-capability-tip>从 INSERT / CTAS 推导表级与字段级来源，支持 JOIN、CTE、子查询和 UNION；纯 SELECT 不产出血缘。</tool-capability-tip>
     </div>
 
     <div class="main-container">
@@ -10,7 +11,8 @@
           <div class="panel-title">SQL输入</div>
           <div class="data-source-selector">
             <label for="data-source">数据源:</label>
-            <select id="data-source" v-model="selectedDataSource">
+              <select id="data-source" v-model.number="selectedDataSource" :disabled="loadingLineage || loadingDataSources || !dataSources.length">
+              <option v-if="!dataSources.length" disabled value="">{{ loadingDataSources ? '正在加载…' : '暂无可用数据源' }}</option>
               <option v-for="source in dataSources"
                       :key="source.value"
                       :value="source.value">
@@ -30,7 +32,7 @@
         </div>
 
         <div class="sql-actions">
-          <button id="parse-btn" @click="parseSQL">解析SQL</button>
+            <button id="parse-btn" :disabled="loadingLineage || loadingDataSources || !dataSources.length" @click="parseSQL">解析SQL</button>
         </div>
       </div>
 
@@ -42,13 +44,15 @@
                 type="button"
                 :class="{ active: isFieldLevel }"
                 :aria-pressed="isFieldLevel"
-                @click="isFieldLevel = true"
+                :disabled="loadingLineage || loadingDataSources || !dataSources.length"
+                @click="switchLineageLevel(true)"
             >字段级</button>
             <button
                 type="button"
                 :class="{ active: !isFieldLevel }"
                 :aria-pressed="!isFieldLevel"
-                @click="isFieldLevel = false"
+                :disabled="loadingLineage || loadingDataSources || !dataSources.length"
+                @click="switchLineageLevel(false)"
             >表级</button>
           </div>
         </div>
@@ -95,11 +99,13 @@
 <script>
 import * as echarts from 'echarts';
 import { fullscreen, exitFullscreen } from '@/utils/fullscreen';
-import { analyzeSQL } from '@/api/LineageApi'
-import { fetchDataSourceTypes } from '@/api/DatasourceApi'
+import { analyzeColumnLineage, analyzeTableLineage } from '@/api/LineageApi'
+import { loadDataSourceOptions } from '@/api/DatasourceApi'
+import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
 
 export default {
   name: 'LineageVisualizer',
+  components: { ToolCapabilityTip },
   data() {
     return {
       sqlInput: `CREATE TABLE user_order_summary AS
@@ -111,6 +117,7 @@ export default {
       FROM users u JOIN orders o ON u.id = o.user_id
       GROUP BY u.id, u.name`,
       isFieldLevel: true,
+      loadingLineage: false,
       myChart: null,
       tableData: [],
       relationData: [],
@@ -119,8 +126,9 @@ export default {
       defaultLineColor: '#66b1ff40',
       activeLineColor: '#66b1ff',
       API_BASE_URL: import.meta.env.VITE_API_URL,
-      selectedDataSource: 1, // 默认选中MySQL
+      selectedDataSource: null,
       dataSources: [],
+      loadingDataSources: true,
       fieldRelationsMap: {},
       highlightedFields: new Set(),
       tableWidth: 160,
@@ -135,10 +143,12 @@ export default {
   },
   mounted() {
     this.$refs.chartContainer.style.cursor = 'grab';
-    this.fetchDataSourceTypes();
     this.initChart();
-    this.loadExampleData();
-    this.parseSQL();
+    this.fetchDataSourceTypes().then(() => {
+      if (this.selectedDataSource !== null) {
+        this.parseSQL();
+      }
+    });
     window.addEventListener('resize', this.handleResize);
 
     // 确保初始化时计算正确高度
@@ -256,22 +266,35 @@ export default {
       this.myChart.on('click', this.handleChartClick);
     },
 
+    switchLineageLevel(isFieldLevel) {
+      if (this.loadingLineage || this.loadingDataSources || !this.dataSources.length) return;
+      this.isFieldLevel = isFieldLevel;
+      this.updateTableData([], []);
+      this.parseSQL();
+    },
+
     async parseSQL() {
+      if (this.loadingLineage || this.loadingDataSources || !this.dataSources.length) return;
       const sql = this.sqlInput.trim();
       if (!sql) {
         alert('请输入SQL语句');
         return;
       }
 
+      this.loadingLineage = true;
       try {
         this.myChart.showLoading();
         const { tableData, relationData } = await this.analyzeSQL(sql);
         this.updateTableData(tableData, relationData);
-        this.buildFieldRelationsMap(relationData);
+        this.highlightedFields = new Set();
+        this.buildFieldRelationsMap(this.isFieldLevel ? relationData : []);
       } catch (error) {
+        this.updateTableData([], []);
+        this.fieldRelationsMap = {};
         console.error('解析失败:', error);
         alert('解析失败: ' + error.message);
       } finally {
+        this.loadingLineage = false;
         this.myChart.hideLoading();
       }
     },
@@ -302,7 +325,8 @@ export default {
 
     async analyzeSQL(sql) {
       try {
-        const response = await analyzeSQL(sql, this.selectedDataSource)
+        const queryLineage = this.isFieldLevel ? analyzeColumnLineage : analyzeTableLineage
+        const response = await queryLineage(sql, this.selectedDataSource)
         return response.data
       } catch (error) {
         console.error('Error in analyzeSQL:', error)
@@ -312,17 +336,16 @@ export default {
 
     async fetchDataSourceTypes() {
       try {
-        const response = await fetchDataSourceTypes()
-        this.dataSources = response.data
+        const { options, selectedValue } = await loadDataSourceOptions('MYSQL')
+        this.dataSources = options
+        this.selectedDataSource = selectedValue
       } catch (error) {
         console.error('Error fetching data source types:', error)
-        this.dataSources = [
-          { value: 3, label: 'MYSQL' },
-          { value: 1, label: 'ORACLE' },
-          { value: 11, label: 'POSTGRESQL' },
-          { value: 17, label: 'SQLSERVER' },
-          { value: 25, label: 'HIVE' }
-        ]
+        this.dataSources = []
+        this.selectedDataSource = null
+        this.$message.error('数据源列表加载失败，请检查服务连接')
+      } finally {
+        this.loadingDataSources = false
       }
     },
 
@@ -365,8 +388,8 @@ export default {
       const sourceTables = [];
       const targetTables = [];
       tables.forEach(table => {
-        const isSource = this.relationData.some(r => r.from.startsWith(table.tableName + '.'));
-        const isTarget = this.relationData.some(r => r.to.startsWith(table.tableName + '.'));
+        const isSource = this.relationData.some(r => this.getTableAndField(r.from).tableName === table.tableName);
+        const isTarget = this.relationData.some(r => this.getTableAndField(r.to).tableName === table.tableName);
 
         if (isSource && !isTarget) {
           sourceTables.push(table);
@@ -457,15 +480,7 @@ export default {
     },
 
     getTableRelations() {
-      const tableRelations = [];
-      this.relationData.forEach(rel => {
-        const fromTable = rel.from.split('.')[0];
-        const toTable = rel.to.split('.')[0];
-        if (!tableRelations.some(r => r.from === fromTable && r.to === toTable)) {
-          tableRelations.push({ from: fromTable, to: toTable });
-        }
-      });
-      return tableRelations;
+      return this.relationData;
     },
 
     drawArrowLine(x1, y1, x2, y2, color = this.defaultLineColor, lineWidth = 2) {
@@ -504,6 +519,7 @@ export default {
     },
 
     getTableAndField(fullName) {
+      if (!this.isFieldLevel) return { tableName: fullName, fieldName: '' };
       if (/\.\d+$/.test(fullName)) {
         const lastDotIndex = fullName.lastIndexOf('.');
         return {
@@ -678,7 +694,7 @@ export default {
                 const sources = this.isFieldLevel
                     ? [...new Set(this.relationData
                         .filter(r => r.to.startsWith(params.name + '.'))
-                        .map(s => s.from.split('.')[0]))]
+                        .map(s => this.getTableAndField(s.from).tableName))]
                     : this.getTableRelations()
                         .filter(r => r.to === params.name)
                         .map(s => s.from);
@@ -768,11 +784,6 @@ export default {
       const newGraphicElements = this.currentGraphicElements.map(item => processItem(item));
       this.myChart.setOption({ graphic: newGraphicElements });
     }
-  },
-  watch: {
-    isFieldLevel() {
-      this.renderChart();
-    }
   }
 };
 </script>
@@ -801,6 +812,7 @@ html, body {
 .data-source-selector {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 8px;
 }
 
@@ -810,18 +822,37 @@ html, body {
 }
 
 .data-source-selector select {
-  padding: 6px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #4b5563;
-  background-color: #ffffff;
-  transition: border-color 0.3s;
+  width: 154px;
+  max-width: 46vw;
+  min-width: 0;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 30px 0 10px;
+  color: #35465b;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, transparent 50%, #526b87 50%), linear-gradient(135deg, #526b87 50%, transparent 50%);
+  background-position: calc(100% - 12px) 14px, calc(100% - 8px) 14px;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  border: 1px solid #c7d0db;
+  border-radius: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .data-source-selector select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #496e93;
+  box-shadow: 0 0 0 2px rgba(73, 110, 147, .12);
+}
+
+.data-source-selector select:disabled {
+  color: #8994a2;
+  background-color: #f0f2f5;
+  cursor: wait;
 }
 
 /* 确保组件占满父容器高度 */
@@ -992,6 +1023,8 @@ html, body {
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
 }
+
+.lineage-level-switch button:disabled { opacity: .55; cursor: wait; }
 
 .lineage-level-switch button:focus-visible {
   outline: 2px solid #93c5fd;

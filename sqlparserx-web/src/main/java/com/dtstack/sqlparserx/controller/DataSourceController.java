@@ -17,13 +17,13 @@
  */
 package com.dtstack.sqlparserx.controller;
 
+import com.dtstack.sqlparserx.core.enums.SqlParserDataSourceType;
 import com.dtstack.sqlparserx.core.parser.ISqlParser;
 import com.dtstack.sqlparserx.core.parser.SqlParserFactory;
 import com.dtstack.sqlparserx.core.parser.base.table.domain.ParseCreateTableResult;
 import com.dtstack.sqlparserx.core.utils.TableSourceUtil;
 import com.dtstack.sqlparserx.domain.ResponseResult;
 import com.dtstack.sqlparserx.enums.DataSourceType2DbType;
-import com.dtstack.sqlparserx.enums.DatasourceTypeEnum;
 import com.dtstack.sqlparserx.syntax.SqlSyntaxParserFactory;
 import com.dtstack.sqlparserx.vo.TableParseRequest;
 
@@ -47,10 +47,10 @@ public class DataSourceController {
 
     @GetMapping("/types")
     public ResponseResult getDataSourceTypes() {
-        // 前端选项与 SqlParserDataSourceType 一一对应。
-        List<DataSourceOption> dataSourceOptions = Arrays.stream(DatasourceTypeEnum.values())
-                .filter(type -> DataSourceType2DbType.isCoreSupported(type.getCode()))
-                .map(type -> new DataSourceOption(type.getCode(), type.name()))
+        // 直接从 Core 业务解析器枚举生成前端选项，名称和值与解析器一一对应。
+        List<DataSourceOption> dataSourceOptions = Arrays.stream(SqlParserDataSourceType.values())
+                .filter(type -> DataSourceType2DbType.isCoreSupported(type.getValue()))
+                .map(type -> new DataSourceOption(type.getValue(), type.name()))
                 .collect(Collectors.toList());
         return ResponseResult.success(dataSourceOptions);
     }
