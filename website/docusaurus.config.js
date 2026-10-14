@@ -59,7 +59,7 @@ const config = {
           sidebarPath: './sidebars.js',
           // 每页「编辑此页」链接，替换成你的仓库地址
           editUrl:
-            'https://github.com/DTStack/SqlParserX/tree/main/website/',
+            'https://github.com/DTStack/SqlParserX/tree/master/website/',
           // 显示「最后更新时间/作者」需要站点位于 Git 仓库中；
           // 若已纳入 Git 管理，可改为 true 开启。
           showLastUpdateAuthor: false,
@@ -81,7 +81,7 @@ const config = {
             xslt: true,
           },
           editUrl:
-            'https://github.com/DTStack/SqlParserX/tree/main/website/',
+            'https://github.com/DTStack/SqlParserX/tree/master/website/',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',

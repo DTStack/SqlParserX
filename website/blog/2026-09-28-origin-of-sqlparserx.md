@@ -412,7 +412,7 @@ SqlParserX（根 Reactor）
 - **语法解析层（`sqlparserx-syntax`）**：统一维护 Druid 依赖、SQL→AST、多语句解析与切分，以及后续数据源 Lexer / StatementParser / AST Node 扩展；
 - **业务解析层（`sqlparserx-core`）**：基于统一 AST 实现真实表、建表结构、表/字段血缘、函数与 SQL 权限改写。
 
-两层以 `DbType + SQLStatement AST` 作为连接契约，**不额外复制一套 AST**，避免长期转换与同步。详细设计见 [模块依赖包引用结构设计](https://github.com/DTStack/SqlParserX/blob/main/docs/02、SQL业务层解析能力支撑情况/模块依赖包引用结构设计.md)。
+两层以 `DbType + SQLStatement AST` 作为连接契约，**不额外复制一套 AST**，避免长期转换与同步。详细设计见 [模块依赖包引用结构设计](https://github.com/DTStack/SqlParserX/blob/master/docs/02、SQL业务层解析能力支撑情况/模块依赖包引用结构设计.md)。
 
 ### 6.2 从内部二开走向官方 Druid
 
@@ -423,10 +423,10 @@ SqlParserX（根 Reactor）
 SqlParserX 不仅提供代码，也提供了一套可维护的文档体系：
 
 - [双层架构设计](/docs/about/architecture)
-- [模块依赖包引用结构设计](https://github.com/DTStack/SqlParserX/blob/main/docs/02、SQL业务层解析能力支撑情况/模块依赖包引用结构设计.md)
-- [Druid 版本与 SQL 语法支持情况](https://github.com/DTStack/SqlParserX/blob/main/docs/01、SQL语法层解析能力支撑情况/Druid版本与SQL语法支持情况.md)
-- [能力支持情况（数据源 + 通用解析能力）](https://github.com/DTStack/SqlParserX/tree/main/docs/02、SQL业务层解析能力支撑情况/能力支持情况)
-- [解析能力标准迭代维护扩展指南](https://github.com/DTStack/SqlParserX/blob/main/docs/02、SQL业务层解析能力支撑情况/标准迭代维护扩展文档/SqlParserX解析能力标准迭代维护扩展指南.md)
+- [模块依赖包引用结构设计](https://github.com/DTStack/SqlParserX/blob/master/docs/02、SQL业务层解析能力支撑情况/模块依赖包引用结构设计.md)
+- [Druid 版本与 SQL 语法支持情况](https://github.com/DTStack/SqlParserX/blob/master/docs/01、SQL语法层解析能力支撑情况/Druid版本与SQL语法支持情况.md)
+- [能力支持情况（数据源 + 通用解析能力）](https://github.com/DTStack/SqlParserX/tree/master/docs/02、SQL业务层解析能力支撑情况/能力支持情况)
+- [解析能力标准迭代维护扩展指南](https://github.com/DTStack/SqlParserX/blob/master/docs/02、SQL业务层解析能力支撑情况/标准迭代维护扩展文档/SqlParserX解析能力标准迭代维护扩展指南.md)
 
 ### 6.4 目标
 
