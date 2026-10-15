@@ -1,0 +1,21 @@
+README.md
+  s_36ed2fc24b9fcb::t_b69bb6fe8bcdfc 269-277
+README_zh-CN.md
+  s_36ed2fc24b9fcb::t_b69bb6fe8bcdfc 281-289
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3ca04771b980313101216ac89dafc709d35f519d",
+  "prompts": {},
+  "sessions": {
+    "s_36ed2fc24b9fcb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a13d7f-78d1-78b2-a4f3-bf15e8aea65d",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
