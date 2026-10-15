@@ -1,5 +1,3 @@
-# SqlParserX
-
 ![SqlParserX](docs/images/banner.png)
 
 > [English](README.md) | **简体中文**
