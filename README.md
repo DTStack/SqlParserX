@@ -266,6 +266,15 @@ Contributions of any form are welcome: bug fixes, new dialect support, lineage p
 - **Submit a PR**: fork the repository, develop on a feature branch (e.g. `feat_1.0.x_x`), follow the existing layered extension model (add dialect implementations or override Clients under the `parser` package), add corresponding test cases, then open a pull request.
 - **Development conventions**: keep the core library Java 8 compatible; prefer extending `BaseSqlParser` for new dialect implementations and only override methods when necessary; test cases can follow the suite organization in `AllTestsSuite`.
 
+Before submitting a merge request (MR) or pull request (PR), you must run a local build from the project root:
+
+```bash
+mvn clean package -U -DskipTests
+```
+
+- `-U` (`--update-snapshots`): forces Maven to check remote repositories for the latest SNAPSHOT dependency updates.
+- `-DskipTests`: skips test execution.
+
 Before submitting a pull request, please read the [Contributing Guide](docs/02、SQL业务层解析能力支撑情况/标准迭代维护扩展文档/SqlParserX解析能力标准迭代维护扩展指南.md) and the architecture, module dependency and capability support docs to make sure new logic is placed in the correct syntax or business layer.
 
 ## Contributor

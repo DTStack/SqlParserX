@@ -278,6 +278,15 @@ SqlParserX
 - **提 PR**：Fork 本仓库，在功能分支（如 `feat_1.0.x_x`）上开发，遵循现有分层扩展模式（在 `parser` 包下新增方言实现或重写对应 Client），补充对应测试用例后提交 Pull Request。
 - **开发规范**：核心库保持 Java 8 兼容；新增方言实现优先继承 `BaseSqlParser`，仅在确有差异时重写方法；测试用例可参考 `AllTestsSuite` 的套件组织方式。
 
+提交 Merge Request（MR）前，必须在项目根目录执行一次本地编译打包：
+
+```bash
+mvn clean package -U -DskipTests
+```
+
+- `-U`（`--update-snapshots`）：强制检查远程仓库中的 SNAPSHOT 依赖是否有最新更新。
+- `-DskipTests`：跳过测试执行。
+
 提交 Pull Request 前，请先阅读 [Contributing Guide](docs/02、SQL业务层解析能力支撑情况/标准迭代维护扩展文档/SqlParserX解析能力标准迭代维护扩展指南.md) 以及项目中的架构设计、模块依赖和能力支持文档，确保新增逻辑放在正确的语法层或业务层。
 
 ## Contributor
