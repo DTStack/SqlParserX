@@ -21,6 +21,14 @@
             </select>
           </div>
         </div>
+
+        <demo-sql-selector
+            tool="table-parser"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
@@ -57,10 +65,11 @@
 <script>
 import { loadDataSourceOptions, parseTables } from '@/api/DatasourceApi'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'TableParser',
-  components: { ToolCapabilityTip },
+  components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
       sqlInput: `-- 完整查询（包含WITH AS、JOIN、子查询、UNION等）

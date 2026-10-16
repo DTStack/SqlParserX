@@ -22,6 +22,13 @@
           </div>
         </div>
 
+        <demo-sql-selector
+            tool="sql-splitter"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
@@ -56,10 +63,11 @@
 import { splitSQL } from '@/api/sqlparser'
 import { loadDataSourceOptions } from '@/api/DatasourceApi'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'SQLSplitterTester',
-  components: { ToolCapabilityTip },
+  components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
       sqlInput: `CREATE OR REPLACE FUNCTION add_numbers(

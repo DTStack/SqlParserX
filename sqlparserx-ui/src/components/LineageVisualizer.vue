@@ -22,6 +22,13 @@
           </div>
         </div>
 
+        <demo-sql-selector
+            tool="lineage"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <!-- 将文本区域和按钮分离，按钮固定在底部 -->
         <div class="sql-input-wrapper">
           <textarea
@@ -102,10 +109,11 @@ import { fullscreen, exitFullscreen } from '@/utils/fullscreen';
 import { analyzeColumnLineage, analyzeTableLineage } from '@/api/LineageApi'
 import { loadDataSourceOptions } from '@/api/DatasourceApi'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'LineageVisualizer',
-  components: { ToolCapabilityTip },
+  components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
       sqlInput: `CREATE TABLE user_order_summary AS

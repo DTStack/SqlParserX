@@ -23,7 +23,7 @@ const config = {
   // 组织/用户站点：https://<org>.github.io，baseUrl 用 '/'
   // 项目站点：https://<org>.github.io/<repo>/，baseUrl 用 '/<repo>/'
   url: 'https://dtstack.github.io',
-  baseUrl: '/SqlParserX/',
+  baseUrl: process.env.DOCUSAURUS_BASE_URL || '/SqlParserX/',
   organizationName: 'DTStack', // GitHub 组织/用户名
   projectName: 'SqlParserX', // GitHub 仓库名
   deploymentBranch: 'gh-pages', // docusaurus deploy 推送到的分支

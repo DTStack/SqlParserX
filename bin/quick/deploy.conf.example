@@ -1,0 +1,10 @@
+# ============================================
+# SqlParserX 部署配置文件示例
+# 复制此文件为 deploy.conf 并修改配置：
+#   cp deploy.conf.example deploy.conf
+# ============================================
+
+# 服务器配置
+SERVER_IP="xx.xx.xx.xx"
+SERVER_USER="root"
+SERVER_DEPLOY_DIR="/opt/tools/sqlparserx"

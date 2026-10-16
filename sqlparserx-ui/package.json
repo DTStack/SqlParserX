@@ -8,6 +8,7 @@
     "pro": "vite --mode production",
     "build:dev": "vite build --mode development",
     "build:prod": "vite build --mode production",
+    "validate:demos": "node scripts/validate-demo-sql.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

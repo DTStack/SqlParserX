@@ -36,6 +36,13 @@
           <span class="hint">动态变量格式：<code>${参数名}</code></span>
         </div>
 
+        <demo-sql-selector
+            tool="parameter-workbench"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <label class="field-label" for="parameter-sql">SQL 语句</label>
         <textarea id="parameter-sql" v-model="sqlInput" class="sql-editor" spellcheck="false"
                   placeholder="请输入包含 ${参数名} 的 SELECT SQL"></textarea>
@@ -205,9 +212,11 @@
 
 <script>
 import { loadDataSourceOptions, parseParameters, prepareCompile } from '@/api/DatasourceApi'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'ParameterWorkbench',
+  components: { DemoSqlSelector },
   data() {
     return {
       currentStep: 1,

@@ -21,6 +21,14 @@
             </select>
           </div>
         </div>
+
+        <demo-sql-selector
+            tool="create-table-parser"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
@@ -189,10 +197,11 @@
 <script>
 import { loadDataSourceOptions, parseCreateTable } from '@/api/DatasourceApi'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'CreateTableParser',
-  components: { ToolCapabilityTip },
+  components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
       sqlInput: `CREATE TABLE IF NOT EXISTS example_db.example_tbl_unique

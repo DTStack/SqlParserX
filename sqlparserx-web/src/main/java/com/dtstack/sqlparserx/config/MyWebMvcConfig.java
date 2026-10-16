@@ -19,6 +19,7 @@ package com.dtstack.sqlparserx.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -33,5 +34,16 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") //允许携带的请求头
                 .allowedMethods("*") //允许的请求方法
                 .allowedOrigins("*");  //添加跨域请求头 Access-Control-Allow-Origin，值如："https://domain1.com"或"*"
+    }
+
+    /**
+     * Serve the static site entry points at directory URLs.
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/front").setViewName("redirect:/front/");
+        registry.addViewController("/front/").setViewName("forward:/front/index.html");
+        registry.addViewController("/website").setViewName("redirect:/website/");
+        registry.addViewController("/website/").setViewName("forward:/website/index.html");
     }
 }

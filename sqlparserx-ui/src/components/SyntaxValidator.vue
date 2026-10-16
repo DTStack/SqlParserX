@@ -21,6 +21,14 @@
             </select>
           </div>
         </div>
+
+        <demo-sql-selector
+            tool="syntax-validator"
+            :data-sources="dataSources"
+            :selected-data-source="selectedDataSource"
+            @load="sqlInput = $event"
+        />
+
         <div class="sql-input-wrapper">
           <textarea
               id="sql-input"
@@ -68,10 +76,11 @@
 import { validateSQL } from '@/api/sqlparser'
 import { loadDataSourceOptions } from '@/api/DatasourceApi'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
+import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
 
 export default {
   name: 'SyntaxValidator',
-  components: { ToolCapabilityTip },
+  components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
       sqlInput: '',
