@@ -1,0 +1,118 @@
+sqlparserx-ui/src/demos/sql/create-table-parser/COMMON/basic-table.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-7
+sqlparserx-ui/src/components/CreateTableParser.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 24-31,200,204
+bin/quick/README.md
+  s_108fa2cbdbdffd::t_0255570e95ac55 38,58
+  s_108fa2cbdbdffd::t_48ef741ec5ecd9 1-11,14-30,32-37,39,43-49,53-56,59-78,80,82-91,94-116,119-127,131-141,144-171,173-182,184-200
+  s_108fa2cbdbdffd::t_2442f575f02a7a 12-13,31,40-42,50-52,92-93,117-118,172
+  s_108fa2cbdbdffd::t_5993f8899c95f5 57
+  s_108fa2cbdbdffd::t_55d1998892911d 79,81,128-130,183
+  s_108fa2cbdbdffd::t_053f45d8bc635f 142-143
+conf/application.properties
+  s_d0f07d08a8f142::t_61cadab1999b1d 1
+sqlparserx-ui/src/demos/sql/table-parser/MYSQL/cte-union.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-21
+sqlparserx-ui/src/demos/sql/syntax-validator/COMMON/select-cte-join.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-10
+sqlparserx-ui/.env.production
+  s_d0f07d08a8f142::t_af7bf4d3eca17a 1
+sqlparserx-ui/src/demos/sql/lineage/MYSQL/complex-aggregation-union.sql
+  s_108fa2cbdbdffd::t_6016d368ad1aa3 1-237
+sqlparserx-ui/src/components/SQLSplitterTester.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 25-31,66,70
+sqlparserx-ui/src/demos/sql/parameter-workbench/COMMON/single-parameter.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-3
+  s_108fa2cbdbdffd::t_7fc6d537526c8a 4-5
+bin/base.sh
+  s_108fa2cbdbdffd::t_1352eb196536e4 43
+  s_108fa2cbdbdffd::t_8d594277f5b36d 4-42,44
+sqlparserx-ui/src/demos/sqlDemoCatalog.js
+  s_108fa2cbdbdffd::t_633ee2db82f3cb 1-27,38-44,47-72
+  s_108fa2cbdbdffd::t_6e0fc47b8345b7 28-37,45-46
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/config/MyWebMvcConfig.java
+  s_108fa2cbdbdffd::t_053f45d8bc635f 22,38-47
+  s_108fa2cbdbdffd::t_feee8b0013d892 48
+bin/quick/push.sh
+  s_108fa2cbdbdffd::t_edf4a914e3c41a 262-263,284-285
+  s_108fa2cbdbdffd::t_8d594277f5b36d 156-158
+  s_108fa2cbdbdffd::t_5be21d887f751f 155
+  s_108fa2cbdbdffd::t_0c39235387c3ea 192,203,205,207-208,210-230
+  s_108fa2cbdbdffd::t_8be84580ecb82d 40,144-153,159,183-185
+  s_108fa2cbdbdffd::t_7d13eeb84fda3c 154
+  s_108fa2cbdbdffd::t_a81ac9e55fd49f 1-39,41-143,160-182,186-191,193-202,204,206,209,231-261,264-283,286-303
+bin/quick/setup-ssh.sh
+  s_108fa2cbdbdffd::t_7d13eeb84fda3c 1-77
+sqlparserx-ui/src/demos/sql/sql-splitter/COMMON/multiple-statements.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-6
+sqlparserx-ui/src/components/LineageVisualizer.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 25-31,112,116
+sqlparserx-ui/src/demos/sql/table-parser/COMMON/join-subquery.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-9
+sqlparserx-ui/package.json
+  s_108fa2cbdbdffd::t_7fc6d537526c8a 11
+bin/quick/build.sh
+  s_108fa2cbdbdffd::t_8d5ff330c60366 171,178-211
+  s_108fa2cbdbdffd::t_d2c0145390b45c 225-226,237-243,255,257
+  s_108fa2cbdbdffd::t_dc2fd3f3ae9d96 105-115
+  s_108fa2cbdbdffd::t_0f598cbef505d4 1-104,116-170,172-177,212-224,227-236,244-254,256,258-263
+sqlparserx-ui/src/demos/README.md
+  s_108fa2cbdbdffd::t_b73e9413be8ecd 20
+  s_108fa2cbdbdffd::t_5c011e6d14211e 1-19,21-29
+sqlparserx-ui/src/demos/sql/parameter-workbench/MYSQL/tenant-filter.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-2,4-5
+  s_108fa2cbdbdffd::t_5c011e6d14211e 3
+.gitignore
+  s_108fa2cbdbdffd::t_b63e02decc7340 46-48
+  s_d0f07d08a8f142::t_ee075b5b9e57ea 44-45
+  s_108fa2cbdbdffd::t_b1ec8568301a98 49
+sqlparserx-ui/src/components/DemoSqlSelector.vue
+  s_108fa2cbdbdffd::t_633ee2db82f3cb 1-143
+sqlparserx-ui/src/components/TableParser.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 24-31,68,72
+sqlparserx-ui/src/demos/sql/table-parser/HIVE/cte-insert.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-5
+sqlparserx-ui/src/demos/sql/lineage/COMMON/insert-join.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-6
+sqlparserx-ui/src/components/ParameterWorkbench.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 39-45,215,219
+sqlparserx-ui/scripts/validate-demo-sql.mjs
+  s_108fa2cbdbdffd::t_6e0fc47b8345b7 53-68,80,85,102-104
+  s_108fa2cbdbdffd::t_7fc6d537526c8a 1-52,69-79,81-84,86-101,105-120
+sqlparserx-ui/src/components/SyntaxValidator.vue
+  s_108fa2cbdbdffd::t_c62336a74e7881 24-31,79,83
+sqlparserx-ui/src/demos/sql/lineage/MYSQL/ctas-join.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-10
+bin/centos-sqlparserx.sh
+  s_108fa2cbdbdffd::t_5be21d887f751f 26
+website/docusaurus.config.js
+  s_108fa2cbdbdffd::t_edf4a914e3c41a 26
+sqlparserx-ui/src/demos/sql/create-table-parser/DORIS/duplicate-key.sql
+  s_108fa2cbdbdffd::t_9085a094e06b83 1-12
+bin/quick/deploy.conf.example
+  s_108fa2cbdbdffd::t_46d305ed050a64 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e766067f79b3e7ae0f3525a0a947951b67d26d9a",
+  "prompts": {},
+  "sessions": {
+    "s_108fa2cbdbdffd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a142fc-d06f-7721-8694-199604a87730",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_d0f07d08a8f142": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebd87abc1ffe2rRTHEHJyH9ozA",
+        "model": "deepseek-v4.1-flash"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
