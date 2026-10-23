@@ -1,0 +1,19 @@
+docs/路线图设计/SqlParserX路线图.md
+  s_aa4b22291c285d::t_2298fbd86d7d4e 1-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ceb9ff1af22a05225b1f2dbf6d9c5143cdca7f31",
+  "prompts": {},
+  "sessions": {
+    "s_aa4b22291c285d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a167e6-3b9c-7ca3-9424-01f1d960394b",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
