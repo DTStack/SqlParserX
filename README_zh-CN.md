@@ -10,9 +10,24 @@
 
 > 多数据库方言 SQL 解析引擎与工具集：表解析、表/字段血缘解析、函数解析、SQL 切分、行级权限 SQL 过滤，并提供 Java Module、Web 服务与可视化前端。
 
+> **在线工具：**[https://sqlparserx.dtstack.com/](https://sqlparserx.dtstack.com/) —— 无需本地部署，即可在线体验 SQL 解析、语法校验、SQL 切分及血缘分析。
+
 SqlParserX 是一套「**Druid 语法解析层 + SqlParserX 业务解析层**」的 SQL 解析中间件。
 
 SqlParserX 起源于对多数据源 SQL 解析、AST 统一和业务解析复用问题的持续实践，项目在内部解析能力改造的基础上逐步沉淀为独立的双层 SQL 解析引擎。关于项目为什么诞生、内部改造过程及设计思考，可阅读技术博客：[SqlParserX 的诞生起源背景 & 内部改造](docs/blogs/20260928：SqlParserX的诞生起源背景%26内部改造.md)。
+
+## 在线 SQL 解析工具
+
+无需本地部署即可通过浏览器体验 SqlParserX：[在线 SQL 解析工具](https://sqlparserx.dtstack.com/)。在接入 Java Module 或 Web 服务前，可以先使用在线工具快速验证 SQL 解析结果。
+
+在线工具支持：
+
+- SQL 解析及解析结果查看；
+- 表血缘和字段血缘查看；
+- SQL 语法校验与多语句切分；
+- 不同数据库方言及解析能力的快速体验。
+
+打开[在线 SQL 解析工具](https://sqlparserx.dtstack.com/)，选择数据库方言和解析功能，输入 SQL 后即可在浏览器中查看解析结果。
 
 ## 核心提供能力
 
@@ -30,6 +45,8 @@ SqlParserX 起源于对多数据源 SQL 解析、AST 统一和业务解析复用
 SqlParserX 的通用解析能力围绕以下核心场景构建，各能力的详细支持情况见 [通用解析能力文档](docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表解析支持情况.md)：
 
 ## 快速示例
+
+如果希望先在线体验，可访问 [SqlParserX 在线 SQL 解析工具](https://sqlparserx.dtstack.com/)；下面的示例展示如何通过 Java 接入同样的解析能力。
 
 ### 引入pom依赖
 
