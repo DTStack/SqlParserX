@@ -1,0 +1,34 @@
+sqlparserx-ui/src/components/DemoSqlSelector.vue
+  s_a1062879900604::t_2410630ff10751 68-70,72,80-81,86,90,94-95,98-100,107,111-113,134,151-152,154,157-160
+  s_a1062879900604::t_d836acc3e5a2e6 115,119-129
+sqlparserx-ui/.env.development
+  s_c1ae05056a78e5::t_a1291cd554d76c 1-3
+sqlparserx-ui/index.html
+  s_a1062879900604::t_f13a0609f1cd5d 6-7
+sqlparserx-ui/vite.config.js
+  s_c1ae05056a78e5::t_a1291cd554d76c 1,5-22,24-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "03baf934e71455f9ec302bc4a79d082cdcf2db62",
+  "prompts": {},
+  "sessions": {
+    "s_a1062879900604": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17675-c845-7913-a8e9-c69a6afa6d99",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    },
+    "s_c1ae05056a78e5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17646-45fe-7ff0-851f-b24510031556",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
