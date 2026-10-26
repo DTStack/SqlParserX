@@ -1,0 +1,28 @@
+README.md
+  s_4fb1f31ccd78ff::t_941909ecaa7428 13-14
+  s_4fb1f31ccd78ff::t_f0a4f21f0f5518 19-31,49
+  s_4fb1f31ccd78ff::t_e68e371c375138 50
+README_zh-CN.md
+  s_4fb1f31ccd78ff::t_f0a4f21f0f5518 19-31,49
+  s_4fb1f31ccd78ff::t_941909ecaa7428 13-14
+  s_4fb1f31ccd78ff::t_f3128e510b7231 50
+sqlparserx-ui/src/components/Home.vue
+  s_4fb1f31ccd78ff::t_5092369d3693a9 256,278-282,442,444
+  s_4fb1f31ccd78ff::t_a1822d452c4f97 490
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aef51b1535ebe31ab1c08287b53e0af54f9d4bc3",
+  "prompts": {},
+  "sessions": {
+    "s_4fb1f31ccd78ff": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17797-bd57-7291-9a93-c9a117b25dd9",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
