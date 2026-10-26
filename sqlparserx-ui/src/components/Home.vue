@@ -253,6 +253,7 @@
             <span class="brand-name"><span>SqlParser</span><span class="brand-x">X</span></span>
           </div>
           <p class="footer-tag">多数据库方言 SQL 解析引擎</p>
+          <p class="footer-intro">SqlParserX 是来自袋鼠云数据中台的开源项目，致力于提供统一、可扩展的多数据库 SQL 解析能力。</p>
           <p class="footer-copy">Apache License 2.0 · Copyright © 2026 dtstack</p>
         </div>
         <div class="footer-cols">
@@ -273,6 +274,11 @@
             <a href="#community" @click.prevent="scrollToSection('community')">Issue</a>
             <a href="#community" @click.prevent="scrollToSection('community')">贡献指南</a>
             <a href="#community" @click.prevent="scrollToSection('community')">更新日志</a>
+          </div>
+          <div class="footer-col">
+            <h4>数据中台</h4>
+            <a href="https://www.dtstack.com/" target="_blank" rel="noopener">袋鼠云官网</a>
+            <a href="https://github.com/DTStack/SqlParserX" target="_blank" rel="noopener">SqlParserX 开源项目</a>
           </div>
         </div>
       </div>
@@ -433,8 +439,9 @@ export default {
 .footer-brand .brand-icon { width: 36px; height: 36px; }
 .footer-brand .brand-name { font-size: 16px; }
 .footer-tag { color: #6b7c88; font-size: 12px; margin: 0 0 9px; }
+.footer-intro { max-width: 360px; color: #86939d; font-size: 11px; line-height: 1.7; margin: 0 0 10px; }
 .footer-copy { color: #86939d; font-size: 11px; margin: 0; }
-.footer-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.footer-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
 .footer-col h4 { font-size: 12px; margin: 0 0 12px; color: #3a5366; font-weight: 700; }
 .footer-col a { display: block; color: #74838f; font-size: 11px; text-decoration: none; padding: 4px 0; transition: color .2s; }
 .footer-col a:hover { color: #2563eb; }
@@ -480,6 +487,6 @@ export default {
   .stat-item:nth-child(3) { border-left: 0; }
   .final-cta { padding: 32px 18px; }
   .site-footer { padding: 28px 16px; }
-  .footer-cols { gap: 16px; }
+  .footer-cols { grid-template-columns: repeat(2, 1fr); gap: 16px; }
 }
 </style>

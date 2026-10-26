@@ -10,9 +10,24 @@
 
 > A multi-database SQL parsing engine and toolkit: table parsing, table/column lineage, function extraction, SQL splitting, row-level permission rewriting, with a Java Module, Web service and visualization frontend.
 
+> **Online tool:** [https://sqlparserx.dtstack.com/](https://sqlparserx.dtstack.com/) — try SQL parsing, syntax validation, SQL splitting and lineage analysis directly in your browser.
+
 SqlParserX is a "**Druid syntax parsing layer + SqlParserX business parsing layer**" SQL parsing middleware.
 
 SqlParserX originated from practical work on multi-datasource SQL parsing, AST unification and reusable business parsing. It gradually evolved from an internal parsing refactoring into an independent two-layer SQL parsing engine. For the project background, internal refactoring journey and design rationale, see the technical blog: [The Origin and Internal Refactoring of SqlParserX](docs/blogs/20260928：SqlParserX的诞生起源背景%26内部改造.md).
+
+## Online SQL Parser
+
+Try SqlParserX directly in the browser through the [SqlParserX Online SQL Parser](https://sqlparserx.dtstack.com/). The online tool is suitable for quickly validating SQL parsing results before integrating the Java module or Web service.
+
+You can use it to:
+
+- Parse SQL and inspect the parsed result;
+- View table and column lineage;
+- Validate SQL syntax and split multi-statement scripts;
+- Experiment with supported database dialects and parsing capabilities.
+
+Open the [online tool](https://sqlparserx.dtstack.com/), select the database dialect and parsing function, enter your SQL, and then view the result in the browser.
 
 ## Core Capabilities
 
@@ -30,6 +45,8 @@ SqlParserX originated from practical work on multi-datasource SQL parsing, AST u
 SqlParserX's common parsing capabilities are built around the following core scenarios. For detailed support of each capability, see the [common parsing capability docs](docs/02、SQL业务层解析能力支撑情况/能力支持情况/通用解析能力/表解析支持情况.md):
 
 ## Quick Examples
+
+For a browser-based introduction, start with the [SqlParserX Online SQL Parser](https://sqlparserx.dtstack.com/). The examples below show how to integrate the same parsing capabilities through Java.
 
 ### Maven dependency
 
