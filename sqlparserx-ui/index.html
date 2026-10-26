@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <script>
-      // 代理部署：无尾斜杠时补上，避免相对资源丢失端口段
-      if (location.pathname.replace(/\/$/, '').split('/').pop() !== '') {
+      // 代理部署：仅在缺少尾斜杠时补一次，确保相对资源路径正确
+      if (!location.pathname.endsWith('/')) {
         location.replace(location.pathname + '/' + location.search + location.hash)
       }
     </script>

@@ -65,11 +65,11 @@ export default {
 <style scoped>
 .demo-sql-selector {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 9px;
   margin: 0 0 12px;
-  padding: 10px 12px;
+  padding: 11px 12px 12px;
   border: 1px solid #e5edf7;
   border-radius: 10px;
   background: #f8fbff;
@@ -77,42 +77,61 @@ export default {
 
 .demo-sql-heading {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
 }
 
 .demo-sql-label {
+  flex: none;
   color: #334155;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .demo-sql-hint {
+  min-width: 0;
+  overflow: hidden;
   color: #8492a6;
   font-size: 11px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .demo-sql-controls {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: none;
+  min-width: 0;
 }
 
 .demo-sql-controls select {
-  width: min(280px, 32vw);
-  min-width: 150px;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
   height: 34px;
-  padding: 0 9px;
+  padding: 0 32px 0 9px;
   border: 1px solid #d7e0eb;
   border-radius: 7px;
   color: #334155;
-  background: #fff;
+  background-color: #fff;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748b 50%),
+    linear-gradient(135deg, #64748b 50%, transparent 50%);
+  background-position:
+    calc(100% - 15px) 14px,
+    calc(100% - 11px) 14px;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  appearance: none;
+  -webkit-appearance: none;
   font-size: 12px;
 }
 
 .demo-sql-controls button {
+  flex: none;
   height: 34px;
   padding: 0 13px;
   border: 0;
@@ -129,15 +148,16 @@ export default {
 }
 
 @media (max-width: 720px) {
-  .demo-sql-selector {
-    align-items: stretch;
+  .demo-sql-heading {
+    align-items: flex-start;
     flex-direction: column;
+    gap: 2px;
   }
 
-  .demo-sql-controls select {
-    width: 100%;
-    min-width: 0;
-    flex: 1;
+  .demo-sql-hint {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
   }
 }
 </style>
