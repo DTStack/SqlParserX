@@ -1,0 +1,18 @@
+conf/static/assets/index-JYZpSMSy.js
+  h_415c008e101ba5 1,5,9,14,27-28,36-42,48-52,55,57,60,62,64,66-69,71-78,85,97,103,340,350,355,360,366,376,385,390,411-412,415,422,528,540,549,559,566,568-569,571-572,575,579,585,590-592,605-606,608,610,612,620,622,626,630-632,636,640,642-643,648,652,654,658,666-669,675,681
+conf/static/assets/index-r9KSu74N.css
+  h_415c008e101ba5 1
+conf/static/index.html
+  h_415c008e101ba5 44-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eb1faa4f7dfc8d4d30eb9a38ff41998648482422",
+  "prompts": {},
+  "humans": {
+    "h_415c008e101ba5": {
+      "author": "changlu <939974883@qq.com>"
+    }
+  }
+}
