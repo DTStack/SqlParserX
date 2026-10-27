@@ -3,18 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <script>
-      // 代理部署：仅在缺少尾斜杠时补一次，确保相对资源路径正确
-      if (!location.pathname.endsWith('/')) {
-        location.replace(location.pathname + '/' + location.search + location.hash)
+      // 兼容历史 Hash 路由，迁移后地址栏只保留 History 路径。
+      const legacyRoutes = {
+        '/': '/',
+        '/lineage': '/app/lineage.html',
+        '/sql-splitter': '/app/sql-splitter.html',
+        '/syntax-validator': '/app/syntax-validator.html',
+        '/table-parser': '/app/table-parser.html',
+        '/create-table-parser': '/app/create-table-parser.html',
+        '/parameter-workbench': '/app/parameter-workbench.html'
+      }
+      const legacyPath = location.hash.startsWith('#/') ? location.hash.slice(1) : ''
+      if (legacyRoutes[legacyPath]) {
+        history.replaceState(null, '', legacyRoutes[legacyPath] + location.search)
       }
     </script>
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SqlParserX - 多方言 SQL 解析引擎</title>
-    <script type="module" crossorigin src="/assets/index-BZzXGw-m.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-bP0-EdcF.css">
+    <title>SqlParserX - 多数据库方言 SQL 解析引擎与在线工具</title>
+    <meta name="description" content="SqlParserX 是开源的多数据库方言 SQL 解析引擎，提供 SQL 血缘分析、语法校验、真实表与建表结构解析、脚本切分和参数预编译在线工具。" />
+    <meta name="keywords" content="SqlParserX,SQL解析,SQL血缘,SQL语法校验,SQL表解析,SQL切分,参数预编译" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://sqlparserx.dtstack.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="SqlParserX" />
+    <meta property="og:title" content="SqlParserX - 多数据库方言 SQL 解析引擎" />
+    <meta property="og:description" content="覆盖 SQL 血缘、语法校验、表结构解析、脚本切分与参数预编译的开源 SQL 解析引擎。" />
+    <meta property="og:url" content="https://sqlparserx.dtstack.com/" />
+    <meta property="og:image" content="https://sqlparserx.dtstack.com/logo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="SqlParserX - 多数据库方言 SQL 解析引擎" />
+    <meta name="twitter:description" content="开源、多方言、可扩展的 SQL 解析引擎与在线工具。" />
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"SoftwareApplication","name":"SqlParserX","url":"https://sqlparserx.dtstack.com/","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"开源的多数据库方言 SQL 解析引擎与在线工具。","license":"https://www.apache.org/licenses/LICENSE-2.0","codeRepository":"https://github.com/DTStack/SqlParserX","creator":{"@type":"Organization","name":"DTStack","url":"https://www.dtstack.com/"}}
+    </script>
+    <style>
+      .seo-shell{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;color:#182b49;background:#f8fafc;min-height:100vh}.seo-nav,.seo-hero,.seo-cards{max-width:1180px;margin:auto}.seo-nav{height:68px;display:flex;align-items:center;gap:12px;padding:0 24px}.seo-nav img{width:42px}.seo-nav strong{font-size:20px}.seo-hero{padding:76px 24px 50px}.seo-hero h1{font-size:52px;margin:0 0 16px}.seo-hero h1 span{color:#2563eb}.seo-hero h2{font-size:28px;margin:0 0 18px}.seo-hero p{max-width:760px;color:#52637a;font-size:18px;line-height:1.8}.seo-actions a{display:inline-block;margin:14px 10px 0 0;padding:12px 20px;border-radius:8px;text-decoration:none}.seo-primary{background:#2563eb;color:#fff}.seo-secondary{border:1px solid #cbd5e1;color:#182b49}.seo-cards{padding:10px 24px 72px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.seo-cards a{padding:22px;background:#fff;border:1px solid #e2e8f0;border-radius:12px;color:#182b49;text-decoration:none}.seo-cards h3{margin:0 0 8px}.seo-cards p{margin:0;color:#64748b;line-height:1.6}@media(max-width:760px){.seo-hero h1{font-size:40px}.seo-cards{grid-template-columns:1fr}}
+    </style>
+    <script type="module" crossorigin src="/assets/index-Bcd4lRi6.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-rjL9NVTA.css">
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="seo-shell">
+        <header class="seo-nav"><img src="/logo.png" alt="SqlParserX Logo" width="42" height="42" /><strong>SqlParser<span style="color:#2563eb">X</span></strong></header>
+        <main>
+          <section class="seo-hero">
+            <h1>SqlParser<span>X</span></h1>
+            <h2>多数据库方言 SQL 解析引擎</h2>
+            <p>覆盖 SQL 类型识别、真实表与建表结构解析、表级和字段级血缘、函数名提取及参数预编译，并提供可直接使用的 Web 工具。</p>
+            <div class="seo-actions"><a class="seo-primary" href="https://sqlparserx.dtstack.com/app/lineage.html">立即体验</a><a class="seo-secondary" href="https://sqlparserx.dtstack.com/website/">查看文档</a></div>
+          </section>
+          <section class="seo-cards" aria-label="SqlParserX 在线工具">
+            <a href="https://sqlparserx.dtstack.com/sql-lineage.html"><h3>SQL 血缘分析</h3><p>解析表级与字段级数据流转关系。</p></a>
+            <a href="https://sqlparserx.dtstack.com/sql-syntax-validator.html"><h3>SQL 语法校验</h3><p>验证多数据库方言 SQL 并定位问题。</p></a>
+            <a href="https://sqlparserx.dtstack.com/sql-table-parser.html"><h3>SQL 表解析</h3><p>穿透 CTE、JOIN 和子查询提取真实表。</p></a>
+            <a href="https://sqlparserx.dtstack.com/create-table-sql-parser.html"><h3>建表 SQL 解析</h3><p>提取字段、键、分区与分桶结构。</p></a>
+            <a href="https://sqlparserx.dtstack.com/sql-parameter-parser.html"><h3>SQL 参数预编译</h3><p>提取动态参数并生成 JDBC 占位符 SQL。</p></a>
+            <a href="https://sqlparserx.dtstack.com/sql-splitter.html"><h3>SQL 脚本切分</h3><p>将多语句脚本安全拆分为独立语句。</p></a>
+          </section>
+        </main>
+      </div>
+    </div>
   </body>
 </html>

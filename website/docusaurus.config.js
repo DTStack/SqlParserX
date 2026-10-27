@@ -22,7 +22,7 @@ const config = {
   // -------- 部署信息（GitHub Pages 必改） --------
   // 组织/用户站点：https://<org>.github.io，baseUrl 用 '/'
   // 项目站点：https://<org>.github.io/<repo>/，baseUrl 用 '/<repo>/'
-  url: 'https://dtstack.github.io',
+  url: process.env.DOCUSAURUS_URL || 'https://dtstack.github.io',
   baseUrl: process.env.DOCUSAURUS_BASE_URL || '/SqlParserX/',
   organizationName: 'DTStack', // GitHub 组织/用户名
   projectName: 'SqlParserX', // GitHub 仓库名
@@ -88,6 +88,20 @@ const config = {
         },
         theme: {
           customCss: './src/css/custom.css',
+        },
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.6,
+          // 只提交正式、独立的内容页。开发版文档和博客聚合页虽然可访问，
+          // 但与正式文档或正文重复，不作为搜索引擎落地页。
+          ignorePatterns: [
+            '/website/docs/next/**',
+            '/website/blog/archive',
+            '/website/blog/authors',
+            '/website/blog/authors/**',
+            '/website/blog/tags',
+            '/website/blog/tags/**',
+          ],
         },
         // 如需接入 Google Analytics，取消下面注释并填入你的 trackingID
         // gtag: {

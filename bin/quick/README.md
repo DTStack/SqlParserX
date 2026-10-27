@@ -179,7 +179,7 @@ ssh $SERVER_USER@$SERVER_IP "cd $SERVER_DEPLOY_DIR/bin && sudo -u admin ./centos
 
 | 依赖 | 版本 | 验证命令 |
 |------|------|----------|
-| Java | JDK 17（本地打包推荐） | `java -version` |
+| Java | JDK 8（默认，可用 `BUILD_JAVA_HOME` 覆盖） | `java -version` |
 | Maven | 3.6+ | `mvn -version` |
 | Node.js | >= 20 | `node -v` |
 | npm | 6+ | `npm -v` |

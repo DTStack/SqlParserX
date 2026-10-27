@@ -14,6 +14,7 @@
           <li><a href="#community" @click.prevent="scrollToSection('community')">社区</a></li>
         </ul>
         <div class="nav-cta">
+          <a class="btn btn-ghost" href="/website/">文档</a>
           <a class="btn btn-ghost" href="https://github.com/DTStack/SqlParserX" target="_blank" rel="noopener">源码</a>
           <a class="btn btn-primary" href="#start" @click.prevent="scrollToSection('start')">立即体验</a>
         </div>
@@ -39,7 +40,7 @@
           </p>
 
           <div class="hero-cta">
-            <router-link to="/lineage" class="btn btn-primary btn-lg">立即体验</router-link>
+            <router-link to="/app/lineage.html" class="btn btn-primary btn-lg">立即体验</router-link>
             <a class="btn btn-ghost btn-lg" href="https://github.com/DTStack/SqlParserX" target="_blank" rel="noopener">查看源码</a>
           </div>
 
@@ -63,7 +64,7 @@
               <div class="preview-result-title"><span>字段血缘</span><span class="preview-status"><i class="el-icon-circle-check"></i> 解析结果示例</span></div>
               <div class="lineage-example"><div class="lineage-sources"><div><span class="node-label">来源字段</span><code>users.id</code></div><div><span class="node-label">来源字段</span><code>orders.amount</code></div></div><div class="lineage-arrows" aria-hidden="true"><span>→</span><span>→</span></div><div class="lineage-target"><span class="node-label">analytics.order_summary</span><code>user_id</code><code>total_amount</code></div></div>
             </div>
-            <div class="preview-footer"><span>从 SQL 语句到清晰的数据关系</span><router-link to="/lineage">试试这项工具 <i class="el-icon-top-right"></i></router-link></div>
+            <div class="preview-footer"><span>从 SQL 语句到清晰的数据关系</span><router-link to="/app/lineage.html">试试这项工具 <i class="el-icon-top-right"></i></router-link></div>
           </div>
         </div>
       </section>
@@ -141,7 +142,7 @@
         </div>
 
         <div class="features-grid">
-          <router-link to="/lineage" class="feature-card">
+          <router-link to="/app/lineage.html" class="feature-card">
             <div class="card-icon icon-lineage">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="9" width="6" height="6" rx="1.5"/><rect x="16" y="2" width="6" height="6" rx="1.5"/><rect x="16" y="16" width="6" height="6" rx="1.5"/><path d="M8 12h4V5h4M12 12v7h4"/></svg>
             </div>
@@ -152,7 +153,7 @@
             </div>
           </router-link>
 
-          <router-link to="/parameter-workbench" class="feature-card">
+          <router-link to="/app/parameter-workbench.html" class="feature-card">
             <div class="card-icon icon-parameter">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3H5a2 2 0 0 0-2 2v4l-2 3 2 3v4a2 2 0 0 0 2 2h2M17 3h2a2 2 0 0 1 2 2v4l2 3-2 3v4a2 2 0 0 1-2 2h-2M9 8h6M9 12h6M9 16h6"/></svg>
             </div>
@@ -163,7 +164,7 @@
             </div>
           </router-link>
 
-          <router-link to="/syntax-validator" class="feature-card">
+          <router-link to="/app/syntax-validator.html" class="feature-card">
             <div class="card-icon icon-validate">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9l-7-7Z"/><path d="M14 2v7h7M8 15l3 3 5-6"/></svg>
             </div>
@@ -174,7 +175,7 @@
             </div>
           </router-link>
 
-          <router-link to="/table-parser" class="feature-card">
+          <router-link to="/app/table-parser.html" class="feature-card">
             <div class="card-icon icon-table">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 9v12M15 9v12"/></svg>
             </div>
@@ -185,7 +186,7 @@
             </div>
           </router-link>
 
-          <router-link to="/create-table-parser" class="feature-card">
+          <router-link to="/app/create-table-parser.html" class="feature-card">
             <div class="card-icon icon-create">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="15" height="18" rx="2"/><path d="M3 9h15M3 15h7M9 9v12M18 13v8M14 17h8"/></svg>
             </div>
@@ -196,7 +197,7 @@
             </div>
           </router-link>
 
-          <router-link to="/sql-splitter" class="feature-card">
+          <router-link to="/app/sql-splitter.html" class="feature-card">
             <div class="card-icon icon-split">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7M4 8h5M4 16h5M4 20h7M2 12h20M16 3l3 3 3-3M19 6V1M16 21l3-3 3 3M19 18v5"/></svg>
             </div>
@@ -238,7 +239,7 @@
         <h2>开始解析你的 SQL</h2>
         <p>选择数据源，输入 SQL，即可探索结构、血缘与参数。</p>
         <div class="hero-cta center">
-          <router-link to="/lineage" class="btn btn-primary btn-lg">进入体验</router-link>
+          <router-link to="/app/lineage.html" class="btn btn-primary btn-lg">进入体验</router-link>
           <a class="btn btn-ghost btn-lg" href="https://github.com/DTStack/SqlParserX" target="_blank" rel="noopener">查看项目源码</a>
         </div>
       </section>
@@ -267,7 +268,7 @@
             <h4>开发</h4>
             <a href="https://github.com/DTStack/SqlParserX" target="_blank" rel="noopener">源码仓库</a>
             <a href="#docs" @click.prevent="scrollToSection('docs')">项目概览</a>
-            <router-link to="/parameter-workbench">参数预编译</router-link>
+            <router-link to="/app/parameter-workbench.html">参数预编译</router-link>
           </div>
           <div class="footer-col">
             <h4>社区</h4>

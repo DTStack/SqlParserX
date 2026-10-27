@@ -21,6 +21,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 FRONTEND_DIR="$PROJECT_ROOT/sqlparserx-ui"
 FRONTEND_STATIC_DIR="$PROJECT_ROOT/conf/static"
+BACKEND_STATIC_DIR="$PROJECT_ROOT/sqlparserx-web/src/main/resources/static"
 WEBSITE_DIR="$PROJECT_ROOT/website"
 DEPLOY_CONF="$SCRIPT_DIR/deploy.conf"
 
@@ -102,10 +103,14 @@ build_backend() {
     print_info "开始打包后端..."
     print_separator
 
-    # Spotless 2.30 的 Google Java Format 与 JDK 21 不兼容；macOS 上默认选用已安装的 JDK 17。
-    local build_java_home="${BUILD_JAVA_HOME:-${JAVA_HOME:-}}"
+    # 主工程的编译目标为 Java 8；BUILD_JAVA_HOME 可用于显式覆盖。
+    # macOS 优先自动选择 JDK 8，其它环境再沿用 JAVA_HOME。
+    local build_java_home="${BUILD_JAVA_HOME:-}"
     if [ -z "$build_java_home" ] && [ -x /usr/libexec/java_home ]; then
-        build_java_home="$(/usr/libexec/java_home -v 17 2>/dev/null || true)"
+        build_java_home="$(/usr/libexec/java_home -v 1.8 2>/dev/null || true)"
+    fi
+    if [ -z "$build_java_home" ]; then
+        build_java_home="${JAVA_HOME:-}"
     fi
     if [ -n "$build_java_home" ]; then
         export JAVA_HOME="$build_java_home"
@@ -174,6 +179,21 @@ build_frontend() {
     mkdir -p "$FRONTEND_STATIC_DIR"
     cp -r "$FRONTEND_DIR/dist/." "$FRONTEND_STATIC_DIR/"
 
+    # 叠加由后端维护的 SEO 落地页及站点级文件；不包含根 index.html，避免改变 SPA 首页。
+    if [ -d "$BACKEND_STATIC_DIR" ]; then
+        cp -r "$BACKEND_STATIC_DIR/." "$FRONTEND_STATIC_DIR/"
+    fi
+    "$SCRIPT_DIR/render-seo-files.sh" "$FRONTEND_STATIC_DIR" "$PROJECT_ROOT/conf/application.properties" || { print_error "SEO 静态文件渲染失败"; exit 1; }
+
+    local seo_site_url
+    seo_site_url=${SEO_SITE_URL_OVERRIDE:-$(sed -n 's/^[[:space:]]*seo\.site-url[[:space:]]*=[[:space:]]*//p' "$PROJECT_ROOT/conf/application.properties" | tail -n 1)}
+    seo_site_url=${seo_site_url%/}
+    node "$SCRIPT_DIR/merge-sitemaps.mjs" \
+        "$BACKEND_STATIC_DIR/sitemap.xml" \
+        "$WEBSITE_DIR/build/sitemap.xml" \
+        "$FRONTEND_STATIC_DIR/sitemap.xml" \
+        "$seo_site_url" || { print_error "Sitemap 合并失败"; exit 1; }
+
     print_success "前端打包成功"
     print_info "conf/static 大小: $(du -sh "$FRONTEND_STATIC_DIR" | cut -f1)，文件数: $(find "$FRONTEND_STATIC_DIR" -type f | wc -l | tr -d ' ')"
     print_separator
@@ -199,12 +219,23 @@ build_website() {
         npm ci || { print_error "website 依赖安装失败"; exit 1; }
     fi
 
-    print_info "执行: DOCUSAURUS_BASE_URL=/website/ npm run build"
-    DOCUSAURUS_BASE_URL="/website/" npm run build || { print_error "website 打包失败"; exit 1; }
+    local seo_site_url
+    seo_site_url=${SEO_SITE_URL_OVERRIDE:-$(sed -n 's/^[[:space:]]*seo\.site-url[[:space:]]*=[[:space:]]*//p' "$PROJECT_ROOT/conf/application.properties" | tail -n 1)}
+    seo_site_url=${seo_site_url%/}
+    print_info "执行: DOCUSAURUS_URL=$seo_site_url DOCUSAURUS_BASE_URL=/website/ npm run build"
+    DOCUSAURUS_URL="$seo_site_url" DOCUSAURUS_BASE_URL="/website/" npm run build || { print_error "website 打包失败"; exit 1; }
 
     if [ ! -f "$WEBSITE_DIR/build/index.html" ]; then
         print_error "website 打包失败：未生成 build/index.html"
         exit 1
+    fi
+
+    if [ -d "$FRONTEND_STATIC_DIR" ]; then
+        node "$SCRIPT_DIR/merge-sitemaps.mjs" \
+            "$BACKEND_STATIC_DIR/sitemap.xml" \
+            "$WEBSITE_DIR/build/sitemap.xml" \
+            "$FRONTEND_STATIC_DIR/sitemap.xml" \
+            "$seo_site_url" || { print_error "Sitemap 合并失败"; exit 1; }
     fi
 
     print_success "website 打包成功"

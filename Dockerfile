@@ -20,7 +20,12 @@ COPY website/package*.json ./
 RUN npm ci
 
 COPY website/ ./
-RUN DOCUSAURUS_BASE_URL=/website/ npm run build
+COPY conf/application.properties /workspace/application.properties
+COPY sqlparserx-web/src/main/resources/static/sitemap.xml /workspace/app-sitemap.xml
+COPY bin/quick/merge-sitemaps.mjs /workspace/merge-sitemaps.mjs
+RUN SEO_SITE_URL="$(sed -n 's/^[[:space:]]*seo\.site-url[[:space:]]*=[[:space:]]*//p' /workspace/application.properties | tail -n 1)" && \
+    DOCUSAURUS_URL="${SEO_SITE_URL}" DOCUSAURUS_BASE_URL=/website/ npm run build && \
+    node /workspace/merge-sitemaps.mjs /workspace/app-sitemap.xml /workspace/website/build/sitemap.xml /workspace/sitemap.xml "${SEO_SITE_URL}"
 
 
 FROM maven:3.9.9-eclipse-temurin-17 AS backend-build
@@ -30,6 +35,7 @@ COPY . .
 
 # The runtime image uses the directory-style package produced by assembly.xml.
 RUN mvn -B clean package -DskipTests -Dspotless.check.skip=true
+RUN bin/quick/render-seo-files.sh sqlparserx-web/src/main/resources/static conf/application.properties
 
 
 FROM eclipse-temurin:8-jre
@@ -41,6 +47,8 @@ COPY --from=backend-build /workspace/sqlparserx/sqlparserx-web/target/dtstack-pl
 COPY --from=backend-build /workspace/sqlparserx/sqlparserx-web/target/dtstack-platform/dtstack-platform/lib/ ./lib/
 COPY conf/application.properties conf/logback.xml ./conf/
 COPY --from=ui-build /workspace/sqlparserx-ui/dist/ ./conf/static/
+COPY --from=backend-build /workspace/sqlparserx/sqlparserx-web/src/main/resources/static/ ./conf/static/
+COPY --from=website-build /workspace/sitemap.xml ./conf/static/sitemap.xml
 COPY --from=website-build /workspace/website/build/ ./website/
 
 EXPOSE 16758

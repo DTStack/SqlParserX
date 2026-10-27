@@ -61,7 +61,50 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/index.html");
+        addSpaRoute(registry, "/app/lineage.html");
+        addSpaRoute(registry, "/app/sql-splitter.html");
+        addSpaRoute(registry, "/app/syntax-validator.html");
+        addSpaRoute(registry, "/app/table-parser.html");
+        addSpaRoute(registry, "/app/create-table-parser.html");
+        addSpaRoute(registry, "/app/parameter-workbench.html");
+        addSeoRedirect(registry, "/sql-lineage");
+        addSeoRedirect(registry, "/sql-syntax-validator");
+        addSeoRedirect(registry, "/sql-table-parser");
+        addSeoRedirect(registry, "/create-table-sql-parser");
+        addSeoRedirect(registry, "/sql-parameter-parser");
+        addSeoRedirect(registry, "/sql-splitter");
         registry.addViewController("/website").setViewName("redirect:/website/");
         registry.addViewController("/website/").setViewName("forward:/website/index.html");
+        addWebsitePage(registry, "/website/blog");
+        addWebsitePage(registry, "/website/blog/origin-of-sqlparserx");
+        addWebsitePage(registry, "/website/community");
+        addWebsitePage(registry, "/website/docs/about/architecture");
+        addWebsitePage(registry, "/website/docs/about/introduction");
+        addWebsitePage(registry, "/website/docs/contributing");
+        addWebsitePage(registry, "/website/docs/core/field-lineage");
+        addWebsitePage(registry, "/website/docs/core/function-parse");
+        addWebsitePage(registry, "/website/docs/core/parameter-compile");
+        addWebsitePage(registry, "/website/docs/core/sql-type");
+        addWebsitePage(registry, "/website/docs/core/table-lineage");
+        addWebsitePage(registry, "/website/docs/core/table-parse");
+        addWebsitePage(registry, "/website/docs/intro");
+        addWebsitePage(registry, "/website/docs/quickstart/setup");
+    }
+
+    private void addSpaRoute(ViewControllerRegistry registry, String route) {
+        registry.addViewController(route).setViewName("forward:/index.html");
+    }
+
+    private void addSeoRedirect(ViewControllerRegistry registry, String route) {
+        registry.addViewController(route).setViewName("redirect:" + route + ".html");
+        registry.addViewController(route + "/").setViewName("redirect:" + route + ".html");
+    }
+
+    /**
+     * Docusaurus emits extensionless canonical URLs while its static build uses .html files.
+     */
+    private void addWebsitePage(ViewControllerRegistry registry, String route) {
+        registry.addViewController(route).setViewName("forward:" + route + ".html");
+        registry.addViewController(route + "/").setViewName("redirect:" + route);
     }
 }

@@ -146,10 +146,17 @@ deploy_backend() {
         echo -e "${RED}✗ 无法从 $LOCAL_APPLICATION_CONFIG 读取有效的 server.port${NC}"
         return 1
     fi
+    if [[ ! "${SEO_SITE_URL:-}" =~ ^https?:// ]]; then
+        echo -e "${RED}✗ deploy.conf 中缺少有效的 SEO_SITE_URL${NC}"
+        return 1
+    fi
 
     echo -e "${YELLOW}[同步] 服务器后端端口设为 $server_port...${NC}"
     ssh $SSH_OPTS "$SERVER_USER@$SERVER_IP" \
         "mkdir -p '$SERVER_DEPLOY_DIR/conf' && if grep -Eq '^[[:space:]]*server\\.port[[:space:]]*=' '$SERVER_DEPLOY_DIR/conf/application.properties'; then sed -i -E 's/^[[:space:]]*server\\.port[[:space:]]*=.*/server.port=$server_port/' '$SERVER_DEPLOY_DIR/conf/application.properties'; else printf '\\nserver.port=$server_port\\n' >> '$SERVER_DEPLOY_DIR/conf/application.properties'; fi" || return 1
+    echo -e "${YELLOW}[同步] 服务器 SEO 公开地址设为 $SEO_SITE_URL...${NC}"
+    ssh $SSH_OPTS "$SERVER_USER@$SERVER_IP" \
+        "if grep -Eq '^[[:space:]]*seo\\.site-url[[:space:]]*=' '$SERVER_DEPLOY_DIR/conf/application.properties'; then sed -i -E 's|^[[:space:]]*seo\\.site-url[[:space:]]*=.*|seo.site-url=$SEO_SITE_URL|' '$SERVER_DEPLOY_DIR/conf/application.properties'; else printf '\\nseo.site-url=$SEO_SITE_URL\\n' >> '$SERVER_DEPLOY_DIR/conf/application.properties'; fi" || return 1
     ssh $SSH_OPTS "$SERVER_USER@$SERVER_IP" \
         "if [ -f '$SERVER_DEPLOY_DIR/bin/centos-sqlparserx.sh' ]; then sed -i -E 's/^REMOTE_PORT=.*/REMOTE_PORT=$server_port/' '$SERVER_DEPLOY_DIR/bin/centos-sqlparserx.sh'; fi" || return 1
     rsync -avz -e "ssh $SSH_OPTS" \
