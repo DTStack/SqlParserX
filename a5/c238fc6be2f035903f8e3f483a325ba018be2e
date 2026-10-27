@@ -1,0 +1,29 @@
+sqlparserx-ui/src/components/SQLSplitterTester.vue
+  s_ac1e6f3692e9ab::t_2eea41f14cee76 65,69-70,76,114,124-128
+  s_ac1e6f3692e9ab::t_d25b38aa6703c9 129
+sqlparserx-ui/src/components/LineageVisualizer.vue
+  s_ac1e6f3692e9ab::t_1bc9ce5ad0c653 129,133-135,141,377,388-393
+  s_ac1e6f3692e9ab::t_7797770aa3d951 8-14,41,46,48-56,143,190-200,394,954-971,986-1012
+  s_ac1e6f3692e9ab::t_1e98a412fc90aa 36
+  s_ac1e6f3692e9ab::t_4c8449060c3601 395
+  s_ac1e6f3692e9ab::t_d27ab0a3815f77 1013
+sqlparserx-ui/src/components/DemoSqlSelector.vue
+  s_ac1e6f3692e9ab::t_1e98a412fc90aa 27-28
+  s_ac1e6f3692e9ab::t_1d831e7f8b94fa 52-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5c238fc6be2f035903f8e3f483a325ba018be2e",
+  "prompts": {},
+  "sessions": {
+    "s_ac1e6f3692e9ab": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17c1e-01bd-71c2-9b42-7fb16a2f6716",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
