@@ -12,12 +12,12 @@ function queryLineage(url, sql, dataSourceType) {
 
 /** 调用字段血缘解析接口。 */
 export function analyzeColumnLineage(sql, dataSourceType) {
-    return queryLineage('/api/lineage/column/query', sql, dataSourceType)
+    return queryLineage('api/lineage/column/query', sql, dataSourceType)
 }
 
 /** 调用表血缘解析接口。 */
 export function analyzeTableLineage(sql, dataSourceType) {
-    return queryLineage('/api/lineage/table/query', sql, dataSourceType)
+    return queryLineage('api/lineage/table/query', sql, dataSourceType)
 }
 
 // 保留原有调用名称，默认解析字段血缘。

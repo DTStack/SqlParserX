@@ -261,7 +261,7 @@ SqlParserX
 
 - Parameter parsing (`parseParameterSql` / `buildSqlByPrepareCompile`) and `filterSortSelectField` are placeholder implementations at the base layer (returning empty); they are reserved capabilities without concrete logic yet.
 - Maven surefire in `sqlparserx-core` defaults to `skipTests=true`; CI builds do not run tests by default.
-- The frontend `sqlparserx-ui/README.md` contains default Vite template text; the actual stack is Vue 2.7 + Element UI 2.x.
+- The frontend uses same-origin API access by default: UI assets are deployed to the backend service's `conf/static/`, while the documentation site is deployed to the service root's `website/` directory.
 
 ## Questions
 

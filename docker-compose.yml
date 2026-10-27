@@ -1,0 +1,13 @@
+services:
+  sqlparserx:
+    build:
+      context: .
+      args:
+        # 同源部署时保持根路径；如有统一 API 前缀，可在构建时覆盖。
+        VITE_API_URL: ${VITE_API_URL:-/}
+    image: sqlparserx:local
+    ports:
+      - "${SQLPARSERX_PORT:-16758}:16758"
+    environment:
+      JAVA_OPTS: ${JAVA_OPTS:-}
+    restart: unless-stopped

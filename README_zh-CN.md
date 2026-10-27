@@ -273,7 +273,7 @@ SqlParserX
 
 - 参数解析（`parseParameterSql` / `buildSqlByPrepareCompile`）与 `filterSortSelectField` 在 base 层为占位实现（返回空），属于预留能力，尚未落地具体逻辑。
 - `sqlparserx-core` 的 Maven surefire 默认 `skipTests=true`，CI 构建默认不执行测试。
-- 前端 `sqlparserx-ui/README.md` 为 Vite 模板默认文案，实际技术栈为 Vue 2.7 + Element UI 2.x，与模板文案不符。
+- 前端默认采用前后端同源访问：UI 产物部署到后端服务的 `conf/static/`，文档站点部署到服务根目录的 `website/`。
 
 ## Questions
 

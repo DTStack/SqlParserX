@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+const configuredBaseUrl = import.meta.env.VITE_API_URL || '/'
+const baseURL = configuredBaseUrl.endsWith('/') ? configuredBaseUrl : `${configuredBaseUrl}/`
+
 const service = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL,
     timeout: 5000
 })
 

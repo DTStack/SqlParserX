@@ -6,7 +6,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
-    base: './', // 打包的静态资源引用路径
+    // UI 直接部署到后端服务的 conf/static，资源从同源站点根路径加载。
+    base: '/',
     plugins: [vue2()], // 放插件用的
     resolve: {
       alias: {
