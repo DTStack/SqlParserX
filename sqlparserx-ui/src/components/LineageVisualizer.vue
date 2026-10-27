@@ -5,6 +5,13 @@
       <tool-capability-tip>从 INSERT / CTAS 推导表级与字段级来源，支持 JOIN、CTE、子查询和 UNION；纯 SELECT 不产出血缘。</tool-capability-tip>
     </div>
 
+    <div
+        v-if="isSqlInputExpanded"
+        class="sql-input-backdrop"
+        aria-hidden="true"
+        @click="closeSqlInputExpanded"
+    ></div>
+
     <div class="main-container">
       <div class="sql-panel">
         <div class="panel-header">
@@ -26,16 +33,27 @@
             tool="lineage"
             :data-sources="dataSources"
             :selected-data-source="selectedDataSource"
+            preferred-scene="complex-aggregation-union"
             @load="sqlInput = $event"
         />
 
         <!-- 将文本区域和按钮分离，按钮固定在底部 -->
-        <div class="sql-input-wrapper">
+        <div class="sql-input-wrapper" :class="{ 'sql-input-wrapper--expanded': isSqlInputExpanded }">
           <textarea
               id="sql-input"
               v-model="sqlInput"
               placeholder="请输入SQL语句..."
+              @keydown.esc="closeSqlInputExpanded"
           ></textarea>
+          <button
+              type="button"
+              class="sql-input-expand-button"
+              :aria-label="isSqlInputExpanded ? '收起SQL输入框' : '展开SQL输入框'"
+              :title="isSqlInputExpanded ? '收起' : '展开大屏'"
+              @click="toggleSqlInputExpanded"
+          >
+            {{ isSqlInputExpanded ? '↙' : '⛶' }}
+          </button>
         </div>
 
         <div class="sql-actions">
@@ -108,23 +126,21 @@ import * as echarts from 'echarts';
 import { fullscreen, exitFullscreen } from '@/utils/fullscreen';
 import { analyzeColumnLineage, analyzeTableLineage } from '@/api/LineageApi'
 import { loadDataSourceOptions } from '@/api/DatasourceApi'
+import { getSqlDemoOptions } from '@/demos/sqlDemoCatalog'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
 import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
+
+const preferredLineageScene = 'complex-aggregation-union'
+const defaultLineageDemo = getSqlDemoOptions('lineage', 'MYSQL').find(demo => demo.scene === preferredLineageScene)
 
 export default {
   name: 'LineageVisualizer',
   components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
-      sqlInput: `CREATE TABLE user_order_summary AS
-      SELECT
-        u.id as user_id,
-        u.name,
-        SUM(o.amount) as total_amount,
-        COUNT(o.id) as order_count
-      FROM users u JOIN orders o ON u.id = o.user_id
-      GROUP BY u.id, u.name`,
+      sqlInput: defaultLineageDemo ? defaultLineageDemo.sql : '',
       isFieldLevel: true,
+      isSqlInputExpanded: false,
       loadingLineage: false,
       myChart: null,
       tableData: [],
@@ -171,6 +187,17 @@ export default {
     window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    toggleSqlInputExpanded() {
+      this.isSqlInputExpanded = !this.isSqlInputExpanded;
+      if (this.isSqlInputExpanded) {
+        this.$nextTick(() => this.$el.querySelector('#sql-input')?.focus());
+      }
+    },
+
+    closeSqlInputExpanded() {
+      this.isSqlInputExpanded = false;
+    },
+
     startDrag(event) {
       this.isDragging = true;
       this.dragStartX = event.clientX - this.translateX;
@@ -347,6 +374,7 @@ export default {
         const { options, selectedValue } = await loadDataSourceOptions('MYSQL')
         this.dataSources = options
         this.selectedDataSource = selectedValue
+        this.loadDefaultDemo()
       } catch (error) {
         console.error('Error fetching data source types:', error)
         this.dataSources = []
@@ -355,6 +383,14 @@ export default {
       } finally {
         this.loadingDataSources = false
       }
+    },
+
+    loadDefaultDemo() {
+      const source = this.dataSources.find(item => String(item.value) === String(this.selectedDataSource))
+      const demos = getSqlDemoOptions('lineage', source ? source.label : 'MYSQL')
+      const preferred = demos.find(demo => demo.scene === preferredLineageScene)
+      const demo = preferred || demos[0]
+      if (demo) this.sqlInput = demo.sql
     },
 
     async getExampleData() {
@@ -915,6 +951,24 @@ html, body {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.sql-input-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1090;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.sql-input-wrapper--expanded {
+  position: fixed;
+  inset: 24px;
+  z-index: 1100;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.28);
 }
 
 #sql-input {
@@ -927,6 +981,34 @@ html, body {
   resize: none;
   box-sizing: border-box;
   min-height: 150px; /* 设置最小高度 */
+}
+
+.sql-input-wrapper--expanded #sql-input {
+  min-height: 0;
+  padding-bottom: 48px;
+}
+
+.sql-input-expand-button {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #dbe5f0;
+  border-radius: 6px;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.94);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.12);
+}
+
+.sql-input-expand-button:hover {
+  color: #2563eb;
+  border-color: #93c5fd;
+  background: #eff6ff;
 }
 
 #sql-input:focus {
