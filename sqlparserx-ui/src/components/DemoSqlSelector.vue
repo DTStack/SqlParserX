@@ -24,7 +24,8 @@ export default {
   props: {
     tool: { type: String, required: true },
     dataSources: { type: Array, default: () => [] },
-    selectedDataSource: { type: [Number, String], default: null }
+    selectedDataSource: { type: [Number, String], default: null },
+    preferredScene: { type: String, default: '' }
   },
   data() {
     return { selectedDemoId: '' }
@@ -48,6 +49,11 @@ export default {
     demos: {
       immediate: true,
       handler(options) {
+        const preferred = options.find(demo => demo.scene === this.preferredScene)
+        if (preferred) {
+          this.selectedDemoId = preferred.id
+          return
+        }
         if (!options.some(demo => demo.id === this.selectedDemoId)) {
           this.selectedDemoId = options.length ? options[0].id : ''
         }
