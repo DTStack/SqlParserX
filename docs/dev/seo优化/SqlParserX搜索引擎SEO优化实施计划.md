@@ -1108,7 +1108,7 @@ GET /website/**
 | `merge-sitemaps.mjs` | 合并主站页面与 Docusaurus Sitemap，并按 loc 去重 |
 | `sqlparserx-ui/index.html` | 首页 meta、canonical、OG、JSON-LD 和 Vue 挂载前的可抓取正文 |
 | `website/docusaurus.config.js` | 可配置公开域名，并由 Docusaurus 生成文档 Sitemap |
-| `bin/quick/render-seo-files.sh` | 构建期替换静态产物中的 `__SEO_SITE_URL__` |
+| `bin/quick/site/render-seo-files.sh` | 构建期替换静态产物中的 `__SEO_SITE_URL__` |
 | `bin/quick/build.sh` | 构建 UI、叠加站点级静态文件、渲染公开地址并构建 website |
 | `bin/quick/push.sh` | 部署时更新服务器 `seo.site-url`，再推送后端和静态产物 |
 

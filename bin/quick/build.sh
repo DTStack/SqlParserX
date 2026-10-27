@@ -96,6 +96,15 @@ print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 print_separator() { echo "=========================================="; }
 
+inject_attribution() {
+    local target_dir="$1"
+    DTSTACK_ATTRIBUTION_HTML="${DTSTACK_ATTRIBUTION_HTML:-}" \
+        node "$SCRIPT_DIR/site/inject-attribution.mjs" "$target_dir" || {
+            print_error "全站埋点标签注入失败: $target_dir"
+            exit 1
+        }
+}
+
 # ============================================
 # 后端打包（在项目根目录执行）
 # ============================================
@@ -183,12 +192,13 @@ build_frontend() {
     if [ -d "$BACKEND_STATIC_DIR" ]; then
         cp -r "$BACKEND_STATIC_DIR/." "$FRONTEND_STATIC_DIR/"
     fi
-    "$SCRIPT_DIR/render-seo-files.sh" "$FRONTEND_STATIC_DIR" "$PROJECT_ROOT/conf/application.properties" || { print_error "SEO 静态文件渲染失败"; exit 1; }
+    sh "$SCRIPT_DIR/site/render-seo-files.sh" "$FRONTEND_STATIC_DIR" "$PROJECT_ROOT/conf/application.properties" || { print_error "SEO 静态文件渲染失败"; exit 1; }
+    inject_attribution "$FRONTEND_STATIC_DIR"
 
     local seo_site_url
     seo_site_url=${SEO_SITE_URL_OVERRIDE:-$(sed -n 's/^[[:space:]]*seo\.site-url[[:space:]]*=[[:space:]]*//p' "$PROJECT_ROOT/conf/application.properties" | tail -n 1)}
     seo_site_url=${seo_site_url%/}
-    node "$SCRIPT_DIR/merge-sitemaps.mjs" \
+    node "$SCRIPT_DIR/site/merge-sitemaps.mjs" \
         "$BACKEND_STATIC_DIR/sitemap.xml" \
         "$WEBSITE_DIR/build/sitemap.xml" \
         "$FRONTEND_STATIC_DIR/sitemap.xml" \
@@ -230,8 +240,10 @@ build_website() {
         exit 1
     fi
 
+    inject_attribution "$WEBSITE_DIR/build"
+
     if [ -d "$FRONTEND_STATIC_DIR" ]; then
-        node "$SCRIPT_DIR/merge-sitemaps.mjs" \
+        node "$SCRIPT_DIR/site/merge-sitemaps.mjs" \
             "$BACKEND_STATIC_DIR/sitemap.xml" \
             "$WEBSITE_DIR/build/sitemap.xml" \
             "$FRONTEND_STATIC_DIR/sitemap.xml" \
