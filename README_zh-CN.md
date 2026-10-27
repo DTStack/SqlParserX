@@ -308,7 +308,9 @@ mvn clean package -U -DskipTests
 
 感谢所有参与代码、测试、文档和问题反馈的贡献者。新增贡献者可通过提交 Issue 或 Pull Request 加入项目协作。
 
-[查看项目贡献者与提交记录](https://gitlab.prod.dtstack.cn/changlu/SqlParserX/-/graphs/master)
+<a href="https://github.com/Dtstack/SqlParserX/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Dtstack/SqlParserX" />
+</a>
 
 ## License
 
