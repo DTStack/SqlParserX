@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <script>
-      // 代理部署：无尾斜杠时补上，避免相对资源丢失端口段
-      if (location.pathname.replace(/\/$/, '').split('/').pop() !== '') {
+      // 代理部署：仅在缺少尾斜杠时补一次，确保相对资源路径正确
+      if (!location.pathname.endsWith('/')) {
         location.replace(location.pathname + '/' + location.search + location.hash)
       }
     </script>
-    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SqlParserX - 多方言 SQL 解析引擎</title>
-    <script type="module" crossorigin src="./assets/index-KNFsbGu2.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DZWUlUfA.css">
+    <script type="module" crossorigin src="/assets/index-BZzXGw-m.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-bP0-EdcF.css">
   </head>
   <body>
     <div id="app"></div>

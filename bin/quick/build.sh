@@ -2,8 +2,8 @@
 # ============================================
 # SqlParserX 本地打包脚本
 #   后端: Maven 打包（sqlparserx-engine + sqlparserx-web）
-#   前端: Vite 打包，产物同步到项目 conf/static/front
-#   文档: Docusaurus 打包，产物保留在 website/build
+#   前端: Vite 打包，产物同步到项目 conf/static
+#   文档: Docusaurus 打包，产物保留在 website/build，部署时同步到服务根目录 website
 # 使用: 将脚本放在项目任意位置，自动识别项目根路径
 # ============================================
 
@@ -20,7 +20,7 @@ NC='\033[0m'
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 FRONTEND_DIR="$PROJECT_ROOT/sqlparserx-ui"
-FRONTEND_STATIC_DIR="$PROJECT_ROOT/conf/static/front"
+FRONTEND_STATIC_DIR="$PROJECT_ROOT/conf/static"
 WEBSITE_DIR="$PROJECT_ROOT/website"
 DEPLOY_CONF="$SCRIPT_DIR/deploy.conf"
 
@@ -39,7 +39,7 @@ ONLY_WEBSITE=false
 show_usage() {
     echo "用法: $0 [选项]"
     echo "选项:"
-    echo "  -f, --frontend    仅打包 UI 前端（产物同步到 conf/static/front）"
+    echo "  -f, --frontend    仅打包 UI 前端（产物同步到 conf/static）"
     echo "  -b, --backend     仅打包后端"
     echo "  -wf, --website    仅打包 website 文档站点"
     echo "  -h, --help        显示帮助信息"
@@ -168,14 +168,14 @@ build_frontend() {
         exit 1
     fi
 
-    # 只替换 UI 目录，不影响 website 等其他静态内容
+    # UI 产物直接对应后端服务的 conf/static，website 已迁移到服务根目录 website。
     print_info "同步产物到: $FRONTEND_STATIC_DIR"
     rm -rf "$FRONTEND_STATIC_DIR"
     mkdir -p "$FRONTEND_STATIC_DIR"
     cp -r "$FRONTEND_DIR/dist/." "$FRONTEND_STATIC_DIR/"
 
     print_success "前端打包成功"
-    print_info "front 大小: $(du -sh "$FRONTEND_STATIC_DIR" | cut -f1)，文件数: $(find "$FRONTEND_STATIC_DIR" -type f | wc -l | tr -d ' ')"
+    print_info "conf/static 大小: $(du -sh "$FRONTEND_STATIC_DIR" | cut -f1)，文件数: $(find "$FRONTEND_STATIC_DIR" -type f | wc -l | tr -d ' ')"
     print_separator
 }
 

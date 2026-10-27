@@ -10,7 +10,7 @@ import request from '@/utils/request'
  */
 export function splitSQL(sql, datasourceType) {
     return request({
-        url: '/api/sql/split',
+        url: 'api/sql/split',
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain'
@@ -30,7 +30,7 @@ export function splitSQL(sql, datasourceType) {
  */
 export function validateSQL(sql, datasourceType) {
     return request({
-        url: '/api/datasource/grammarCheck',
+        url: 'api/datasource/grammarCheck',
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain'

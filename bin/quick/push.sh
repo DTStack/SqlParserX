@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================
 # SqlParserX 一键推送部署脚本
-#   前端: conf/static/front -> 服务器 conf/static/front
-#   Website: website/build -> 服务器 conf/static/website
+#   前端: conf/static -> 服务器 conf/static
+#   Website: website/build -> 服务器 website
 #   后端: 业务 jar -> 服务器 dtstack/，完整包再带 lib/
 # 使用: ./push.sh [选项]
 # ============================================
@@ -28,15 +28,14 @@ done
 BACKEND_PACKAGE_DIR="$PROJECT_ROOT/sqlparserx-web/target/dtstack-platform/dtstack-platform"
 BACKEND_JAR_DIR="$BACKEND_PACKAGE_DIR/dtstack"
 BACKEND_LIB_DIR="$BACKEND_PACKAGE_DIR/lib"
-FRONTEND_STATIC_DIR="$PROJECT_ROOT/conf/static/front"
+FRONTEND_STATIC_DIR="$PROJECT_ROOT/conf/static"
 WEBSITE_BUILD_DIR="$PROJECT_ROOT/website/build"
 
 # 服务器路径
 SERVER_JAR_DIR="$SERVER_DEPLOY_DIR/dtstack"
 SERVER_LIB_DIR="$SERVER_DEPLOY_DIR/lib"
 SERVER_STATIC_DIR="$SERVER_DEPLOY_DIR/conf/static"
-SERVER_FRONTEND_DIR="$SERVER_STATIC_DIR/front"
-SERVER_WEBSITE_DIR="$SERVER_STATIC_DIR/website"
+SERVER_WEBSITE_DIR="$SERVER_DEPLOY_DIR/website"
 LOCAL_APPLICATION_CONFIG="$PROJECT_ROOT/conf/application.properties"
 
 # 服务启停脚本（位于 $SERVER_DEPLOY_DIR/bin 下，脚本内部要求以 admin 用户运行）
@@ -65,7 +64,7 @@ ONLY_WEBSITE=false
 show_usage() {
     echo "用法: $0 [选项]"
     echo "选项:"
-    echo "  -f, --frontend    仅部署 UI 前端（conf/static/front）"
+    echo "  -f, --frontend    仅部署 UI 前端（conf/static）"
     echo "  -b, --backend     仅部署后端（业务 jar）"
     echo "  -ba              部署后端完整包（业务 jar + lib）"
     echo "  -wf, --website    仅部署 website 文档站点"
@@ -77,7 +76,7 @@ show_usage() {
     echo "  $0 -f           # 仅部署前端"
     echo "  $0 -b           # 仅部署后端"
     echo "  $0 -ba          # 部署后端完整包（jar + lib）"
-    echo "  $0 -wf          # 部署 website 到 conf/static/website"
+    echo "  $0 -wf          # 部署 website 到服务根目录 website"
     echo "  $0 -r           # 仅重启服务"
 }
 
@@ -189,7 +188,7 @@ deploy_backend_full() {
 }
 
 # ============================================
-# 推送 UI 前端（conf/static/front）
+# 推送 UI 前端（conf/static）
 # ============================================
 deploy_frontend() {
     echo -e "${YELLOW}[1/2] 检查本地前端文件...${NC}"
@@ -202,10 +201,10 @@ deploy_frontend() {
 
     echo -e "${YELLOW}[2/2] 清理服务器旧 UI 文件并推送...${NC}"
     ssh $SSH_OPTS "$SERVER_USER@$SERVER_IP" \
-        "mkdir -p '$SERVER_FRONTEND_DIR' && find '$SERVER_FRONTEND_DIR' -mindepth 1 -maxdepth 1 -exec rm -rf {} +" || return 1
+        "mkdir -p '$SERVER_STATIC_DIR' && find '$SERVER_STATIC_DIR' -mindepth 1 -maxdepth 1 -exec rm -rf {} +" || return 1
 
-    echo -e "${BLUE}[执行] rsync -avz --progress \"$FRONTEND_STATIC_DIR/\" \"$SERVER_USER@$SERVER_IP:$SERVER_FRONTEND_DIR/\"${NC}"
-    rsync -avz --progress -e "ssh $SSH_OPTS" "$FRONTEND_STATIC_DIR/" "$SERVER_USER@$SERVER_IP:$SERVER_FRONTEND_DIR/" || return 1
+    echo -e "${BLUE}[执行] rsync -avz --progress \"$FRONTEND_STATIC_DIR/\" \"$SERVER_USER@$SERVER_IP:$SERVER_STATIC_DIR/\"${NC}"
+    rsync -avz --progress -e "ssh $SSH_OPTS" "$FRONTEND_STATIC_DIR/" "$SERVER_USER@$SERVER_IP:$SERVER_STATIC_DIR/" || return 1
     echo -e "${GREEN}✓ 前端推送完成${NC}"
 }
 

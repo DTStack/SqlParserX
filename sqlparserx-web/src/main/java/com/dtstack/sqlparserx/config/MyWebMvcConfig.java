@@ -19,8 +19,11 @@ package com.dtstack.sqlparserx.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.io.File;
 
 @Configuration
 public class MyWebMvcConfig implements WebMvcConfigurer {
@@ -37,12 +40,27 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
     }
 
     /**
+     * Serve the website build from the deployment root's website directory.
+     *
+     * The UI is served by Spring Boot's normal static resource handler from
+     * conf/static, while the documentation site intentionally lives beside
+     * conf according to the deployment layout.
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String websitePath = new File(System.getProperty("user.dir"), "website")
+                .toURI()
+                .toString();
+        registry.addResourceHandler("/website/**")
+                .addResourceLocations(websitePath);
+    }
+
+    /**
      * Serve the static site entry points at directory URLs.
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/front").setViewName("redirect:/front/");
-        registry.addViewController("/front/").setViewName("forward:/front/index.html");
+        registry.addViewController("/").setViewName("forward:/index.html");
         registry.addViewController("/website").setViewName("redirect:/website/");
         registry.addViewController("/website/").setViewName("forward:/website/index.html");
     }

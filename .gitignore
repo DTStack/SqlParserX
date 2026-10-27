@@ -46,4 +46,3 @@ logs/
 ### Local scripts and private deployment config ###
 bin/local/
 bin/quick/deploy.conf
-conf/static/front/
