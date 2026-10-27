@@ -1,0 +1,34 @@
+Dockerfile
+  s_ac1e6f3692e9ab::t_a1bd833ffa4fe0 44
+  s_ac1e6f3692e9ab::t_1565f195ff9dbe 6,13-15,20,29-30,33
+bin/quick/site/merge-sitemaps.mjs
+  s_ac1e6f3692e9ab::t_676ea16f039997 31
+bin/quick/site/inject-attribution.mjs
+  s_ac1e6f3692e9ab::t_676ea16f039997 1-51,53-63
+  s_ac1e6f3692e9ab::t_0056ebf725538f 52
+bin/quick/build.sh
+  s_ac1e6f3692e9ab::t_a1bd833ffa4fe0 195
+  s_ac1e6f3692e9ab::t_58f08700760cd1 99-101,103-107,196,243
+  s_ac1e6f3692e9ab::t_dcf644395c17e2 102,201,246
+  s_ac1e6f3692e9ab::t_fa78e5f9770d4c 244
+docs/dev/seo优化/SqlParserX搜索引擎SEO优化实施计划.md
+  s_ac1e6f3692e9ab::t_72157ad47cf2d6 1111
+bin/quick/deploy.conf.example
+  s_ac1e6f3692e9ab::t_3bfce28881b662 11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5a76e8f77e4cf478820e1035af04cf0d51e77ea5",
+  "prompts": {},
+  "sessions": {
+    "s_ac1e6f3692e9ab": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17c1e-01bd-71c2-9b42-7fb16a2f6716",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
