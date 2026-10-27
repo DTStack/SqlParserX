@@ -8,3 +8,6 @@
 SERVER_IP="xx.xx.xx.xx"
 SERVER_USER="root"
 SERVER_DEPLOY_DIR="/opt/tools/sqlparserx"
+
+# 全站埋点标签：构建时注入主站和 website 生成的所有 HTML 的 <head>。
+DTSTACK_ATTRIBUTION_HTML='<script src="https://assets.dtstack.com/2026-newweb-dt/sdk/0.1.1/attribution-0.1.1.58a7b2eeea57.min.js" data-auto-init data-cookie-domain="dtstack.com" referrerpolicy="origin" defer></script>'
