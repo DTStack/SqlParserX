@@ -62,23 +62,18 @@
 <script>
 import { splitSQL } from '@/api/sqlparser'
 import { loadDataSourceOptions } from '@/api/DatasourceApi'
+import { getSqlDemoOptions } from '@/demos/sqlDemoCatalog'
 import ToolCapabilityTip from '@/components/ToolCapabilityTip.vue'
 import DemoSqlSelector from '@/components/DemoSqlSelector.vue'
+
+const commonDemo = getSqlDemoOptions('sql-splitter', 'COMMON')[0]
 
 export default {
   name: 'SQLSplitterTester',
   components: { ToolCapabilityTip, DemoSqlSelector },
   data() {
     return {
-      sqlInput: `CREATE OR REPLACE FUNCTION add_numbers(
-    p_num1 IN NUMBER,
-    p_num2 IN NUMBER
-) RETURN NUMBER IS
-BEGIN
-    RETURN p_num1 + p_num2;
-END add_numbers;
-
-select * from WWV_FLOW_FILE_OBJECTS$;`,
+      sqlInput: commonDemo ? commonDemo.sql : '',
       selectedDataSource: null,
       dataSources: [],
       loadingDataSources: true,
@@ -116,6 +111,7 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
         const { options, selectedValue } = await loadDataSourceOptions('ORACLE')
         this.dataSources = options
         this.selectedDataSource = selectedValue
+        this.loadDefaultDemo()
       } catch (error) {
         console.error('Error fetching data source types:', error)
         this.dataSources = []
@@ -124,6 +120,12 @@ select * from WWV_FLOW_FILE_OBJECTS$;`,
       } finally {
         this.loadingDataSources = false
       }
+    },
+
+    loadDefaultDemo() {
+      const source = this.dataSources.find(item => String(item.value) === String(this.selectedDataSource))
+      const demo = getSqlDemoOptions('sql-splitter', source ? source.label : 'COMMON')[0]
+      if (demo) this.sqlInput = demo.sql
     },
   }
 };
