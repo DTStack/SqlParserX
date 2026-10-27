@@ -18,7 +18,7 @@ else
 fi
 
 # 部署根目录下需要维护的子目录
-DEPLOY_SUB_DIRS=("lib" "dtstack" "conf/static" "conf/static/front" "conf/static/website" "bin" "logs" "run")
+DEPLOY_SUB_DIRS=("lib" "dtstack" "conf/static" "website" "bin" "logs" "run")
 
 echo "=========================================="
 echo "    SqlParserX 环境初始化"

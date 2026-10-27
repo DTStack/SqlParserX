@@ -1,0 +1,12 @@
+.git
+.idea
+.agents
+.codex
+**/node_modules
+**/target
+**/dist
+website/build
+website/.docusaurus
+logs
+*.iml
+.DS_Store

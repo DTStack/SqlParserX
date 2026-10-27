@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function fetchDataSourceTypes() {
     return request({
-        url: '/api/datasource/types',
+        url: 'api/datasource/types',
         method: 'GET'
     })
 }
@@ -30,7 +30,7 @@ export async function loadDataSourceOptions(preferredName) {
 
 export function parseTables(form) {
     return request({
-        url: '/api/datasource/parseTables',
+        url: 'api/datasource/parseTables',
         method: 'post',
         data: form
     })
@@ -38,7 +38,7 @@ export function parseTables(form) {
 // 新增：解析建表SQL
 export function parseCreateTable(data) {
     return request({
-        url: '/api/datasource/parseCreateTable',
+        url: 'api/datasource/parseCreateTable',
         method: 'post',
         data
     })
@@ -47,7 +47,7 @@ export function parseCreateTable(data) {
 /** 解析 SQL 中的输入参数、输出字段及其元数据绑定 */
 export function parseParameters(data) {
     return request({
-        url: '/api/parameter/parse',
+        url: 'api/parameter/parse',
         method: 'post',
         data
     })
@@ -56,7 +56,7 @@ export function parseParameters(data) {
 /** 将带变量 SQL 改写为预编译 SQL，并返回有序绑定值 */
 export function prepareCompile(data) {
     return request({
-        url: '/api/parameter/prepareCompile',
+        url: 'api/parameter/prepareCompile',
         method: 'post',
         data
     })

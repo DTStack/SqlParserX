@@ -89,8 +89,8 @@ vim deploy.conf   # 修改 SERVER_IP、SERVER_USER、SERVER_DEPLOY_DIR
 |------|------|----------|
 | 1 | `deploy.conf` | 配置服务器 IP、用户名、部署目录 |
 | 2 | `setup-ssh.sh` | 生成 SSH 密钥 → 复制公钥到服务器 → 按配置创建部署目录 |
-| 3 | `build.sh` | `mvn clean package -U -DskipTests` → UI 构建到 `conf/static/front`；`-wf` 构建 website |
-| 4 | `push.sh` | 推送 jar / lib / `conf/static/front`；`-wf` 推送 website 到 `conf/static/website` |
+| 3 | `build.sh` | `mvn clean package -U -DskipTests` → UI 构建到 `conf/static`；`-wf` 构建 website |
+| 4 | `push.sh` | 推送 jar / lib / `conf/static`；`-wf` 推送 website 到服务根目录 `website` |
 | 5 | `push.sh -r` | 调用 `$SERVER_DEPLOY_DIR/bin/centos-sqlparserx.sh restart` 重启服务 |
 
 ## 四、配置文件说明
@@ -114,8 +114,8 @@ SERVER_DEPLOY_DIR="/opt/tools/sqlparserx" # 部署根目录
 |------|------|------|
 | 后端业务 jar | `sqlparserx-web/target/dtstack-platform/dtstack-platform/dtstack/*.jar` | 可执行业务 jar |
 | 后端依赖 lib | `sqlparserx-web/target/dtstack-platform/dtstack-platform/lib/` | 第三方依赖 jar |
-| UI 前端产物 | `conf/static/front/` | 由 `sqlparserx-ui/dist` 同步而来 |
-| Website 产物 | `website/build/` | 由 `./build.sh -wf` 生成，部署到服务器 `conf/static/website/` |
+| UI 前端产物 | `conf/static/` | 由 `sqlparserx-ui/dist` 同步而来，直接作为后端根站点 |
+| Website 产物 | `website/build/` | 由 `./build.sh -wf` 生成，部署到服务器根目录 `website/` |
 
 ### 部署后服务器目录结构
 
@@ -125,9 +125,8 @@ SERVER_DEPLOY_DIR="/opt/tools/sqlparserx" # 部署根目录
 ├── conf/
 │   ├── application.properties   # 后端配置（server.port=16758）
 │   ├── logback.xml
-│   └── static/
-│       ├── front/          # 解析 UI 前端
-│       └── website/        # Docusaurus 文档网站
+│   └── static/              # 解析 UI 前端（直接对应站点根路径）
+├── website/                 # Docusaurus 文档网站
 ├── dtstack/                # 业务 jar
 ├── lib/                    # 第三方依赖 jar
 ├── logs/                   # 日志
@@ -139,11 +138,11 @@ SERVER_DEPLOY_DIR="/opt/tools/sqlparserx" # 部署根目录
 | 项 | 值 | 配置位置 |
 |----|----|----------|
 | 后端服务端口 | `16758` | `conf/application.properties` 的 `server.port` |
-| UI 前端访问地址 | `http://172.16.114.23:16758/front/` | 静态目录 `conf/static/front/` |
-| Website 文档地址 | `http://172.16.114.23:16758/website/` | 静态目录 `conf/static/website/` |
-| 前端 API 地址 | `http://172.16.114.23:16758` | `sqlparserx-ui/.env.production` 的 `VITE_API_URL` |
+| UI 前端访问地址 | `http://172.16.114.23:16758/` | 静态目录 `conf/static/` |
+| Website 文档地址 | `http://172.16.114.23:16758/website/` | 服务根目录 `website/` |
+| 前端 API 地址 | `http://172.16.114.23:16758/api/...` | `sqlparserx-ui/.env.production` 的 `VITE_API_URL=/` |
 
-> 说明：后端服务读取的是部署目录下 `conf/application.properties`；前端在 `build:prod` 打包时会读取 `.env.production` 中的 `VITE_API_URL`，请确保两者与目标服务器地址、端口保持一致。
+> 说明：后端服务读取的是部署目录下 `conf/application.properties`；前端在 `build:prod` 打包时使用 `VITE_API_URL=/`，浏览器会自动把接口请求发送到当前页面所在域名，无需写死服务器 IP、域名或端口。
 
 ## 七、常用命令速查
 
@@ -174,13 +173,13 @@ ssh $SERVER_USER@$SERVER_IP "cd $SERVER_DEPLOY_DIR/bin && sudo -u admin ./centos
 | `rsync: command not found` | 安装 rsync：`yum install rsync` 或 `apt install rsync` |
 | SSH 连接失败 | 检查 `deploy.conf` 中的 IP 和用户名，重新执行 `./setup-ssh.sh` |
 | 服务重启失败（用户校验） | `centos-sqlparserx.sh` 要求以 `admin` 用户运行，脚本会自动尝试 `sudo -u admin` |
-| 前端接口 404 / 跨域 | 检查 `.env.production` 的 `VITE_API_URL` 与后端实际地址、端口是否一致 |
+| 前端接口 404 / 跨域 | 确认 UI 已同步到服务端 `conf/static/`，并确认浏览器请求的是当前域名下的 `/api/...` |
 
 ## 九、脚本依赖
 
 | 依赖 | 版本 | 验证命令 |
 |------|------|----------|
-| Java | JDK 17（本地打包推荐） | `java -version` |
+| Java | JDK 8（默认，可用 `BUILD_JAVA_HOME` 覆盖） | `java -version` |
 | Maven | 3.6+ | `mvn -version` |
 | Node.js | >= 20 | `node -v` |
 | npm | 6+ | `npm -v` |

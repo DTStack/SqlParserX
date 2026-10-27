@@ -31,7 +31,8 @@ public class SqlParserXWebApplication {
         new SpringApplicationBuilder(SqlParserXWebApplication.class)
                 .properties(
                         "spring.config.location=file:${user.dir.conf}/application.properties",
-                        "spring.resources.static-locations=file:${user.dir.conf}/static/").run(args);
+                        "spring.resources.static-locations=file:${user.dir.conf}/static/")
+                .run(args);
     }
 
 }

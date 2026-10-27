@@ -12,7 +12,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 Vue.use(Router)
 
 export default new Router({
-    // mode: 'history',
+    mode: 'history',
     routes: [
         {
             path: '/',
@@ -24,33 +24,33 @@ export default new Router({
                     component: Home
                 },
                 {
-                    path: '/lineage',
+                    path: '/app/lineage.html',
                     name: 'LineageVisualizer',
                     component: LineageVisualizer
                 },
                 {
-                    path: '/sql-splitter',
+                    path: '/app/sql-splitter.html',
                     name: 'SQLSplitterTester',
                     component: SQLSplitterTester
                 },
                 // Add this new route
                 {
-                    path: '/syntax-validator',
+                    path: '/app/syntax-validator.html',
                     name: 'SyntaxValidator',
                     component: SyntaxValidator
                 },
                 {
-                    path: '/table-parser',
+                    path: '/app/table-parser.html',
                     name: 'TableParser',
                     component: TableParser
                 },                // 新增建表SQL解析路由
                 {
-                    path: '/create-table-parser',
+                    path: '/app/create-table-parser.html',
                     name: 'CreateTableParser',
                     component: CreateTableParser
                 },
                 {
-                    path: '/parameter-workbench',
+                    path: '/app/parameter-workbench.html',
                     name: 'ParameterWorkbench',
                     component: ParameterWorkbench
                 }
