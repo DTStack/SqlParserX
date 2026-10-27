@@ -296,7 +296,9 @@ Before submitting a pull request, please read the [Contributing Guide](docs/02ã€
 
 Thanks to all contributors of code, tests, documentation and issue feedback. New contributors can join the project collaboration by opening issues or pull requests.
 
-[View project contributors and commit history](https://gitlab.prod.dtstack.cn/changlu/SqlParserX/-/graphs/master)
+<a href="https://github.com/Dtstack/SqlParserX/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Dtstack/SqlParserX" />
+</a>
 
 ## License
 
