@@ -1,0 +1,64 @@
+sqlparserx-ui/vite.config.js
+  s_39bc3e72558e28::t_1088fae45fc732 9-10
+sqlparserx-ui/README.md
+  s_39bc3e72558e28::t_98aca5f180a29e 1,3,5-10
+README.md
+  s_39bc3e72558e28::t_e3f0dc0859cb80 264
+Dockerfile
+  s_39bc3e72558e28::t_ddcac58bf5d11e 48
+  s_39bc3e72558e28::t_4aed7c19b0e208 1-47
+.dockerignore
+  s_39bc3e72558e28::t_4aed7c19b0e208 1-12
+sqlparserx-ui/src/api/LineageApi.js
+  s_39bc3e72558e28::t_1088fae45fc732 15,20
+bin/quick/README.md
+  s_39bc3e72558e28::t_862289a43232b5 92-93,117-118,128-129,141-143,145,176
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/SqlParserXWebApplication.java
+  s_39bc3e72558e28::t_d8e97a00691f99 34-35
+bin/quick/setup-ssh.sh
+  s_39bc3e72558e28::t_b7e005efd5b2f5 21
+conf/static/assets/index-bP0-EdcF.css
+  s_39bc3e72558e28::t_12d6ba06452f6e 1
+conf/static/assets/index-BZzXGw-m.js
+  s_39bc3e72558e28::t_12d6ba06452f6e 1-696
+README_zh-CN.md
+  s_39bc3e72558e28::t_e3f0dc0859cb80 276
+sqlparserx-ui/.env.development
+  s_39bc3e72558e28::t_1088fae45fc732 2
+sqlparserx-web/src/main/java/com/dtstack/sqlparserx/config/MyWebMvcConfig.java
+  s_39bc3e72558e28::t_d8e97a00691f99 22,26-27,42-57,63
+sqlparserx-ui/src/utils/request.js
+  s_39bc3e72558e28::t_1088fae45fc732 3-5,7
+sqlparserx-ui/src/api/sqlparser.js
+  s_39bc3e72558e28::t_1088fae45fc732 13,33,48
+sqlparserx-ui/src/api/DatasourceApi.js
+  s_39bc3e72558e28::t_1088fae45fc732 10,33,41,50,59
+bin/quick/build.sh
+  s_39bc3e72558e28::t_b7e005efd5b2f5 5-6,23,42,171,178
+conf/static/index.html
+  s_39bc3e72558e28::t_12d6ba06452f6e 6-7,11,14-15
+docker-compose.yml
+  s_39bc3e72558e28::t_4aed7c19b0e208 1-13
+sqlparserx-ui/.env
+  s_39bc3e72558e28::t_1088fae45fc732 1-2
+sqlparserx-ui/.env.production
+  s_39bc3e72558e28::t_1088fae45fc732 1-2
+bin/quick/push.sh
+  s_39bc3e72558e28::t_b7e005efd5b2f5 4-5,31,38,67,79,191,204,206-207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "df39d5305b5deb6944463e19e349c1312847bff9",
+  "prompts": {},
+  "sessions": {
+    "s_39bc3e72558e28": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17b09-2fc9-7021-add3-ce12028e3a2e",
+        "model": "gpt-5.6-luna"
+      },
+      "human_author": "changlu <939974883@qq.com>"
+    }
+  }
+}
