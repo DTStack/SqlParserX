@@ -28,4 +28,4 @@ const xml = [
 ].join('\n')
 
 fs.writeFileSync(outputPath, xml, 'utf8')
-console.log(`Merged ${uniqueUrls.size} URLs into ${outputPath}`)
+console.log('Merged ' + uniqueUrls.size + ' URLs into ' + outputPath)
